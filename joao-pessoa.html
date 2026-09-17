@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conhecendo João Pessoa | Dorgival Neto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px;}
+  @media (max-width:800px){.stat-grid{grid-template-columns:1fr;}}
+  .stat-card{background:#fff;border:1px solid #e8e4d9;border-radius:4px;padding:26px;text-align:center;}
+  .stat-card .v{font-family:var(--font-display);font-size:34px;font-weight:700;color:var(--black);}
+  .stat-card .k{font-size:11.5px;color:var(--gray);text-transform:uppercase;letter-spacing:.04em;margin-top:6px;}
+  .datablock{margin-top:56px;}
+  .datablock h2{font-size:26px;}
+  .datablock p{color:#39383a;font-size:14.5px;margin-top:12px;max-width:760px;}
+  table.jp{width:100%;border-collapse:collapse;margin-top:20px;font-size:13px;}
+  table.jp th{background:var(--black);color:#fff;text-align:left;padding:9px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+  table.jp td{padding:8px 12px;border-bottom:1px solid #e8e4d9;}
+  .cta-block{background:var(--black);color:#fff;border-radius:4px;padding:40px;margin-top:56px;text-align:center;}
+  .cta-block h3{color:#fff;font-size:24px;}
+  .cta-block p{color:#cfcdc6;font-size:14px;margin-top:8px;}
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a href="index.html"><img class="logo" src="assets/logo-branco.png" alt="Dorgival Neto"></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html#quemsou">Quem sou eu</a>
+      <a href="index.html#servicos">Serviços</a>
+      <a href="joao-pessoa.html" style="color:var(--gold);">João Pessoa</a>
+      <a href="index.html#depoimentos">Depoimentos</a>
+      <a href="imoveis.html">Imóveis</a>
+      <a class="nav-cta" href="index.html#contato">Falar comigo</a>
+    </nav>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </div>
+</header>
+
+<section style="position:relative;height:46vh;min-height:300px;overflow:hidden;">
+  <img src="assets/joao-pessoa-aerea.jpg" alt="João Pessoa" style="width:100%;height:100%;object-fit:cover;">
+  <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(20,20,20,0.8) 0%, rgba(20,20,20,0.1) 55%);display:flex;align-items:flex-end;">
+    <div class="wrap" style="padding-bottom:30px;">
+      <span class="eyebrow" style="color:#e8cd97;">Panorama de mercado</span>
+      <h1 style="color:#fff;font-size:clamp(24px,3.6vw,36px);margin-top:6px;">Conhecendo João Pessoa</h1>
+      <p style="color:#e6e3da;font-size:14px;margin-top:6px;max-width:560px;">Por que a capital paraibana é um dos melhores momentos do Nordeste para morar e investir.</p>
+    </div>
+  </div>
+</section>
+
+<div class="wrap" style="padding-top:44px;">
+  <p style="color:var(--gray);font-size:14.5px;max-width:720px;">João Pessoa vive um momento raro: crescimento econômico consistente, reconhecimento turístico internacional e um Polo Turístico bilionário entrando em operação — tudo isso com um preço de m² ainda competitivo frente às demais capitais do Brasil.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="v">AAA</div><div class="k">Rating S&amp;P Global · 3º ano consecutivo</div></div>
+    <div class="stat-card"><div class="v">R$ 97 bi</div><div class="k">PIB da Paraíba</div></div>
+    <div class="stat-card"><div class="v">Top 3</div><div class="k">Destino mais buscado do mundo · Booking.com</div></div>
+  </div>
+
+  <div class="datablock">
+    <h2>O Polo Turístico Cabo Branco</h2>
+    <p><b>R$ 3,24 bilhões</b> em 12 empreendimentos contratados — o primeiro já inaugurado (Tauá Resort, jul/2026) e o segundo abrindo em out/2026 (Acquaí Parks). Juntos, R$ 1,4 bilhão e 7.240 novos leitos entram em operação em um único ano.</p>
+    <table class="jp">
+      <tr><th>Empreendimento</th><th>Investimento</th><th>Previsão</th></tr>
+      <tr><td>Tauá Resort</td><td>R$ 700 mi</td><td>Inaugurado · Jul/26</td></tr>
+      <tr><td>Acquaí Parks</td><td>R$ 700 mi</td><td>Abre em Out/26</td></tr>
+      <tr><td>WAM Experience</td><td>R$ 480 mi</td><td>2027-2029</td></tr>
+      <tr><td>Piscina de Ondas</td><td>R$ 332 mi</td><td>2028</td></tr>
+      <tr><td>Ocean Palace</td><td>R$ 220 mi</td><td>Jun/2027</td></tr>
+      <tr><td>Holanda's Gold</td><td>R$ 200 mi</td><td>2027</td></tr>
+      <tr><td>The Westin</td><td>R$ 143 mi</td><td>Dez/2027</td></tr>
+    </table>
+  </div>
+
+  <div class="datablock">
+    <h2>Crescimento acima da inflação, sete anos seguidos</h2>
+    <p><b>Indústria:</b> de R$ 14,0 bi (2018) para R$ 27,5 bi (2025) — 4,5% a.a. real. <b>Comércio:</b> de R$ 61,1 bi para R$ 133,6 bi — 6,6% a.a. real. E tudo isso aconteceu <b>sem</b> o Polo Cabo Branco, que só começa a operar em capacidade plena agora.</p>
+  </div>
+
+  <div class="datablock">
+    <h2>O m² ainda é competitivo — mas por pouco tempo</h2>
+    <p>Entre as 16 maiores capitais do Brasil, João Pessoa tem o preço médio de venda mais baixo (R$ 7.970/m² em 2025) — mas foi a cidade que <b>mais cresceu</b> no acumulado 2022-2025: <b>+47%</b>, à frente de Salvador (41%) e Belo Horizonte (40%).</p>
+  </div>
+
+  <div class="datablock">
+    <h2>A Paraíba atrai gente, não só turistas</h2>
+    <p>Segundo o Censo 2022 do IBGE, a Paraíba foi o <b>único estado do Nordeste com saldo migratório positivo</b>: +30.952 pessoas. O estado deixou de exportar população e passou a atrair talentos e negócios.</p>
+  </div>
+
+  <div class="cta-block">
+    <h3>Quer o panorama completo, com todos os dados e fontes?</h3>
+    <p>Baixe o guia em PDF — gratuito.</p>
+    <a class="btn btn-gold" style="margin-top:18px;" href="assets/conhecendo-joao-pessoa.pdf" download>Baixar PDF completo</a>
+  </div>
+  <p style="font-size:11px;color:var(--gray);margin-top:20px;">Fontes: Mercado em Foco 2026 · Governo da Paraíba · S&amp;P Global Ratings · Tesouro Nacional · IBGE (Censo 2022) · Booking.com · CAGED/PNAD Contínua.</p>
+</div>
+
+<footer class="site-footer" style="margin-top:60px;">
+  <div class="wrap" style="text-align:center;">
+    <img class="logo" src="assets/logo-branco.png" alt="Dorgival Neto" style="margin:0 auto 14px;">
+    <div class="foot-bottom" style="margin-top:0;border-top:none;">CRECI 17191-F · CNAI 52963 · Invista Imóveis</div>
+  </div>
+</footer>
+
+</body>
+</html>
