@@ -8,7 +8,7 @@
 const SITE_CONFIG = {
   whatsapp: "5583996336569",       // Dorgival Neto — número oficial
   instagram: "https://instagram.com/dorgivalneto.imoveis",
-  email: "contato@dorgivalneto.com"
+  email: "dorgivalneto.corretor@gmail.com"
 };
 
 const PROPERTIES = [

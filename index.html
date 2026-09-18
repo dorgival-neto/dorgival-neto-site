@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
 </head>
 <body>
 
@@ -38,7 +39,6 @@
       <span class="badge">CRECI 17191-F</span>
       <span class="badge">CNAI 52963</span>
       <span class="badge">Invista Imóveis</span>
-      <span class="badge">Delegado CRECI-PB 21ª Região</span>
     </div>
     <div class="hero-cta">
       <a class="btn btn-gold" href="imoveis.html">Ver catálogo de imóveis</a>
@@ -92,13 +92,13 @@
       <div class="service-card">
         <div class="num">01</div>
         <h3>Venda de Imóveis</h3>
-        <p>Assessoria completa na compra e venda de imóveis de médio e alto padrão em João Pessoa — da curadoria de opções à negociação e ao fechamento, com acompanhamento até o registro em cartório.</p>
+        <p>Assessoria completa na compra e venda de imóveis de médio e alto padrão em João Pessoa — da curadoria de opções à negociação e ao fechamento. Porém nossa relação não termina no registro do imóvel no cartório, ela apenas começa. Eu vou te acompanhar por toda vida.</p>
         <a class="btn btn-outline btn-sm" style="margin-top:16px;" href="#" id="svcWa1" target="_blank" rel="noopener">Fale comigo →</a>
       </div>
       <div class="service-card">
         <div class="num">02</div>
         <h3>Perícia e Avaliação Mercadológica</h3>
-        <p>Avaliação técnica de imóveis para compra, venda, garantia, partilha ou processos judiciais, com metodologia reconhecida e laudo fundamentado (CNAI 52963).</p>
+        <p>Perícia e Avaliação de Imóveis para compra, venda, garantia, revisão de impostos, partilha ou processos judiciais, com metodologia reconhecida e laudo técnico com base na NBR 14.653 - Avaliação de Bens. Perito Avaliador com registro CNAI sob nº 52963.</p>
         <a class="btn btn-outline btn-sm" style="margin-top:16px;" href="#" id="svcWa2" target="_blank" rel="noopener">Fale comigo →</a>
       </div>
       <div class="service-card">
@@ -129,12 +129,14 @@
         <p style="color:#8a8880;font-size:12.5px;margin-top:14px;">Esse é o resumo aberto. O guia completo (PDF) detalha cada etapa, com checklist de documentos e armadilhas comuns.</p>
       </div>
       <div class="guide-form">
-        <h4 style="color:#fff;font-size:15px;margin-bottom:16px;">Baixe o guia completo (PDF)</h4>
+        <h4 id="guiaFormTitle" style="color:#fff;font-size:15px;margin-bottom:16px;">Baixe o guia completo (PDF)</h4>
         <form id="guiaForm">
+          <input type="hidden" name="guia" id="guiaTypeField">
           <label>Seu nome</label>
           <input id="guiaNome" name="nome" type="text" placeholder="Como posso te chamar?" required>
           <label>Seu WhatsApp</label>
-          <input id="guiaWhats" name="whatsapp" type="text" placeholder="(83) 9 9999-9999" required>
+          <input id="guiaWhats" name="whatsapp" type="tel" placeholder="9 9999-9999" required>
+          <div class="field-error" id="guiaWhatsError">Digite um número de telefone válido e completo para o país selecionado.</div>
           <button class="btn btn-gold" type="submit" style="width:100%;justify-content:center;">Quero baixar o guia completo</button>
         </form>
         <p style="font-size:11px;color:#8a8880;margin-top:10px;">Seus dados ficam só comigo — sem spam.</p>
@@ -211,22 +213,51 @@
     </div>
     <div>
       <h4>Contato</h4>
-      <a class="flink" id="footWa" href="#" target="_blank" rel="noopener">WhatsApp</a>
-      <a class="flink" id="footInsta" href="#" target="_blank" rel="noopener">Instagram</a>
-      <span class="flink" id="footEmail"></span>
+      <a class="flink" id="footWa" href="#" target="_blank" rel="noopener"><svg class="ficon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.93 7.93 0 0 0 3.85 1h.01A7.94 7.94 0 0 0 20 12.05a7.9 7.9 0 0 0-2.4-5.73zM12.06 18.6h-.01a6.55 6.55 0 0 1-3.35-.92l-.24-.14-2.49.65.67-2.43-.16-.25a6.58 6.58 0 0 1 5.6-10.1 6.53 6.53 0 0 1 4.63 1.92 6.5 6.5 0 0 1 1.93 4.63 6.6 6.6 0 0 1-6.58 6.64zm3.6-4.93c-.2-.1-1.17-.58-1.35-.64-.18-.07-.31-.1-.44.1-.13.2-.5.64-.62.77-.11.13-.23.14-.42.05-.2-.1-.83-.3-1.58-.98-.58-.52-.98-1.16-1.1-1.36-.11-.2-.01-.3.09-.41.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.07-.14.03-.27-.03-.37-.07-.1-.32-.77-.44-1.06-.11-.28-.23-.24-.32-.24-.08 0-.18-.01-.28-.01-.1 0-.26.04-.4.19-.13.15-.51.5-.51 1.2 0 .71.51 1.4.58 1.5.07.1.99 1.51 2.4 2.06 1.42.55 1.42.37 1.68.35.26-.03.85-.35.97-.68.12-.34.12-.62.09-.68-.03-.06-.11-.1-.24-.16z"/></svg>WhatsApp</a>
+      <a class="flink" id="footInsta" href="#" target="_blank" rel="noopener"><svg class="ficon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17.3" cy="6.7" r="0.9" fill="currentColor" stroke="none"/></svg>Instagram</a>
+      <a class="flink" id="footEmail" href="#"><svg class="ficon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 6.5l8 6.5 8-6.5"/></svg></a>
     </div>
     <div>
       <h4>Credenciais</h4>
       <span class="flink">CRECI 17191-F</span>
       <span class="flink">CNAI 52963</span>
-      <span class="flink">Invista Imóveis · Time de Lançamentos</span>
     </div>
   </div>
   <div class="foot-bottom">© Dorgival Neto Negócios Imobiliários Ltda. Este site não substitui a análise individual de cada negociação.</div>
 </footer>
 
 <script src="assets/data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
 <script>
+const GUIA_FILES = {
+  compra: 'assets/guia-compra-joao-pessoa.pdf',
+  cidade: 'assets/conhecendo-joao-pessoa.pdf'
+};
+const GUIA_TITLES = {
+  compra: 'Baixe o guia completo (PDF)',
+  cidade: 'Baixe o guia "Conhecendo João Pessoa" (PDF)'
+};
+function getGuiaType(){
+  const params = new URLSearchParams(location.search);
+  return params.get('guia') === 'cidade' ? 'cidade' : 'compra';
+}
+function applyGuiaType(){
+  const tipo = getGuiaType();
+  document.getElementById('guiaFormTitle').textContent = GUIA_TITLES[tipo];
+  document.getElementById('guiaTypeField').value = tipo;
+  document.getElementById('guiaPdfLink').href = GUIA_FILES[tipo];
+}
+
+let iti;
+function initPhoneInput(){
+  iti = window.intlTelInput(document.getElementById('guiaWhats'), {
+    initialCountry: 'br',
+    preferredCountries: ['br'],
+    separateDialCode: true,
+    utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js'
+  });
+}
+
 function applyContact(){
   const wa = SITE_CONFIG.whatsapp;
   const msg = encodeURIComponent('Olá Dorgival! Vim pelo site e gostaria de falar com você.');
@@ -235,7 +266,9 @@ function applyContact(){
   document.getElementById('ctaWaBtn').href = link;
   document.getElementById('footWa').href = link;
   document.getElementById('footInsta').href = SITE_CONFIG.instagram;
-  document.getElementById('footEmail').textContent = SITE_CONFIG.email;
+  const footEmailEl = document.getElementById('footEmail');
+  footEmailEl.href = `mailto:${SITE_CONFIG.email}`;
+  footEmailEl.append(SITE_CONFIG.email);
 
   const svcMsgs = [
     'Olá Dorgival! Quero saber mais sobre como vender ou comprar um imóvel com sua assessoria.',
@@ -251,15 +284,28 @@ function applyContact(){
 document.getElementById('guiaForm').addEventListener('submit', async function(e){
   e.preventDefault();
   const nome = document.getElementById('guiaNome').value.trim();
-  const whats = document.getElementById('guiaWhats').value.trim();
-  if(!nome || !whats){ alert('Preencha seu nome e WhatsApp.'); return; }
+  const whatsInput = document.getElementById('guiaWhats');
+  const errorEl = document.getElementById('guiaWhatsError');
+  errorEl.style.display = 'none';
+  whatsInput.closest('.iti')?.classList.remove('iti-error');
+
+  if(!nome){ alert('Preencha seu nome.'); return; }
+  if(!whatsInput.value.trim() || !iti.isValidNumber()){
+    errorEl.style.display = 'block';
+    whatsInput.closest('.iti')?.classList.add('iti-error');
+    whatsInput.focus();
+    return;
+  }
+
   const btn = e.target.querySelector('button[type="submit"]');
   btn.disabled = true; btn.textContent = 'Enviando...';
+  const formData = new FormData(e.target);
+  formData.set('whatsapp', iti.getNumber());
   try{
     await fetch('https://formspree.io/f/xgaverke', {
       method: 'POST',
       headers: { 'Accept': 'application/json' },
-      body: new FormData(e.target)
+      body: formData
     });
     document.getElementById('guiaModalTitle').textContent = 'Tudo certo!';
     document.getElementById('guiaModalText').textContent = 'Recebi seus dados. Toque no botão abaixo para baixar o guia completo em PDF.';
@@ -286,6 +332,8 @@ function renderTeaser(){
   `).join('');
 }
 applyContact();
+applyGuiaType();
+initPhoneInput();
 renderTeaser();
 </script>
 </body>
