@@ -122,6 +122,7 @@
     <button class="modal-close" onclick="document.getElementById('guiaJPOverlay').classList.remove('open')">✕</button>
     <h3 id="guiaJPModalTitle">Guia enviado!</h3>
     <p id="guiaJPModalText" style="margin-top:10px;color:#cfcdc6;font-size:14px;">Seu guia foi enviado para o seu e-mail — assim ele fica registrado por lá e você pode consultar quando quiser.</p>
+    <a class="btn btn-gold" id="guiaJPPdfLink" href="assets/conhecendo-joao-pessoa.pdf" download style="margin-top:16px;width:100%;justify-content:center;">Baixar PDF completo</a>
   </div>
 </div>
 
@@ -188,10 +189,10 @@ document.getElementById('guiaJPForm').addEventListener('submit', async function(
 
   if(emailOk){
     document.getElementById('guiaJPModalTitle').textContent = 'Guia enviado!';
-    document.getElementById('guiaJPModalText').textContent = 'Seu guia foi enviado para o seu e-mail — assim ele fica registrado por lá e você pode consultar quando quiser.';
+    document.getElementById('guiaJPModalText').textContent = 'Também enviei uma cópia para o seu e-mail. Toque no botão abaixo para baixar agora.';
   }else{
-    document.getElementById('guiaJPModalTitle').textContent = 'Recebi seu cadastro';
-    document.getElementById('guiaJPModalText').textContent = 'Recebi seus dados, mas houve um problema técnico ao enviar o guia por e-mail agora. Vou te enviar manualmente em breve.';
+    document.getElementById('guiaJPModalTitle').textContent = 'Guia liberado';
+    document.getElementById('guiaJPModalText').textContent = 'Não consegui confirmar o envio por e-mail agora, mas seu guia já está liberado para download abaixo.';
   }
   btn.disabled = false; btn.textContent = 'Quero receber o PDF completo';
   document.getElementById('guiaJPOverlay').classList.add('open');

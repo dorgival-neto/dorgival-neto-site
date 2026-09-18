@@ -218,6 +218,7 @@
     <button class="modal-close" onclick="document.getElementById('guiaOverlay').classList.remove('open')">✕</button>
     <h3 id="guiaModalTitle">Guia enviado!</h3>
     <p id="guiaModalText" style="margin-top:10px;color:#cfcdc6;font-size:14px;">Seu guia foi enviado para o seu e-mail — assim ele fica registrado por lá e você pode consultar quando quiser.</p>
+    <a class="btn btn-gold" id="guiaPdfLink" href="assets/guia-compra-joao-pessoa.pdf" download style="margin-top:16px;width:100%;justify-content:center;">Baixar guia em PDF</a>
   </div>
 </div>
 
@@ -324,10 +325,10 @@ document.getElementById('guiaForm').addEventListener('submit', async function(e)
 
   if(emailOk){
     document.getElementById('guiaModalTitle').textContent = 'Guia enviado!';
-    document.getElementById('guiaModalText').textContent = 'Seu guia foi enviado para o seu e-mail — assim ele fica registrado por lá e você pode consultar quando quiser.';
+    document.getElementById('guiaModalText').textContent = 'Também enviei uma cópia para o seu e-mail. Toque no botão abaixo para baixar agora.';
   }else{
-    document.getElementById('guiaModalTitle').textContent = 'Recebi seu cadastro';
-    document.getElementById('guiaModalText').textContent = 'Recebi seus dados, mas houve um problema técnico ao enviar o guia por e-mail agora. Vou te enviar manualmente em breve.';
+    document.getElementById('guiaModalTitle').textContent = 'Guia liberado';
+    document.getElementById('guiaModalText').textContent = 'Não consegui confirmar o envio por e-mail agora, mas seu guia já está liberado para download abaixo.';
   }
   btn.disabled = false; btn.textContent = 'Quero receber o guia completo';
   document.getElementById('guiaOverlay').classList.add('open');
