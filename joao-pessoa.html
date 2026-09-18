@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
 <style>
   .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px;}
   @media (max-width:800px){.stat-grid{grid-template-columns:1fr;}}
@@ -21,9 +22,7 @@
   table.jp{width:100%;border-collapse:collapse;margin-top:20px;font-size:13px;}
   table.jp th{background:var(--black);color:#fff;text-align:left;padding:9px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
   table.jp td{padding:8px 12px;border-bottom:1px solid #e8e4d9;}
-  .cta-block{background:var(--black);color:#fff;border-radius:4px;padding:40px;margin-top:56px;text-align:center;}
-  .cta-block h3{color:#fff;font-size:24px;}
-  .cta-block p{color:#cfcdc6;font-size:14px;margin-top:8px;}
+  .guide-box{margin-top:56px;}
 </style>
 </head>
 <body>
@@ -59,7 +58,7 @@
 
   <div class="stat-grid">
     <div class="stat-card"><div class="v">AAA</div><div class="k">Rating S&amp;P Global · 3º ano consecutivo</div><div class="note">Nota máxima de crédito, que mede a capacidade do estado de pagar suas dívidas em dia. Quanto mais alta, menor o risco fiscal — o que atrai mais investimento privado e obras de infraestrutura para a região.</div></div>
-    <div class="stat-card"><div class="v">R$ 97 bi</div><div class="k">PIB da Paraíba</div></div>
+    <div class="stat-card"><div class="v">R$ 97 bi</div><div class="k">PIB da Paraíba</div><div class="note">Uma das economias que mais crescem no Brasil: alta de 5,5% projetada para 2025 — a maior do Nordeste e a 3ª maior do país. Mais economia forte significa mais emprego, mais renda e mais gente buscando morar bem na cidade.</div></div>
     <div class="stat-card"><div class="v">Top 3</div><div class="k">Destino mais buscado do mundo · Booking.com</div><div class="note">Ficando atrás somente de Sanya, na China, e Trieste, na Itália.</div></div>
   </div>
 
@@ -93,12 +92,36 @@
     <p>Segundo o Censo 2022 do IBGE, a Paraíba foi o <b>único estado do Nordeste com saldo migratório positivo</b>: +30.952 pessoas. O estado deixou de exportar população e passou a atrair talentos e negócios.</p>
   </div>
 
-  <div class="cta-block">
-    <h3>Quer o panorama completo, com todos os dados e fontes?</h3>
-    <p>Baixe o guia em PDF — gratuito.</p>
-    <a class="btn btn-gold" style="margin-top:18px;" href="index.html?guia=cidade#guia">Baixar PDF completo</a>
+  <div class="guide-box" id="guiaJP">
+    <div>
+      <span class="eyebrow">Guia gratuito</span>
+      <h2 style="color:#fff;">Quer o panorama completo, com todos os dados e fontes?</h2>
+      <p style="color:#cfcdc6;margin-top:10px;font-size:14.5px;">Baixe o PDF completo "Conhecendo João Pessoa" — com todos os números, fontes e detalhes dos empreendimentos do Polo Cabo Branco.</p>
+      <p style="color:#8a8880;font-size:12.5px;margin-top:14px;">Fontes: Mercado em Foco 2026 · Governo da Paraíba · S&amp;P Global Ratings · Tesouro Nacional · IBGE (Censo 2022) · Booking.com · CAGED/PNAD Contínua.</p>
+    </div>
+    <div class="guide-form">
+      <h4 style="color:#fff;font-size:15px;margin-bottom:16px;">Baixe o guia completo (PDF)</h4>
+      <form id="guiaJPForm">
+        <label>Seu nome</label>
+        <input id="guiaJPNome" name="nome" type="text" placeholder="Como posso te chamar?" required>
+        <label>Seu WhatsApp</label>
+        <input id="guiaJPWhats" name="whatsapp" type="tel" placeholder="9 9999-9999" required>
+        <div class="field-error" id="guiaJPWhatsError">Digite um número de telefone válido e completo para o país selecionado.</div>
+        <button class="btn btn-gold" type="submit" style="width:100%;justify-content:center;">Quero baixar o PDF completo</button>
+      </form>
+      <p style="font-size:11px;color:#8a8880;margin-top:10px;">Seus dados ficam só comigo — sem spam.</p>
+    </div>
   </div>
-  <p style="font-size:11px;color:var(--gray);margin-top:20px;">Fontes: Mercado em Foco 2026 · Governo da Paraíba · S&amp;P Global Ratings · Tesouro Nacional · IBGE (Censo 2022) · Booking.com · CAGED/PNAD Contínua.</p>
+</div>
+
+<!-- MODAL GUIA -->
+<div class="modal-overlay" id="guiaJPOverlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('guiaJPOverlay').classList.remove('open')">✕</button>
+    <h3 id="guiaJPModalTitle">Tudo certo!</h3>
+    <p id="guiaJPModalText" style="margin-top:10px;color:#cfcdc6;font-size:14px;">Recebi seus dados. Toque no botão abaixo para baixar o PDF completo.</p>
+    <a class="btn btn-gold" id="guiaJPPdfLink" href="assets/conhecendo-joao-pessoa.pdf" download style="margin-top:16px;width:100%;justify-content:center;">Baixar PDF completo</a>
+  </div>
 </div>
 
 <footer class="site-footer" style="margin-top:60px;">
@@ -108,5 +131,51 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+<script>
+const itiJP = window.intlTelInput(document.getElementById('guiaJPWhats'), {
+  initialCountry: 'br',
+  preferredCountries: ['br'],
+  separateDialCode: true,
+  utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js'
+});
+
+document.getElementById('guiaJPForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const nome = document.getElementById('guiaJPNome').value.trim();
+  const whatsInput = document.getElementById('guiaJPWhats');
+  const errorEl = document.getElementById('guiaJPWhatsError');
+  errorEl.style.display = 'none';
+  whatsInput.closest('.iti')?.classList.remove('iti-error');
+
+  if(!nome){ alert('Preencha seu nome.'); return; }
+  if(!whatsInput.value.trim() || !itiJP.isValidNumber()){
+    errorEl.style.display = 'block';
+    whatsInput.closest('.iti')?.classList.add('iti-error');
+    whatsInput.focus();
+    return;
+  }
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  const formData = new FormData(e.target);
+  formData.set('whatsapp', itiJP.getNumber());
+  formData.set('guia', 'cidade');
+  try{
+    await fetch('https://formspree.io/f/xgaverke', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: formData
+    });
+    document.getElementById('guiaJPModalTitle').textContent = 'Tudo certo!';
+    document.getElementById('guiaJPModalText').textContent = 'Recebi seus dados. Toque no botão abaixo para baixar o PDF completo.';
+  }catch(err){
+    document.getElementById('guiaJPModalTitle').textContent = 'Guia liberado';
+    document.getElementById('guiaJPModalText').textContent = 'Não consegui confirmar seu cadastro agora, mas o guia já está liberado para download abaixo.';
+  }
+  btn.disabled = false; btn.textContent = 'Quero baixar o PDF completo';
+  document.getElementById('guiaJPOverlay').classList.add('open');
+});
+</script>
 </body>
 </html>

@@ -129,9 +129,9 @@
         <p style="color:#8a8880;font-size:12.5px;margin-top:14px;">Esse é o resumo aberto. O guia completo (PDF) detalha cada etapa, com checklist de documentos e armadilhas comuns.</p>
       </div>
       <div class="guide-form">
-        <h4 id="guiaFormTitle" style="color:#fff;font-size:15px;margin-bottom:16px;">Baixe o guia completo (PDF)</h4>
+        <h4 style="color:#fff;font-size:15px;margin-bottom:16px;">Baixe o guia completo (PDF)</h4>
         <form id="guiaForm">
-          <input type="hidden" name="guia" id="guiaTypeField">
+          <input type="hidden" name="guia" value="compra">
           <label>Seu nome</label>
           <input id="guiaNome" name="nome" type="text" placeholder="Como posso te chamar?" required>
           <label>Seu WhatsApp</label>
@@ -151,6 +151,16 @@
     <span class="eyebrow center" style="display:block;">Prova social</span>
     <h2 class="center" style="font-size:32px;margin-top:8px;">Depoimentos de Clientes e Parceiros</h2>
     <div class="testi-grid">
+      <div class="testi-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+          <div style="width:52px;height:52px;border-radius:50%;background:var(--off-2);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:20px;font-weight:700;flex-shrink:0;">J</div>
+          <div>
+            <div style="font-weight:600;font-size:14px;">J. Borba</div>
+            <div style="font-size:11.5px;color:var(--gray);">Comprou um apartamento no Jardim Oceania</div>
+          </div>
+        </div>
+        <p>"Sem conhecer João Pessoa direito e morando longe, decidi comprar um imóvel na cidade. Bendigo a sorte que me ajudou colocando Dorgival no meu caminho: expliquei de forma clara o que eu desejava para este imóvel, e ele foi incrivelmente solícito e perspicaz, me apresentando várias opções exatamente dentro do que eu buscava até encontrar o imóvel perfeito. Também esteve disponível e foi atencioso durante todo o processo de aquisição, o que facilitou para que a compra fosse um sucesso. Estou muito satisfeita, agradeço a Dorgival pelo seu trabalho excelente e o recomendo a todos."</p>
+      </div>
       <div class="testi-card">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
           <img src="assets/delber.jpg" alt="Delber L. Marcolino Filho" style="width:52px;height:52px;border-radius:50%;object-fit:cover;">
@@ -229,25 +239,6 @@
 <script src="assets/data.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
 <script>
-const GUIA_FILES = {
-  compra: 'assets/guia-compra-joao-pessoa.pdf',
-  cidade: 'assets/conhecendo-joao-pessoa.pdf'
-};
-const GUIA_TITLES = {
-  compra: 'Baixe o guia completo (PDF)',
-  cidade: 'Baixe o guia "Conhecendo João Pessoa" (PDF)'
-};
-function getGuiaType(){
-  const params = new URLSearchParams(location.search);
-  return params.get('guia') === 'cidade' ? 'cidade' : 'compra';
-}
-function applyGuiaType(){
-  const tipo = getGuiaType();
-  document.getElementById('guiaFormTitle').textContent = GUIA_TITLES[tipo];
-  document.getElementById('guiaTypeField').value = tipo;
-  document.getElementById('guiaPdfLink').href = GUIA_FILES[tipo];
-}
-
 let iti;
 function initPhoneInput(){
   iti = window.intlTelInput(document.getElementById('guiaWhats'), {
@@ -332,7 +323,6 @@ function renderTeaser(){
   `).join('');
 }
 applyContact();
-applyGuiaType();
 initPhoneInput();
 renderTeaser();
 </script>
