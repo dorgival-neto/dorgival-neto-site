@@ -100,14 +100,16 @@
       <p style="color:#8a8880;font-size:12.5px;margin-top:14px;">Fontes: Mercado em Foco 2026 · Governo da Paraíba · S&amp;P Global Ratings · Tesouro Nacional · IBGE (Censo 2022) · Booking.com · CAGED/PNAD Contínua.</p>
     </div>
     <div class="guide-form">
-      <h4 style="color:#fff;font-size:15px;margin-bottom:16px;">Baixe o guia completo (PDF)</h4>
+      <h4 style="color:#fff;font-size:15px;margin-bottom:16px;">Receba o guia completo por e-mail (PDF)</h4>
       <form id="guiaJPForm">
         <label>Seu nome</label>
         <input id="guiaJPNome" name="nome" type="text" placeholder="Como posso te chamar?" required>
+        <label>Seu e-mail</label>
+        <input id="guiaJPEmail" name="email" type="email" placeholder="voce@email.com" required>
         <label>Seu WhatsApp</label>
         <input id="guiaJPWhats" name="whatsapp" type="tel" placeholder="9 9999-9999" required>
         <div class="field-error" id="guiaJPWhatsError">Digite um número de telefone válido e completo para o país selecionado.</div>
-        <button class="btn btn-gold" type="submit" style="width:100%;justify-content:center;">Quero baixar o PDF completo</button>
+        <button class="btn btn-gold" type="submit" style="width:100%;justify-content:center;">Quero receber o PDF completo</button>
       </form>
       <p style="font-size:11px;color:#8a8880;margin-top:10px;">Seus dados ficam só comigo — sem spam.</p>
     </div>
@@ -118,9 +120,8 @@
 <div class="modal-overlay" id="guiaJPOverlay">
   <div class="modal-box">
     <button class="modal-close" onclick="document.getElementById('guiaJPOverlay').classList.remove('open')">✕</button>
-    <h3 id="guiaJPModalTitle">Tudo certo!</h3>
-    <p id="guiaJPModalText" style="margin-top:10px;color:#cfcdc6;font-size:14px;">Recebi seus dados. Toque no botão abaixo para baixar o PDF completo.</p>
-    <a class="btn btn-gold" id="guiaJPPdfLink" href="assets/conhecendo-joao-pessoa.pdf" download style="margin-top:16px;width:100%;justify-content:center;">Baixar PDF completo</a>
+    <h3 id="guiaJPModalTitle">Guia enviado!</h3>
+    <p id="guiaJPModalText" style="margin-top:10px;color:#cfcdc6;font-size:14px;">Seu guia foi enviado para o seu e-mail — assim ele fica registrado por lá e você pode consultar quando quiser.</p>
   </div>
 </div>
 
@@ -140,15 +141,19 @@ const itiJP = window.intlTelInput(document.getElementById('guiaJPWhats'), {
   utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js'
 });
 
+function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
 document.getElementById('guiaJPForm').addEventListener('submit', async function(e){
   e.preventDefault();
   const nome = document.getElementById('guiaJPNome').value.trim();
+  const email = document.getElementById('guiaJPEmail').value.trim();
   const whatsInput = document.getElementById('guiaJPWhats');
   const errorEl = document.getElementById('guiaJPWhatsError');
   errorEl.style.display = 'none';
   whatsInput.closest('.iti')?.classList.remove('iti-error');
 
   if(!nome){ alert('Preencha seu nome.'); return; }
+  if(!isValidEmail(email)){ alert('Digite um e-mail válido.'); return; }
   if(!whatsInput.value.trim() || !itiJP.isValidNumber()){
     errorEl.style.display = 'block';
     whatsInput.closest('.iti')?.classList.add('iti-error');
@@ -161,19 +166,34 @@ document.getElementById('guiaJPForm').addEventListener('submit', async function(
   const formData = new FormData(e.target);
   formData.set('whatsapp', itiJP.getNumber());
   formData.set('guia', 'cidade');
+
+  let emailOk = false;
   try{
-    await fetch('https://formspree.io/f/xgaverke', {
-      method: 'POST',
-      headers: { 'Accept': 'application/json' },
-      body: formData
-    });
-    document.getElementById('guiaJPModalTitle').textContent = 'Tudo certo!';
-    document.getElementById('guiaJPModalText').textContent = 'Recebi seus dados. Toque no botão abaixo para baixar o PDF completo.';
+    const [, guiaRes] = await Promise.all([
+      fetch('https://formspree.io/f/xgaverke', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData
+      }),
+      fetch('/api/send-guia', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, guia: 'cidade' })
+      })
+    ]);
+    emailOk = guiaRes.ok;
   }catch(err){
-    document.getElementById('guiaJPModalTitle').textContent = 'Guia liberado';
-    document.getElementById('guiaJPModalText').textContent = 'Não consegui confirmar seu cadastro agora, mas o guia já está liberado para download abaixo.';
+    emailOk = false;
   }
-  btn.disabled = false; btn.textContent = 'Quero baixar o PDF completo';
+
+  if(emailOk){
+    document.getElementById('guiaJPModalTitle').textContent = 'Guia enviado!';
+    document.getElementById('guiaJPModalText').textContent = 'Seu guia foi enviado para o seu e-mail — assim ele fica registrado por lá e você pode consultar quando quiser.';
+  }else{
+    document.getElementById('guiaJPModalTitle').textContent = 'Recebi seu cadastro';
+    document.getElementById('guiaJPModalText').textContent = 'Recebi seus dados, mas houve um problema técnico ao enviar o guia por e-mail agora. Vou te enviar manualmente em breve.';
+  }
+  btn.disabled = false; btn.textContent = 'Quero receber o PDF completo';
   document.getElementById('guiaJPOverlay').classList.add('open');
 });
 </script>
