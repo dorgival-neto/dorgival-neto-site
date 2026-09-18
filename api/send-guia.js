@@ -25,8 +25,15 @@ module.exports = async (req, res) => {
     return;
   }
 
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+    console.error('send-guia: GMAIL_USER/GMAIL_APP_PASSWORD nao configurados');
+    res.status(500).json({ error: 'credenciais de e-mail nao configuradas' });
+    return;
+  }
+
   const filePath = path.join(process.cwd(), 'assets', guiaInfo.file);
   if (!fs.existsSync(filePath)) {
+    console.error('send-guia: arquivo nao encontrado em', filePath);
     res.status(500).json({ error: 'arquivo nao encontrado' });
     return;
   }
@@ -55,6 +62,7 @@ module.exports = async (req, res) => {
 
     res.status(200).json({ ok: true });
   } catch (err) {
+    console.error('send-guia: falha ao enviar e-mail', err);
     res.status(500).json({ error: 'falha ao enviar e-mail' });
   }
 };

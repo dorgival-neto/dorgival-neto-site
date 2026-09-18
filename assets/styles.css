@@ -123,7 +123,7 @@ header.site-nav{
 /* TESTIMONIALS CAROUSEL */
 .testi-empty{border:1px dashed #c9c3b0;border-radius:var(--radius);padding:44px;text-align:center;color:var(--gray);margin-top:36px;}
 .testi-carousel{position:relative;margin-top:36px;padding:0 8px;}
-.testi-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;padding:4px 4px 10px;scrollbar-width:none;}
+.testi-track{position:relative;display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;padding:4px 4px 10px;scrollbar-width:none;}
 .testi-track::-webkit-scrollbar{display:none;}
 .testi-card{background:var(--white);border-radius:var(--radius);padding:26px;border:1px solid #e8e4d9;scroll-snap-align:center;flex:0 0 88%;}
 @media (min-width:700px){.testi-card{flex:0 0 58%;}}
