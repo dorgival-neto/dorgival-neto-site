@@ -137,11 +137,11 @@
           <label>Seu e-mail</label>
           <input id="guiaEmail" name="email" type="email" placeholder="voce@email.com" required>
           <label>Seu WhatsApp</label>
-          <input id="guiaWhats" name="whatsapp" type="tel" placeholder="9 9999-9999" required>
+          <input id="guiaWhats" name="whatsapp" type="tel" placeholder="83 9 9999-9999" required>
           <div class="field-error" id="guiaWhatsError">Digite um número de telefone válido e completo para o país selecionado.</div>
           <button class="btn btn-gold" type="submit" style="width:100%;justify-content:center;">Quero receber o guia completo</button>
         </form>
-        <p style="font-size:11px;color:#8a8880;margin-top:10px;">Seus dados ficam só comigo — sem spam.</p>
+        <p style="font-size:11px;color:#8a8880;margin-top:10px;">Seus dados ficam só comigo — sem spam e sem mensagens automáticas.</p>
       </div>
     </div>
   </div>
@@ -152,27 +152,32 @@
   <div class="wrap">
     <span class="eyebrow center" style="display:block;">Prova social</span>
     <h2 class="center" style="font-size:32px;margin-top:8px;">Depoimentos de Clientes e Parceiros</h2>
-    <div class="testi-grid">
-      <div class="testi-card">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-          <div style="width:52px;height:52px;border-radius:50%;background:var(--off-2);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:20px;font-weight:700;flex-shrink:0;">J</div>
-          <div>
-            <div style="font-weight:600;font-size:14px;">J. Borba</div>
-            <div style="font-size:11.5px;color:var(--gray);">Comprou um apartamento no Jardim Oceania</div>
+    <div class="testi-carousel">
+      <div class="testi-track" id="testiTrack">
+        <div class="testi-card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <img src="assets/Janaina.jpg" alt="J. Borba" style="width:52px;height:52px;border-radius:50%;object-fit:cover;">
+            <div>
+              <div style="font-weight:600;font-size:14px;">J. Borba</div>
+              <div style="font-size:11.5px;color:var(--gray);">Comprou um apartamento no Jardim Oceania</div>
+            </div>
           </div>
+          <p>"Sem conhecer João Pessoa direito e morando longe, decidi comprar um imóvel na cidade. Bendigo a sorte que me ajudou colocando Dorgival no meu caminho: expliquei de forma clara o que eu desejava para este imóvel, e ele foi incrivelmente solícito e perspicaz, me apresentando várias opções exatamente dentro do que eu buscava até encontrar o imóvel perfeito. Também esteve disponível e foi atencioso durante todo o processo de aquisição, o que facilitou para que a compra fosse um sucesso. Estou muito satisfeita, agradeço a Dorgival pelo seu trabalho excelente e o recomendo a todos."</p>
         </div>
-        <p>"Sem conhecer João Pessoa direito e morando longe, decidi comprar um imóvel na cidade. Bendigo a sorte que me ajudou colocando Dorgival no meu caminho: expliquei de forma clara o que eu desejava para este imóvel, e ele foi incrivelmente solícito e perspicaz, me apresentando várias opções exatamente dentro do que eu buscava até encontrar o imóvel perfeito. Também esteve disponível e foi atencioso durante todo o processo de aquisição, o que facilitou para que a compra fosse um sucesso. Estou muito satisfeita, agradeço a Dorgival pelo seu trabalho excelente e o recomendo a todos."</p>
-      </div>
-      <div class="testi-card">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-          <img src="assets/delber.jpg" alt="Delber L. Marcolino Filho" style="width:52px;height:52px;border-radius:50%;object-fit:cover;">
-          <div>
-            <div style="font-weight:600;font-size:14px;">Delber L. Marcolino Filho</div>
-            <div style="font-size:11.5px;color:var(--gray);">Marcolino Engenharia · Parceiro</div>
+        <div class="testi-card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <img src="assets/delber.jpg" alt="Delber L. Marcolino Filho" style="width:52px;height:52px;border-radius:50%;object-fit:cover;">
+            <div>
+              <div style="font-weight:600;font-size:14px;">Delber L. Marcolino Filho</div>
+              <div style="font-size:11.5px;color:var(--gray);">Marcolino Engenharia · Parceiro</div>
+            </div>
           </div>
+          <p>"Parabéns, meu amigo! Excelente condução. Admiro sua postura e expertise. Não é demagogia, admiro muito sua postura desde o dia que nos conhecemos. Você tem muito a acrescentar a esse mercado! Conte conosco nessa jornada! Faremos muitos negócios ainda."</p>
         </div>
-        <p>"Parabéns, meu amigo! Excelente condução. Admiro sua postura e expertise. Não é demagogia, admiro muito sua postura desde o dia que nos conhecemos. Você tem muito a acrescentar a esse mercado! Conte conosco nessa jornada! Faremos muitos negócios ainda."</p>
       </div>
+      <button class="testi-arrow prev" id="testiPrev" aria-label="Depoimento anterior">‹</button>
+      <button class="testi-arrow next" id="testiNext" aria-label="Próximo depoimento">›</button>
+      <div class="testi-dots" id="testiDots"></div>
     </div>
     <p style="text-align:center;color:var(--gray);font-size:13px;margin-top:24px;">
       Se você já fechou negócio comigo e quer deixar um relato, me chame no WhatsApp.
@@ -342,8 +347,80 @@ function renderTeaser(){
     </a>
   `).join('');
 }
+function initTestiCarousel(){
+  const track = document.getElementById('testiTrack');
+  const cards = Array.from(track.children);
+  if(cards.length < 2) return;
+  const dotsWrap = document.getElementById('testiDots');
+  const prevBtn = document.getElementById('testiPrev');
+  const nextBtn = document.getElementById('testiNext');
+  let index = 0;
+  let autoplayId, resumeTimeout;
+
+  cards.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'testi-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Ir para depoimento ' + (i + 1));
+    dot.addEventListener('click', () => { goTo(i); restartAutoplay(); });
+    dotsWrap.appendChild(dot);
+  });
+  const dots = Array.from(dotsWrap.children);
+
+  function updateDots(){
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+  }
+  function goTo(i){
+    index = (i + cards.length) % cards.length;
+    cards[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    updateDots();
+  }
+  function next(){ goTo(index + 1); }
+  function prev(){ goTo(index - 1); }
+
+  prevBtn.addEventListener('click', () => { prev(); restartAutoplay(); });
+  nextBtn.addEventListener('click', () => { next(); restartAutoplay(); });
+
+  let scrollTimeout;
+  track.addEventListener('scroll', () => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      const trackRect = track.getBoundingClientRect();
+      const center = trackRect.left + trackRect.width / 2;
+      let closest = 0, closestDist = Infinity;
+      cards.forEach((c, i) => {
+        const r = c.getBoundingClientRect();
+        const dist = Math.abs((r.left + r.width / 2) - center);
+        if(dist < closestDist){ closestDist = dist; closest = i; }
+      });
+      index = closest;
+      updateDots();
+    }, 120);
+  });
+
+  function pauseAutoplay(){
+    clearInterval(autoplayId);
+    clearTimeout(resumeTimeout);
+    resumeTimeout = setTimeout(startAutoplay, 9000);
+  }
+  function restartAutoplay(){
+    clearInterval(autoplayId);
+    clearTimeout(resumeTimeout);
+    startAutoplay();
+  }
+  function startAutoplay(){
+    clearInterval(autoplayId);
+    autoplayId = setInterval(next, 7000);
+  }
+
+  track.addEventListener('touchstart', pauseAutoplay, { passive: true });
+  track.addEventListener('mousedown', pauseAutoplay);
+
+  startAutoplay();
+}
+
 applyContact();
 initPhoneInput();
+initTestiCarousel();
 renderTeaser();
 </script>
 </body>
