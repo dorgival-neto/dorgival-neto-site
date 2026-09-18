@@ -13,6 +13,37 @@ const SITE_CONFIG = {
 
 const PROPERTIES = [
   {
+    id: "bancarios-reformado",
+    titulo: "Apartamento reformado 3 quartos — Bancários",
+    tipo: "Venda",
+    status: "Pronto para morar",
+    bairro: "Bancários",
+    cidade: "João Pessoa",
+    preco: 597000,
+    condominio: 550,
+    areaUtil: 68,
+    areaTotal: 68,
+    quartos: 3,
+    suites: 1,
+    banheiros: 2,
+    vagas: 2,
+    descricao: "Apartamento totalmente reformado no bairro dos Bancários, com móveis planejados em todos os ambientes, projeto de iluminação especial e fechadura eletrônica. Um dos quartos foi transformado em closet, mas pode voltar a ser dormitório. A 300m do Parque das Três Ruas, próximo a padarias, restaurantes, supermercados e farmácias. Condomínio com piscina, academia, salões de festa, quadra poliesportiva, playground e portaria 24h.",
+    diferenciais: ["Reformado","Móveis planejados","Fechadura eletrônica","Piscina","Academia","Portaria 24h"],
+    fotos: [
+      "assets/imoveis/bancarios-802b/20260912_100759.jpg",
+      "assets/imoveis/bancarios-802b/20260912_100808.jpg",
+      "assets/imoveis/bancarios-802b/20260912_100817.jpg",
+      "assets/imoveis/bancarios-802b/20260912_100825.jpg",
+      "assets/imoveis/bancarios-802b/20260912_100935.jpg",
+      "assets/imoveis/bancarios-802b/20260912_101034.jpg",
+      "assets/imoveis/bancarios-802b/20260912_100953.jpg",
+      "assets/imoveis/bancarios-802b/20260912_101006.jpg",
+      "assets/imoveis/bancarios-802b/20260824_172956.jpg",
+      "assets/imoveis/bancarios-802b/20260824_172946.jpg"
+    ],
+    destaque: true
+  },
+  {
     id: "urbi-mare",
     titulo: "Urbi Mare — Lançamento em Manaíra",
     tipo: "Venda",
