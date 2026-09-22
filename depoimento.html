@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deixe seu Depoimento | Dorgival Neto</title>
+<meta name="description" content="Compartilhe sua experiência com Dorgival Neto — Corretor, Perito e Avaliador Imobiliário em João Pessoa.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+<style>
+  .depo-wrap{max-width:640px;margin:0 auto;padding:60px 24px 90px;}
+  .depo-form{background:var(--black);color:var(--off);border-radius:var(--radius);padding:40px;margin-top:28px;}
+  .depo-form label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--gold-2);display:block;margin-bottom:6px;}
+  .depo-form input,.depo-form textarea{width:100%;padding:12px 13px;border-radius:4px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.06);color:#fff;font-family:var(--font-body);margin-bottom:16px;font-size:14px;}
+  .depo-form input::placeholder,.depo-form textarea::placeholder{color:#8a8880;}
+  .depo-form textarea{min-height:150px;resize:vertical;line-height:1.5;}
+  .depo-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:560px){.depo-row{grid-template-columns:1fr;}}
+  .depo-success{background:var(--black);color:var(--off);border-radius:var(--radius);padding:48px 40px;margin-top:28px;text-align:center;}
+  .depo-success h3{color:#fff;font-size:24px;}
+  .depo-success p{color:#cfcdc6;margin-top:10px;font-size:14.5px;}
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a href="index.html"><img class="logo" src="assets/logo-branco.png" alt="Dorgival Neto"></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html#quemsou">Quem sou eu</a>
+      <a href="index.html#servicos">Serviços</a>
+      <a href="joao-pessoa.html">João Pessoa</a>
+      <a href="index.html#depoimentos">Depoimentos</a>
+      <a href="imoveis.html">Imóveis</a>
+      <a class="nav-cta" href="index.html#contato">Falar comigo</a>
+    </nav>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </div>
+</header>
+
+<div class="depo-wrap">
+  <span class="eyebrow">Prova social</span>
+  <h1 style="font-size:30px;margin-top:6px;">Deixe seu depoimento</h1>
+  <p style="color:var(--gray);margin-top:8px;font-size:14.5px;">Se você já fechou negócio comigo, conte como foi sua experiência — seu relato ajuda outras pessoas a decidir com mais confiança.</p>
+
+  <div class="depo-form" id="depoFormBox">
+    <form id="depoForm">
+      <div class="depo-row">
+        <div>
+          <label>Nome</label>
+          <input id="depoNome" name="nome" type="text" placeholder="Seu nome" required>
+        </div>
+        <div>
+          <label>Sobrenome</label>
+          <input id="depoSobrenome" name="sobrenome" type="text" placeholder="Seu sobrenome" required>
+        </div>
+      </div>
+      <label>Seu WhatsApp</label>
+      <input id="depoWhats" name="whatsapp" type="tel" placeholder="83 9 9999-9999" required>
+      <div class="field-error" id="depoWhatsError">Digite um número de telefone válido e completo para o país selecionado.</div>
+      <label>Seu depoimento</label>
+      <textarea id="depoTexto" name="texto" placeholder="Conte como foi sua experiência..." required></textarea>
+      <button class="btn btn-gold" type="submit" style="width:100%;justify-content:center;">Enviar depoimento</button>
+    </form>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap" style="text-align:center;">
+    <img class="logo" src="assets/logo-branco.png" alt="Dorgival Neto" style="margin:0 auto 14px;">
+    <div class="foot-bottom" style="margin-top:0;border-top:none;">CRECI 17191-F · CNAI 52963</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+<script>
+const itiDepo = window.intlTelInput(document.getElementById('depoWhats'), {
+  initialCountry: 'br',
+  preferredCountries: ['br'],
+  separateDialCode: true,
+  utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js'
+});
+
+document.getElementById('depoForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const nome = document.getElementById('depoNome').value.trim();
+  const sobrenome = document.getElementById('depoSobrenome').value.trim();
+  const texto = document.getElementById('depoTexto').value.trim();
+  const whatsInput = document.getElementById('depoWhats');
+  const errorEl = document.getElementById('depoWhatsError');
+  errorEl.style.display = 'none';
+  whatsInput.closest('.iti')?.classList.remove('iti-error');
+
+  if(!nome || !sobrenome){ alert('Preencha seu nome e sobrenome.'); return; }
+  if(!texto){ alert('Escreva seu depoimento.'); return; }
+  if(!whatsInput.value.trim() || !itiDepo.isValidNumber()){
+    errorEl.style.display = 'block';
+    whatsInput.closest('.iti')?.classList.add('iti-error');
+    whatsInput.focus();
+    return;
+  }
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+
+  let ok = false;
+  try{
+    const res = await fetch('/api/send-depoimento', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, sobrenome, whatsapp: itiDepo.getNumber(), texto })
+    });
+    ok = res.ok;
+  }catch(err){
+    ok = false;
+  }
+
+  if(ok){
+    document.getElementById('depoFormBox').outerHTML = `
+      <div class="depo-success">
+        <h3>Muito obrigado!</h3>
+        <p>Recebi seu depoimento e fico muito feliz em ler sua experiência. Em breve ele pode aparecer aqui no site.</p>
+        <a class="btn btn-gold" href="index.html" style="margin-top:20px;">Voltar para o site</a>
+      </div>`;
+  }else{
+    btn.disabled = false; btn.textContent = 'Enviar depoimento';
+    alert('Não consegui enviar agora. Tente novamente em instantes ou me chame direto no WhatsApp.');
+  }
+});
+</script>
+</body>
+</html>

@@ -79,5 +79,33 @@ const PROPERTIES = [
       "assets/imoveis/bancarios-802b/20260824_172946.jpg"
     ],
     destaque: true
+  },
+  {
+    id: "bancarios-69m2",
+    titulo: "Apartamento 3 quartos com varanda — Bancários",
+    tipo: "Venda",
+    status: "Pronto para morar",
+    bairro: "Bancários",
+    cidade: "João Pessoa",
+    preco: 439000,
+    areaUtil: 67,
+    areaTotal: 69,
+    quartos: 3,
+    suites: 1,
+    banheiros: 2,
+    vagas: 1,
+    descricao: "Excelente apartamento de 67m² de área privativa, com 3 quartos (1 suíte), sala para dois ambientes com varanda e cozinha integrada com móveis planejados. Uma ótima opção para quem busca conforto, praticidade e uma estrutura completa de lazer em uma das regiões mais consolidadas de João Pessoa. A 300m do Parque das Três Ruas, com fácil acesso a padarias, restaurantes, supermercados, colégios, farmácias, academias, Mangabeira Shopping, centros universitários e demais serviços da região. Condomínio com piscina adulto e infantil, 2 espaços gourmet, 2 salões de festas, quadra poliesportiva, salão de jogos, academia, playground, espaço kids, mini mercado, bicicletários, espaço de estudos e portaria 24h. * Disponibilidade e valores sujeitos a alteração sem aviso prévio.",
+    diferenciais: ["Varanda","Cozinha planejada","Blindex nos banheiros","Aceita financiamento","Piscina","Academia","Portaria 24h"],
+    fotos: [
+      "assets/imoveis/bancarios-504b/sala-tv.jpg",
+      "assets/imoveis/bancarios-504b/sala-cozinha.jpg",
+      "assets/imoveis/bancarios-504b/cozinha.jpg",
+      "assets/imoveis/bancarios-504b/quarto.jpg",
+      "assets/imoveis/bancarios-504b/banheiro.jpg",
+      "assets/imoveis/bancarios-504b/vista.jpg",
+      "assets/imoveis/bancarios-504b/lounge.jpg",
+      "assets/imoveis/bancarios-504b/lazer.jpg"
+    ],
+    destaque: true
   }
 ];
