@@ -14,11 +14,26 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const { nome, sobrenome, whatsapp, texto } = req.body || {};
+  const { nome, sobrenome, whatsapp, texto, arquivo } = req.body || {};
 
   if (!nome || !sobrenome || !whatsapp || !texto) {
     res.status(400).json({ error: 'dados invalidos' });
     return;
+  }
+
+  const MAX_FILE_BYTES = 3 * 1024 * 1024;
+  let attachments;
+  if (arquivo && arquivo.dataBase64) {
+    const buffer = Buffer.from(arquivo.dataBase64, 'base64');
+    if (buffer.length > MAX_FILE_BYTES) {
+      res.status(400).json({ error: 'arquivo muito grande' });
+      return;
+    }
+    attachments = [{
+      filename: arquivo.filename || 'anexo',
+      content: buffer,
+      contentType: arquivo.contentType || 'application/octet-stream'
+    }];
   }
 
   if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
@@ -45,7 +60,9 @@ module.exports = async (req, res) => {
         <p><b>WhatsApp:</b> ${escapeHtml(whatsapp)}</p>
         <p><b>Depoimento:</b></p>
         <p>${escapeHtml(texto).replace(/\n/g, '<br>')}</p>
-      `
+        ${attachments ? '<p><i>Anexo incluído nesta mensagem.</i></p>' : ''}
+      `,
+      attachments
     });
 
     res.status(200).json({ ok: true });

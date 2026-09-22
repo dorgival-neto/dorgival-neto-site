@@ -22,6 +22,8 @@
   .depo-success{background:var(--black);color:var(--off);border-radius:var(--radius);padding:48px 40px;margin-top:28px;text-align:center;}
   .depo-success h3{color:#fff;font-size:24px;}
   .depo-success p{color:#cfcdc6;margin-top:10px;font-size:14.5px;}
+  .depo-attach{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+  .depo-attach-name{font-size:12.5px;color:#a8a7a3;}
 </style>
 </head>
 <body>
@@ -44,7 +46,7 @@
 <div class="depo-wrap">
   <span class="eyebrow">Prova social</span>
   <h1 style="font-size:30px;margin-top:6px;">Deixe seu depoimento</h1>
-  <p style="color:var(--gray);margin-top:8px;font-size:14.5px;">Se você já fechou negócio comigo, conte como foi sua experiência — seu relato ajuda outras pessoas a decidir com mais confiança.</p>
+  <p style="color:var(--gray);margin-top:8px;font-size:14.5px;">Se você já realizou negócio comigo, seja cliente ou parceiro, conte como foi sua experiência — seu relato ajuda outras pessoas a decidir com mais confiança.</p>
 
   <div class="depo-form" id="depoFormBox">
     <form id="depoForm">
@@ -63,8 +65,27 @@
       <div class="field-error" id="depoWhatsError">Digite um número de telefone válido e completo para o país selecionado.</div>
       <label>Seu depoimento</label>
       <textarea id="depoTexto" name="texto" placeholder="Conte como foi sua experiência..." required></textarea>
+
+      <input type="file" id="depoArquivo" accept="image/*,video/*,audio/*" style="display:none;">
+      <div class="depo-attach">
+        <button type="button" class="btn btn-outline-gold btn-sm" id="depoAttachBtn">📎 Anexar foto, áudio ou vídeo</button>
+        <span class="depo-attach-name" id="depoAttachName">Nenhum arquivo selecionado</span>
+      </div>
+      <p style="font-size:11px;color:#8a8880;margin:-10px 0 16px;">Arquivos de até 3MB. Vídeos maiores, me envie direto pelo WhatsApp.</p>
+
       <button class="btn btn-gold" type="submit" style="width:100%;justify-content:center;">Enviar depoimento</button>
     </form>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAÇÃO ANEXO -->
+<div class="modal-overlay" id="depoAttachOverlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('depoAttachOverlay').classList.remove('open')">✕</button>
+    <h3>Quer deixar seu depoimento ainda mais especial?</h3>
+    <p style="margin-top:10px;color:#cfcdc6;font-size:14px;">Você também pode enviar uma foto, um áudio ou um vídeo junto com seu relato.</p>
+    <a class="btn btn-gold" id="depoAttachYes" style="margin-top:18px;width:100%;justify-content:center;">Anexar arquivo</a>
+    <button class="btn btn-outline-gold" id="depoAttachNo" style="margin-top:10px;width:100%;justify-content:center;">Não, enviar somente o depoimento em texto</button>
   </div>
 </div>
 
@@ -84,7 +105,87 @@ const itiDepo = window.intlTelInput(document.getElementById('depoWhats'), {
   utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js'
 });
 
-document.getElementById('depoForm').addEventListener('submit', async function(e){
+const MAX_FILE_BYTES = 3 * 1024 * 1024;
+const fileInput = document.getElementById('depoArquivo');
+const attachName = document.getElementById('depoAttachName');
+const attachOverlay = document.getElementById('depoAttachOverlay');
+
+document.getElementById('depoAttachBtn').addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', () => {
+  const f = fileInput.files[0];
+  if(!f){ attachName.textContent = 'Nenhum arquivo selecionado'; return; }
+  if(f.size > MAX_FILE_BYTES){
+    alert('Esse arquivo é muito grande para enviar por aqui (máximo 3MB). Escolha um arquivo menor ou me envie direto pelo WhatsApp.');
+    fileInput.value = '';
+    attachName.textContent = 'Nenhum arquivo selecionado';
+    return;
+  }
+  attachName.textContent = f.name;
+});
+
+document.getElementById('depoAttachYes').addEventListener('click', () => {
+  attachOverlay.classList.remove('open');
+  fileInput.click();
+});
+document.getElementById('depoAttachNo').addEventListener('click', () => {
+  attachOverlay.classList.remove('open');
+  submitDepoimento();
+});
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function submitDepoimento(){
+  const nome = document.getElementById('depoNome').value.trim();
+  const sobrenome = document.getElementById('depoSobrenome').value.trim();
+  const texto = document.getElementById('depoTexto').value.trim();
+  const btn = document.querySelector('#depoForm button[type="submit"]');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+
+  const payload = { nome, sobrenome, whatsapp: itiDepo.getNumber(), texto };
+  const file = fileInput.files[0];
+  if(file){
+    try{
+      payload.arquivo = {
+        filename: file.name,
+        contentType: file.type || 'application/octet-stream',
+        dataBase64: await fileToBase64(file)
+      };
+    }catch(err){ /* segue sem o anexo se a leitura falhar */ }
+  }
+
+  let ok = false;
+  try{
+    const res = await fetch('/api/send-depoimento', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    ok = res.ok;
+  }catch(err){
+    ok = false;
+  }
+
+  if(ok){
+    document.getElementById('depoFormBox').outerHTML = `
+      <div class="depo-success">
+        <h3>Muito obrigado!</h3>
+        <p>Recebi seu depoimento e fico muito feliz em ler sua experiência. Em breve ele pode aparecer aqui no site.</p>
+        <a class="btn btn-gold" href="index.html" style="margin-top:20px;">Voltar para o site</a>
+      </div>`;
+  }else{
+    btn.disabled = false; btn.textContent = 'Enviar depoimento';
+    alert('Não consegui enviar agora. Tente novamente em instantes ou me chame direto no WhatsApp.');
+  }
+}
+
+document.getElementById('depoForm').addEventListener('submit', function(e){
   e.preventDefault();
   const nome = document.getElementById('depoNome').value.trim();
   const sobrenome = document.getElementById('depoSobrenome').value.trim();
@@ -103,32 +204,11 @@ document.getElementById('depoForm').addEventListener('submit', async function(e)
     return;
   }
 
-  const btn = e.target.querySelector('button[type="submit"]');
-  btn.disabled = true; btn.textContent = 'Enviando...';
-
-  let ok = false;
-  try{
-    const res = await fetch('/api/send-depoimento', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, sobrenome, whatsapp: itiDepo.getNumber(), texto })
-    });
-    ok = res.ok;
-  }catch(err){
-    ok = false;
+  if(!fileInput.files[0]){
+    attachOverlay.classList.add('open');
+    return;
   }
-
-  if(ok){
-    document.getElementById('depoFormBox').outerHTML = `
-      <div class="depo-success">
-        <h3>Muito obrigado!</h3>
-        <p>Recebi seu depoimento e fico muito feliz em ler sua experiência. Em breve ele pode aparecer aqui no site.</p>
-        <a class="btn btn-gold" href="index.html" style="margin-top:20px;">Voltar para o site</a>
-      </div>`;
-  }else{
-    btn.disabled = false; btn.textContent = 'Enviar depoimento';
-    alert('Não consegui enviar agora. Tente novamente em instantes ou me chame direto no WhatsApp.');
-  }
+  submitDepoimento();
 });
 </script>
 </body>
