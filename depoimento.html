@@ -97,6 +97,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+<script src="assets/data.js"></script>
 <script>
 const itiDepo = window.intlTelInput(document.getElementById('depoWhats'), {
   initialCountry: 'br',
@@ -160,23 +161,28 @@ async function submitDepoimento(){
     }catch(err){ /* segue sem o anexo se a leitura falhar */ }
   }
 
-  let ok = false;
-  try{
-    const res = await fetch('/api/send-depoimento', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    ok = res.ok;
-  }catch(err){
-    ok = false;
-  }
+  const fd = new FormData();
+  fd.set('origem', 'depoimento');
+  fd.set('nome', nome + ' ' + sobrenome);
+  fd.set('whatsapp', payload.whatsapp);
+  fd.set('texto', texto);
+
+  const [fsRes, apiRes] = await Promise.allSettled([
+    fetch('https://formspree.io/f/xgaverke', { method: 'POST', headers: { 'Accept': 'application/json' }, body: fd }),
+    fetch('/api/send-depoimento', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+  ]);
+  const fsOk = fsRes.status === 'fulfilled' && fsRes.value.ok;
+  const apiOk = apiRes.status === 'fulfilled' && apiRes.value.ok;
+  const ok = fsOk || apiOk;
+  const anexoPerdido = !!payload.arquivo && !apiOk;
 
   if(ok){
+    const wa = `https://wa.me/${SITE_CONFIG.whatsapp}?text=${encodeURIComponent('Olá Dorgival! Enviei meu depoimento pelo site e quero te mandar também uma foto/vídeo.')}`;
     document.getElementById('depoFormBox').outerHTML = `
       <div class="depo-success">
         <h3>Muito obrigado!</h3>
         <p>Recebi seu depoimento e fico muito feliz em ler sua experiência. Em breve ele pode aparecer aqui no site.</p>
+        ${anexoPerdido ? `<p style="margin-top:14px;">Seu arquivo não conseguiu ser anexado. Se quiser, me envie pelo <a href="${wa}" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline;">WhatsApp</a>.</p>` : ''}
         <a class="btn btn-gold" href="index.html" style="margin-top:20px;">Voltar para o site</a>
       </div>`;
   }else{

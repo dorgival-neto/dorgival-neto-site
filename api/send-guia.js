@@ -2,6 +2,8 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 
+const MAIL_USER = process.env.GMAIL_USER || 'dorgivalneto.corretor@gmail.com';
+
 const GUIAS = {
   compra: { file: 'guia-compra-joao-pessoa.pdf', label: 'Como comprar um imóvel em João Pessoa com segurança' },
   cidade: { file: 'conhecendo-joao-pessoa.pdf', label: 'Conhecendo João Pessoa' }
@@ -25,8 +27,8 @@ module.exports = async (req, res) => {
     return;
   }
 
-  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-    console.error('send-guia: GMAIL_USER/GMAIL_APP_PASSWORD nao configurados');
+  if (!process.env.GMAIL_APP_PASSWORD) {
+    console.error('send-guia: GMAIL_APP_PASSWORD nao configurada');
     res.status(500).json({ error: 'credenciais de e-mail nao configuradas' });
     return;
   }
@@ -42,13 +44,13 @@ module.exports = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.GMAIL_USER,
+        user: MAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD
       }
     });
 
     await transporter.sendMail({
-      from: `Dorgival Neto <${process.env.GMAIL_USER}>`,
+      from: `Dorgival Neto <${MAIL_USER}>`,
       to: email,
       subject: `Seu guia: ${guiaInfo.label}`,
       html: `

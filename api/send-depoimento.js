@@ -1,5 +1,7 @@
 const nodemailer = require('nodemailer');
 
+const MAIL_USER = process.env.GMAIL_USER || 'dorgivalneto.corretor@gmail.com';
+
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -36,8 +38,8 @@ module.exports = async (req, res) => {
     }];
   }
 
-  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-    console.error('send-depoimento: GMAIL_USER/GMAIL_APP_PASSWORD nao configurados');
+  if (!process.env.GMAIL_APP_PASSWORD) {
+    console.error('send-depoimento: GMAIL_APP_PASSWORD nao configurada');
     res.status(500).json({ error: 'credenciais de e-mail nao configuradas' });
     return;
   }
@@ -46,14 +48,14 @@ module.exports = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.GMAIL_USER,
+        user: MAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD
       }
     });
 
     await transporter.sendMail({
-      from: `Site Dorgival Neto <${process.env.GMAIL_USER}>`,
-      to: process.env.GMAIL_USER,
+      from: `Site Dorgival Neto <${MAIL_USER}>`,
+      to: MAIL_USER,
       subject: `Novo depoimento no site: ${nome} ${sobrenome}`,
       html: `
         <p><b>Nome:</b> ${escapeHtml(nome)} ${escapeHtml(sobrenome)}</p>
