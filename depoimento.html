@@ -50,12 +50,14 @@
   <div class="nav-inner">
     <a href="index.html"><img class="logo" src="assets/logo-branco.png" alt="Dorgival Neto"></a>
     <nav class="nav-links" id="navLinks">
-      <a href="index.html#quemsou">Quem sou eu</a>
-      <a href="index.html#servicos">Serviços</a>
-      <a href="joao-pessoa.html">João Pessoa</a>
-      <a href="index.html#depoimentos">Depoimentos</a>
-      <a href="imoveis.html">Imóveis</a>
-      <a class="nav-cta" href="index.html#contato">Falar comigo</a>
+      <a href="/imoveis.html">Imóveis</a>
+      <a href="/avaliacao.html">Avalie seu imóvel</a>
+      <a href="/#servicos">Serviços</a>
+      <a href="/joao-pessoa.html">João Pessoa</a>
+      <a href="/#depoimentos">Depoimentos</a>
+      <a href="/#quemsou">Quem sou eu</a>
+      <a href="/mercado/">Mercado</a>
+      <a class="nav-cta" href="/#contato">Falar comigo</a>
     </nav>
     <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
   </div>
@@ -110,6 +112,7 @@
 <footer class="site-footer">
   <div class="wrap" style="text-align:center;">
     <img class="logo" src="assets/logo-branco.png" alt="Dorgival Neto" style="margin:0 auto 14px;">
+    <div class="foot-links"><!--FOOTLINKS--><a href="/imoveis.html">Imóveis</a><a href="/avaliacao.html">Avalie seu imóvel</a><a href="/parceiros.html">Sou corretor parceiro</a><a href="/mercado/">Mercado</a><a href="/#guia">Guia de compra</a><a href="/bairro/bancarios/">Imóveis em Bancários</a><a href="/bairro/bessa/">Imóveis em Bessa</a><!--/FOOTLINKS--></div>
     <div class="foot-bottom" style="margin-top:0;border-top:none;">CRECI 17191-F · CNAI 52963</div>
   </div>
 </footer>
@@ -235,5 +238,6 @@ document.getElementById('depoForm').addEventListener('submit', function(e){
   submitDepoimento();
 });
 </script>
+<script src="/assets/analytics.js"></script>
 </body>
 </html>

@@ -1,19 +1,34 @@
 /* ============================================================
    DADOS DO SITE — Dorgival Neto Imóveis
    Para adicionar/editar imóveis, peça ao Claude para atualizar
-   este arquivo com os dados do novo imóvel. Fotos: use links
-   diretos (Google Drive, Imgur, Postimages etc.)
+   este arquivo com os dados do novo imóvel.
+
+   Campos de cada imóvel:
+   - id: endereço da página (ex.: /imovel/elevatto-bessa/) — não mude depois de divulgar
+   - codigo: DN-<BAIRRO 3 letras>-<sequência>, ex.: DN-BES-001
+   - trilhas: ["investir"], ["morar"] ou as duas
+   - investimento (opcional): aPartirDe (true/false), entrega, entrada,
+     parcela, posicao, pagamento — só aparece o que estiver preenchido
    ============================================================ */
 
 const SITE_CONFIG = {
   whatsapp: "5583996336569",       // Dorgival Neto — número oficial
   instagram: "https://instagram.com/dorgivalneto.imoveis",
-  email: "dorgivalneto.corretor@gmail.com"
+  email: "dorgivalneto.corretor@gmail.com",
+  ga4Id: "",                       // ex.: "G-XXXXXXXXXX" (Google Analytics 4)
+  pixelId: ""                      // ex.: "1234567890" (Meta Pixel)
 };
 
 const PROPERTIES = [
   {
     id: "elevatto-bessa",
+    codigo: "DN-BES-001",
+    trilhas: ["investir", "morar"],
+    investimento: {
+      aPartirDe: true,
+      pagamento: "Fluxo de pagamento facilitado",
+      unidadeRef: "Preço e metragem da unidade 1404"
+    },
     titulo: "Elevatto — Lançamento no Bessa",
     tipo: "Venda",
     status: "Lançamento",
@@ -51,6 +66,8 @@ const PROPERTIES = [
   },
   {
     id: "bancarios-reformado",
+    codigo: "DN-BAN-001",
+    trilhas: ["morar"],
     titulo: "Apartamento reformado 3 quartos — Bancários",
     tipo: "Venda",
     status: "Pronto para morar",
@@ -82,6 +99,8 @@ const PROPERTIES = [
   },
   {
     id: "bancarios-69m2",
+    codigo: "DN-BAN-002",
+    trilhas: ["morar"],
     titulo: "Apartamento 3 quartos com varanda — Bancários",
     tipo: "Venda",
     status: "Pronto para morar",
