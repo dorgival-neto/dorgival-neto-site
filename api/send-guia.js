@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const filePath = path.join(process.cwd(), 'assets', guiaInfo.file);
+  const filePath = path.join(process.cwd(), 'api', '_files', guiaInfo.file);
   if (!fs.existsSync(filePath)) {
     console.error('send-guia: arquivo nao encontrado em', filePath);
     res.status(500).json({ error: 'arquivo nao encontrado' });

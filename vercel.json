@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/send-guia.js": {
-      "includeFiles": "assets/*.pdf"
+      "includeFiles": "api/_files/*.pdf"
     }
   }
 }
