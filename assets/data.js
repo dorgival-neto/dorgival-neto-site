@@ -9,15 +9,20 @@
    - trilhas: ["investir"], ["morar"] ou as duas
    - investimento (opcional): aPartirDe (true/false), entrega, entrada,
      parcela, posicao, pagamento — só aparece o que estiver preenchido
+   - simulador (opcional): diaria (R$), condominio (R$/mês), iptu (R$/ano) —
+     valores iniciais do simulador de investimento (/simulador/); o imóvel
+     só aparece lá se tiver este campo. Deixe condominio/iptu null se ainda
+     não souber: o visitante preenche e o simulador avisa se ficar vazio.
    ============================================================ */
 
 const SITE_CONFIG = {
   whatsapp: "5583996336569",       // Dorgival Neto — número oficial
   instagram: "https://instagram.com/dorgivalneto.imoveis",
   email: "dorgivalneto.corretor@gmail.com",
-  ga4Id: "",                       // ex.: "G-XXXXXXXXXX" (Google Analytics 4)
+  ga4Id: "G-8GRWXGK9C0",           // Google Analytics 4 (conta dorgivalneto.corretor@gmail.com)
   pixelId: ""                      // ex.: "1234567890" (Meta Pixel)
 };
+window.SITE_CONFIG = SITE_CONFIG;  // catalog.js e analytics.js leem por window
 
 const PROPERTIES = [
   {
@@ -29,6 +34,7 @@ const PROPERTIES = [
       pagamento: "Fluxo de pagamento facilitado",
       unidadeRef: "Preço e metragem da unidade 1404"
     },
+    simulador: { diaria: 450, condominio: null, iptu: null },
     titulo: "Elevatto — Lançamento no Bessa",
     tipo: "Venda",
     status: "Lançamento",

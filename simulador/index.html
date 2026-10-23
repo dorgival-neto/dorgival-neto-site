@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Investimento Imobiliário em João Pessoa — Renda e Valorização | Dorgival Neto</title>
+<!-- SEO:start -->
+<meta name="description" content="Simule o retorno de um imóvel de temporada em João Pessoa em três cenários (conservador, base e otimista): renda com diária e valorização. Projeção, não promessa de rentabilidade.">
+<link rel="canonical" href="https://dorgivalneto.com.br/simulador/">
+<meta name="theme-color" content="#141414">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Dorgival Neto">
+<meta property="og:title" content="Simulador de Investimento Imobiliário em João Pessoa — Renda e Valorização | Dorgival Neto">
+<meta property="og:description" content="Simule o retorno de um imóvel de temporada em João Pessoa em três cenários (conservador, base e otimista): renda com diária e valorização. Projeção, não promessa de rentabilidade.">
+<meta property="og:url" content="https://dorgivalneto.com.br/simulador/">
+<meta property="og:image" content="https://dorgivalneto.com.br/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!-- SEO:end -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css">
+
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a href="/"><img class="logo" src="/assets/logo-branco.png" alt="Dorgival Neto"></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="/imoveis.html">Imóveis</a>
+      <a href="/avaliacao.html">Avalie seu imóvel</a>
+      <a href="/#servicos">Serviços</a>
+      <a href="/joao-pessoa.html">João Pessoa</a>
+      <a href="/#depoimentos">Depoimentos</a>
+      <a href="/#quemsou">Quem sou eu</a>
+      <a href="/mercado/">Mercado</a>
+      <a class="nav-cta" href="/#contato">Falar comigo</a>
+    </nav>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </div>
+</header>
+
+<div class="article" style="max-width:1000px;">
+  <span class="eyebrow">Investimento</span>
+  <h1>Simulador de investimento</h1>
+  <p>Veja, em três cenários, quanto um imóvel de temporada (diária) pode render em renda e valorização ao longo dos anos: Elevatto — Lançamento no Bessa. Ajuste os números e compare.</p>
+  <div class="sim-disclaimer">⚠ Projeção não é promessa de rentabilidade. <span>Os resultados abaixo são simulações com premissas hipotéticas de diária, ocupação e valorização. O mercado pode ter desempenho diferente do projetado, inclusive com perda. Não é recomendação de investimento nem garantia de retorno — confirme valores e condições antes de decidir.</span></div>
+  <div class="sim-grid">
+    <form class="form-dark" id="simForm" onsubmit="return false;" autocomplete="off">
+      <div><label>Imóvel</label><select id="simImovel"></select></div>
+      <label>Preço do imóvel (R$)</label><input id="simPreco" type="text" inputmode="decimal">
+      <label>Diária média (R$)</label><input id="simDiaria" type="text" inputmode="decimal">
+      <div class="sim-hint">Valor inicial ilustrativo — ajuste conforme a sua pesquisa de mercado ou peça uma estimativa a mim.</div>
+      <label>Condomínio (R$ por mês)</label><input id="simCond" type="text" inputmode="decimal" placeholder="Preencha para um resultado fiel">
+      <label>IPTU (R$ por ano)</label><input id="simIptu" type="text" inputmode="decimal" placeholder="Preencha para um resultado fiel">
+      <label>Prazo da análise</label>
+      <select id="simAnos"><option value="3">3 anos</option><option value="5" selected>5 anos</option><option value="7">7 anos</option><option value="10">10 anos</option></select>
+      <label>Anos até a entrega (sem renda)</label><input id="simEntrega" type="text" inputmode="decimal" value="0">
+      <div class="sim-hint">Imóvel na planta só gera renda depois da entrega. Informe quantos anos faltam: nesse período a renda não conta, mas a valorização sim.</div>
+    </form>
+    <div>
+      <div class="sim-result">
+        <div class="sim-warn" id="simWarn">⚠ Condomínio e/ou IPTU não preenchidos: esses custos foram considerados como R$ 0, então o resultado abaixo pode estar acima do real. Preencha os campos para uma projeção mais fiel.</div>
+        <div id="simTabela"></div>
+        <p class="sim-note">Premissas: administração de 20% sobre a receita bruta; ocupação de 45% / 55% / 65% e valorização de 10% / 12% / 15% ao ano (conservador / base / otimista), valores constantes ao longo do prazo, sem impostos sobre a renda, financiamento ou correção da diária. Projeção não é promessa de rentabilidade.</p>
+      </div>
+      <p style="margin-top:18px;"><a class="btn btn-gold" id="simCta" target="_blank" rel="noopener" href="#">💬 Quero a tabela e uma simulação personalizada</a></p>
+    </div>
+  </div>
+  <h2>Condições de pagamento</h2>
+  <p>Resumo das condições do empreendimento. O que ainda estiver como “a confirmar” eu envio atualizado pelo WhatsApp.</p>
+  <div class="cond" data-id="elevatto-bessa"><h3 style="font-size:20px;margin-top:6px;">Elevatto — Lançamento no Bessa</h3><table class="cond-table"><tr><td>Preço de referência</td><td>a partir de R$ 850.756 (unidade 1404)</td></tr><tr><td>Entrega</td><td><span class="pend">A confirmar — peça a tabela atualizada</span></td></tr><tr><td>Entrada</td><td><span class="pend">A confirmar — peça a tabela atualizada</span></td></tr><tr><td>Parcelas</td><td><span class="pend">A confirmar — peça a tabela atualizada</span></td></tr><tr><td>Posição</td><td><span class="pend">A confirmar — peça a tabela atualizada</span></td></tr><tr><td>Pagamento</td><td>Fluxo de pagamento facilitado</td></tr></table></div>
+</div>
+
+<a id="fabWa" class="fab-wa" href="https://wa.me/5583996336569?text=Ol%C3%A1%20Dorgival%21%20Vim%20pelo%20site%20e%20gostaria%20de%20falar%20com%20voc%C3%AA." target="_blank" rel="noopener">💬 WhatsApp</a>
+
+<footer class="site-footer">
+  <div class="wrap" style="text-align:center;">
+    <img class="logo" src="/assets/logo-branco.png" alt="Dorgival Neto" style="margin:0 auto 14px;">
+    <div class="foot-links"><!--FOOTLINKS--><a href="/imoveis.html">Imóveis</a><a href="/avaliacao.html">Avalie seu imóvel</a><a href="/parceiros.html">Sou corretor parceiro</a><a href="/mercado/">Mercado</a><a href="/simulador/">Simulador de investimento</a><a href="/#guia">Guia de compra</a><a href="/bairro/bancarios/">Imóveis em Bancários</a><a href="/bairro/bessa/">Imóveis em Bessa</a><a href="/privacidade.html">Privacidade</a><!--/FOOTLINKS--></div>
+    <div class="foot-bottom" style="margin-top:0;border-top:none;">CRECI 17191-F · CNAI 52963</div>
+  </div>
+</footer>
+
+<script src="/assets/data.js"></script>
+<script src="/assets/catalog.js"></script>
+<script src="/assets/analytics.js"></script>
+<script>
+(function(){
+  var SIM = PROPERTIES.filter(function(p){ return p.simulador; });
+  if (!SIM.length) return;
+  var CEN = [
+    { nome: 'Conservador', occ: 0.45, val: 0.10 },
+    { nome: 'Base', occ: 0.55, val: 0.12 },
+    { nome: 'Otimista', occ: 0.65, val: 0.15 }
+  ];
+  var ADM = 0.20;
+  var $ = function(id){ return document.getElementById(id); };
+  var used = false;
+
+  function parse(v){
+    var s = String(v == null ? '' : v).replace(/[^\d,.\-]/g, '');
+    if (!s) return NaN;
+    if (s.indexOf(',') > -1) s = s.replace(/\./g, '').replace(',', '.');
+    else if ((s.match(/\./g) || []).length > 1 || /\.\d{3}$/.test(s)) s = s.replace(/\./g, '');
+    return parseFloat(s);
+  }
+  function brl(v){ return (v < 0 ? '-' : '') + 'R$ ' + Math.abs(Math.round(v)).toLocaleString('pt-BR'); }
+  function pct(v, d){ return (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: d || 0, maximumFractionDigits: d == null ? 1 : d }) + '%'; }
+  function cur(){ return SIM.filter(function(p){ return p.id === $('simImovel').value; })[0] || SIM[0]; }
+
+  function fill(p){
+    $('simPreco').value = p.preco ? String(p.preco).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+    $('simDiaria').value = p.simulador.diaria || '';
+    $('simCond').value = p.simulador.condominio == null ? '' : p.simulador.condominio;
+    $('simIptu').value = p.simulador.iptu == null ? '' : p.simulador.iptu;
+    $('simEntrega').value = p.simulador.entregaAnos || 0;
+    document.querySelectorAll('.cond').forEach(function(c){ c.style.display = c.getAttribute('data-id') === p.id ? '' : 'none'; });
+  }
+
+  function calc(){
+    var p = cur();
+    var preco = parse($('simPreco').value), diaria = parse($('simDiaria').value);
+    var cond = parse($('simCond').value), iptu = parse($('simIptu').value);
+    var anos = parseInt($('simAnos').value, 10);
+    var entrega = Math.max(0, parseFloat($('simEntrega').value) || 0);
+    var out = $('simTabela'), warn = $('simWarn'), cta = $('simCta');
+    if (!(preco > 0) || !(diaria > 0)) {
+      out.innerHTML = '<p class="sim-note" style="margin:0;">Informe o preço do imóvel e a diária média para ver a projeção.</p>';
+      warn.classList.remove('on'); cta.style.display = 'none';
+      return;
+    }
+    var semCustos = isNaN(cond) || isNaN(iptu);
+    warn.classList.toggle('on', semCustos);
+    var custos = (isNaN(cond) ? 0 : cond) * 12 + (isNaN(iptu) ? 0 : iptu);
+    var anosRenda = Math.max(0, anos - entrega);
+    var rows = CEN.map(function(c){
+      var bruta = diaria * 365 * c.occ, adm = bruta * ADM, liq = bruta - adm - custos;
+      var fut = preco * Math.pow(1 + c.val, anos), valoriz = fut - preco;
+      var renda = liq * anosRenda, ganho = valoriz + renda;
+      return { c: c, bruta: bruta, adm: adm, liq: liq, y: liq / preco, fut: fut, renda: renda, ganho: ganho, ret: ganho / preco };
+    });
+    function line(label, fn, cls, neg){
+      return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + label + '</td>' + rows.map(function(r){
+        var v = fn(r); return '<td' + (neg && neg(r) ? ' class="neg"' : '') + '>' + v + '</td>';
+      }).join('') + '</tr>';
+    }
+    out.innerHTML = '<table class="sim-table"><thead><tr><th></th>' + CEN.map(function(c){ return '<th>' + c.nome + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      line('Ocupação da diária', function(r){ return pct(r.c.occ); }) +
+      line('Receita bruta por ano', function(r){ return brl(r.bruta); }) +
+      line('Administração (' + pct(ADM) + ')', function(r){ return '-' + brl(r.adm).replace('-', ''); }) +
+      line('Condomínio + IPTU por ano', function(r){ return semCustos && !custos ? 'não informado' : '-' + brl(custos).replace('-', ''); }) +
+      line('Renda líquida por ano', function(r){ return brl(r.liq); }, 'key', function(r){ return r.liq < 0; }) +
+      line('Rendimento líquido sobre o preço', function(r){ return pct(r.y, 1) + ' a.a.'; }, '', function(r){ return r.y < 0; }) +
+      line('Valorização do imóvel', function(r){ return pct(r.c.val) + ' a.a.'; }) +
+      line('Valor estimado em ' + anos + ' anos', function(r){ return brl(r.fut); }, 'key') +
+      line('Renda acumulada (' + anosRenda + (anosRenda === 1 ? ' ano' : ' anos') + ' de renda)', function(r){ return brl(r.renda); }, '', function(r){ return r.renda < 0; }) +
+      line('Ganho total estimado', function(r){ return brl(r.ganho); }, 'key', function(r){ return r.ganho < 0; }) +
+      line('Retorno total sobre o preço', function(r){ return pct(r.ret, 0); }, '', function(r){ return r.ret < 0; }) +
+      '</tbody></table>';
+    var base = rows[1];
+    cta.style.display = '';
+    cta.href = DN.wa('Olá Dorgival! Fiz a simulação do ' + p.codigo + ' (' + p.titulo + ') no site: preço ' + brl(preco) + ', diária ' + brl(diaria) + ', prazo ' + anos + ' anos. No cenário base deu ganho de ' + brl(base.ganho) + '. Quero a tabela e uma simulação personalizada.');
+    if (!used) { used = true; DN.track('simulador_uso', { item_id: p.id }); }
+  }
+
+  var sel = $('simImovel');
+  if (SIM.length > 1) {
+    sel.innerHTML = SIM.map(function(p){ return '<option value="' + p.id + '">' + p.titulo + '</option>'; }).join('');
+    sel.onchange = function(){ fill(cur()); calc(); };
+  } else { sel.parentNode.style.display = 'none'; sel.innerHTML = '<option value="' + SIM[0].id + '"></option>'; }
+  ['simPreco', 'simDiaria', 'simCond', 'simIptu', 'simEntrega', 'simAnos'].forEach(function(id){ $(id).addEventListener('input', calc); $(id).addEventListener('change', calc); });
+  fill(SIM[0]); calc();
+})();
+</script>
+</body>
+</html>

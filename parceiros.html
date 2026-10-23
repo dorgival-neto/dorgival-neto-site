@@ -74,7 +74,7 @@
 <footer class="site-footer">
   <div class="wrap" style="text-align:center;">
     <img class="logo" src="/assets/logo-branco.png" alt="Dorgival Neto" style="margin:0 auto 14px;">
-    <div class="foot-links"><!--FOOTLINKS--><a href="/imoveis.html">Imóveis</a><a href="/avaliacao.html">Avalie seu imóvel</a><a href="/parceiros.html">Sou corretor parceiro</a><a href="/mercado/">Mercado</a><a href="/#guia">Guia de compra</a><a href="/bairro/bancarios/">Imóveis em Bancários</a><a href="/bairro/bessa/">Imóveis em Bessa</a><!--/FOOTLINKS--></div>
+    <div class="foot-links"><!--FOOTLINKS--><a href="/imoveis.html">Imóveis</a><a href="/avaliacao.html">Avalie seu imóvel</a><a href="/parceiros.html">Sou corretor parceiro</a><a href="/mercado/">Mercado</a><a href="/simulador/">Simulador de investimento</a><a href="/#guia">Guia de compra</a><a href="/bairro/bancarios/">Imóveis em Bancários</a><a href="/bairro/bessa/">Imóveis em Bessa</a><a href="/privacidade.html">Privacidade</a><!--/FOOTLINKS--></div>
     <div class="foot-bottom" style="margin-top:0;border-top:none;">CRECI 17191-F · CNAI 52963</div>
   </div>
 </footer>
@@ -97,6 +97,9 @@
     var btn = f.querySelector('button[type=submit]'); btn.disabled = true; var label = btn.textContent; btn.textContent = 'Enviando...';
     var fd = new FormData(f); fd.set('whatsapp', iti.getNumber()); fd.set('origem', 'parceiro');
     var ok = false;
+    var det = [];
+    fd.forEach(function (v, k) { if (v && ['nome', 'whatsapp', 'whatsapp_digitado', 'origem'].indexOf(k) < 0) det.push(k + ': ' + v); });
+    fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ origem: 'parceiro', nome: fd.get('nome'), whatsapp: fd.get('whatsapp'), detalhes: det.join(' | ') }) }).catch(function () {});
     try { var r = await fetch('https://formspree.io/f/xgaverke', { method: 'POST', headers: { 'Accept': 'application/json' }, body: fd }); ok = r.ok; } catch (x) {}
     if (ok) {
       DN.track('generate_lead', { method: 'parceiro' });

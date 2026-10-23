@@ -140,8 +140,9 @@ def foot_links():
         ("/avaliacao.html", "Avalie seu imóvel"),
         ("/parceiros.html", "Sou corretor parceiro"),
         ("/mercado/", "Mercado"),
+        ("/simulador/", "Simulador de investimento"),
         ("/#guia", "Guia de compra"),
-    ] + [("/bairro/%s/" % slugify(b), "Imóveis em %s" % b) for b in BAIRROS]
+    ] + [("/bairro/%s/" % slugify(b), "Imóveis em %s" % b) for b in BAIRROS] + [("/privacidade.html", "Privacidade")]
     return "".join('<a href="%s">%s</a>' % l for l in links)
 
 
@@ -313,6 +314,7 @@ def property_page(p):
       <div class="p-actions">
         <a class="btn btn-gold" data-book="{p['id']}" href="{book_link(p)}" target="_blank" rel="noopener">Quero ver book/tabela</a>
         <a class="btn btn-outline" href="{wa_msg}" target="_blank" rel="noopener">💬 Falar no WhatsApp</a>
+        {'<a class="btn btn-outline" href="/simulador/">📈 Simular investimento</a>' if p.get("simulador") else ''}
         <div class="p-row">
           <button type="button" class="btn btn-outline btn-sm" id="btnShare">↗ Compartilhar</button>
           <button type="button" class="btn fav-btn btn-sm" data-fav="{p['id']}">♥ Favoritar</button>
@@ -382,6 +384,9 @@ LEAD_JS = r"""<script>
     var btn = f.querySelector('button[type=submit]'); btn.disabled = true; var label = btn.textContent; btn.textContent = 'Enviando...';
     var fd = new FormData(f); fd.set('whatsapp', iti.getNumber()); fd.set('origem', '__ORIGEM__');
     var ok = false;
+    var det = [];
+    fd.forEach(function (v, k) { if (v && ['nome', 'whatsapp', 'whatsapp_digitado', 'origem'].indexOf(k) < 0) det.push(k + ': ' + v); });
+    fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ origem: '__ORIGEM__', nome: fd.get('nome'), whatsapp: fd.get('whatsapp'), detalhes: det.join(' | ') }) }).catch(function () {});
     try { var r = await fetch('https://formspree.io/f/xgaverke', { method: 'POST', headers: { 'Accept': 'application/json' }, body: fd }); ok = r.ok; } catch (x) {}
     if (ok) {
       DN.track('generate_lead', { method: '__ORIGEM__' });
@@ -463,6 +468,182 @@ def parceiros_page():
     return page("Sou Corretor Parceiro | Parcerias em Imóveis em João Pessoa | Dorgival Neto",
                 "Corretor ou imobiliária? Vamos trabalhar juntos em lançamentos e imóveis em João Pessoa. Fale com Dorgival Neto, CRECI 17191-F.",
                 "/parceiros.html", body, ITI_JS + "\n" + js, extra_head=ITI_CSS, active="/parceiros.html")
+
+
+# ------------------------------------------------------------------ simulador de investimento
+SIM_JS = r"""<script>
+(function(){
+  var SIM = PROPERTIES.filter(function(p){ return p.simulador; });
+  if (!SIM.length) return;
+  var CEN = [
+    { nome: 'Conservador', occ: 0.45, val: 0.10 },
+    { nome: 'Base', occ: 0.55, val: 0.12 },
+    { nome: 'Otimista', occ: 0.65, val: 0.15 }
+  ];
+  var ADM = 0.20;
+  var $ = function(id){ return document.getElementById(id); };
+  var used = false;
+
+  function parse(v){
+    var s = String(v == null ? '' : v).replace(/[^\d,.\-]/g, '');
+    if (!s) return NaN;
+    if (s.indexOf(',') > -1) s = s.replace(/\./g, '').replace(',', '.');
+    else if ((s.match(/\./g) || []).length > 1 || /\.\d{3}$/.test(s)) s = s.replace(/\./g, '');
+    return parseFloat(s);
+  }
+  function brl(v){ return (v < 0 ? '-' : '') + 'R$ ' + Math.abs(Math.round(v)).toLocaleString('pt-BR'); }
+  function pct(v, d){ return (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: d || 0, maximumFractionDigits: d == null ? 1 : d }) + '%'; }
+  function cur(){ return SIM.filter(function(p){ return p.id === $('simImovel').value; })[0] || SIM[0]; }
+
+  function fill(p){
+    $('simPreco').value = p.preco ? String(p.preco).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+    $('simDiaria').value = p.simulador.diaria || '';
+    $('simCond').value = p.simulador.condominio == null ? '' : p.simulador.condominio;
+    $('simIptu').value = p.simulador.iptu == null ? '' : p.simulador.iptu;
+    $('simEntrega').value = p.simulador.entregaAnos || 0;
+    document.querySelectorAll('.cond').forEach(function(c){ c.style.display = c.getAttribute('data-id') === p.id ? '' : 'none'; });
+  }
+
+  function calc(){
+    var p = cur();
+    var preco = parse($('simPreco').value), diaria = parse($('simDiaria').value);
+    var cond = parse($('simCond').value), iptu = parse($('simIptu').value);
+    var anos = parseInt($('simAnos').value, 10);
+    var entrega = Math.max(0, parseFloat($('simEntrega').value) || 0);
+    var out = $('simTabela'), warn = $('simWarn'), cta = $('simCta');
+    if (!(preco > 0) || !(diaria > 0)) {
+      out.innerHTML = '<p class="sim-note" style="margin:0;">Informe o preço do imóvel e a diária média para ver a projeção.</p>';
+      warn.classList.remove('on'); cta.style.display = 'none';
+      return;
+    }
+    var semCustos = isNaN(cond) || isNaN(iptu);
+    warn.classList.toggle('on', semCustos);
+    var custos = (isNaN(cond) ? 0 : cond) * 12 + (isNaN(iptu) ? 0 : iptu);
+    var anosRenda = Math.max(0, anos - entrega);
+    var rows = CEN.map(function(c){
+      var bruta = diaria * 365 * c.occ, adm = bruta * ADM, liq = bruta - adm - custos;
+      var fut = preco * Math.pow(1 + c.val, anos), valoriz = fut - preco;
+      var renda = liq * anosRenda, ganho = valoriz + renda;
+      return { c: c, bruta: bruta, adm: adm, liq: liq, y: liq / preco, fut: fut, renda: renda, ganho: ganho, ret: ganho / preco };
+    });
+    function line(label, fn, cls, neg){
+      return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + label + '</td>' + rows.map(function(r){
+        var v = fn(r); return '<td' + (neg && neg(r) ? ' class="neg"' : '') + '>' + v + '</td>';
+      }).join('') + '</tr>';
+    }
+    out.innerHTML = '<table class="sim-table"><thead><tr><th></th>' + CEN.map(function(c){ return '<th>' + c.nome + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      line('Ocupação da diária', function(r){ return pct(r.c.occ); }) +
+      line('Receita bruta por ano', function(r){ return brl(r.bruta); }) +
+      line('Administração (' + pct(ADM) + ')', function(r){ return '-' + brl(r.adm).replace('-', ''); }) +
+      line('Condomínio + IPTU por ano', function(r){ return semCustos && !custos ? 'não informado' : '-' + brl(custos).replace('-', ''); }) +
+      line('Renda líquida por ano', function(r){ return brl(r.liq); }, 'key', function(r){ return r.liq < 0; }) +
+      line('Rendimento líquido sobre o preço', function(r){ return pct(r.y, 1) + ' a.a.'; }, '', function(r){ return r.y < 0; }) +
+      line('Valorização do imóvel', function(r){ return pct(r.c.val) + ' a.a.'; }) +
+      line('Valor estimado em ' + anos + ' anos', function(r){ return brl(r.fut); }, 'key') +
+      line('Renda acumulada (' + anosRenda + (anosRenda === 1 ? ' ano' : ' anos') + ' de renda)', function(r){ return brl(r.renda); }, '', function(r){ return r.renda < 0; }) +
+      line('Ganho total estimado', function(r){ return brl(r.ganho); }, 'key', function(r){ return r.ganho < 0; }) +
+      line('Retorno total sobre o preço', function(r){ return pct(r.ret, 0); }, '', function(r){ return r.ret < 0; }) +
+      '</tbody></table>';
+    var base = rows[1];
+    cta.style.display = '';
+    cta.href = DN.wa('Olá Dorgival! Fiz a simulação do ' + p.codigo + ' (' + p.titulo + ') no site: preço ' + brl(preco) + ', diária ' + brl(diaria) + ', prazo ' + anos + ' anos. No cenário base deu ganho de ' + brl(base.ganho) + '. Quero a tabela e uma simulação personalizada.');
+    if (!used) { used = true; DN.track('simulador_uso', { item_id: p.id }); }
+  }
+
+  var sel = $('simImovel');
+  if (SIM.length > 1) {
+    sel.innerHTML = SIM.map(function(p){ return '<option value="' + p.id + '">' + p.titulo + '</option>'; }).join('');
+    sel.onchange = function(){ fill(cur()); calc(); };
+  } else { sel.parentNode.style.display = 'none'; sel.innerHTML = '<option value="' + SIM[0].id + '"></option>'; }
+  ['simPreco', 'simDiaria', 'simCond', 'simIptu', 'simEntrega', 'simAnos'].forEach(function(id){ $(id).addEventListener('input', calc); $(id).addEventListener('change', calc); });
+  fill(SIM[0]); calc();
+})();
+</script>"""
+
+
+def simulador_page():
+    sim = [p for p in PROPS if p.get("simulador")]
+    names = ", ".join(p["titulo"] for p in sim)
+    rows_for = lambda p: [
+        ("Preço de referência", price_txt(p) + (" (%s)" % p["investimento"]["unidadeRef"].replace("Preço e metragem da ", "") if (p.get("investimento") or {}).get("unidadeRef") else "")),
+        ("Entrega", (p.get("investimento") or {}).get("entrega")),
+        ("Entrada", (p.get("investimento") or {}).get("entrada")),
+        ("Parcelas", (p.get("investimento") or {}).get("parcela")),
+        ("Posição", (p.get("investimento") or {}).get("posicao")),
+        ("Pagamento", (p.get("investimento") or {}).get("pagamento")),
+    ]
+    conds = ""
+    for p in sim:
+        trs = "".join('<tr><td>%s</td><td>%s</td></tr>' % (k, esc(v) if v else '<span class="pend">A confirmar — peça a tabela atualizada</span>') for k, v in rows_for(p))
+        conds += '<div class="cond" data-id="%s"><h3 style="font-size:20px;margin-top:6px;">%s</h3><table class="cond-table">%s</table></div>' % (p["id"], esc(p["titulo"]), trs)
+    first = sim[0] if sim else None
+    body = f"""<div class="article" style="max-width:1000px;">
+  <span class="eyebrow">Investimento</span>
+  <h1>Simulador de investimento</h1>
+  <p>Veja, em três cenários, quanto um imóvel de temporada (diária) pode render em renda e valorização ao longo dos anos: {esc(names)}. Ajuste os números e compare.</p>
+  <div class="sim-disclaimer">⚠ Projeção não é promessa de rentabilidade. <span>Os resultados abaixo são simulações com premissas hipotéticas de diária, ocupação e valorização. O mercado pode ter desempenho diferente do projetado, inclusive com perda. Não é recomendação de investimento nem garantia de retorno — confirme valores e condições antes de decidir.</span></div>
+  <div class="sim-grid">
+    <form class="form-dark" id="simForm" onsubmit="return false;" autocomplete="off">
+      <div><label>Imóvel</label><select id="simImovel"></select></div>
+      <label>Preço do imóvel (R$)</label><input id="simPreco" type="text" inputmode="decimal">
+      <label>Diária média (R$)</label><input id="simDiaria" type="text" inputmode="decimal">
+      <div class="sim-hint">Valor inicial ilustrativo — ajuste conforme a sua pesquisa de mercado ou peça uma estimativa a mim.</div>
+      <label>Condomínio (R$ por mês)</label><input id="simCond" type="text" inputmode="decimal" placeholder="Preencha para um resultado fiel">
+      <label>IPTU (R$ por ano)</label><input id="simIptu" type="text" inputmode="decimal" placeholder="Preencha para um resultado fiel">
+      <label>Prazo da análise</label>
+      <select id="simAnos"><option value="3">3 anos</option><option value="5" selected>5 anos</option><option value="7">7 anos</option><option value="10">10 anos</option></select>
+      <label>Anos até a entrega (sem renda)</label><input id="simEntrega" type="text" inputmode="decimal" value="0">
+      <div class="sim-hint">Imóvel na planta só gera renda depois da entrega. Informe quantos anos faltam: nesse período a renda não conta, mas a valorização sim.</div>
+    </form>
+    <div>
+      <div class="sim-result">
+        <div class="sim-warn" id="simWarn">⚠ Condomínio e/ou IPTU não preenchidos: esses custos foram considerados como R$ 0, então o resultado abaixo pode estar acima do real. Preencha os campos para uma projeção mais fiel.</div>
+        <div id="simTabela"></div>
+        <p class="sim-note">Premissas: administração de 20% sobre a receita bruta; ocupação de 45% / 55% / 65% e valorização de 10% / 12% / 15% ao ano (conservador / base / otimista), valores constantes ao longo do prazo, sem impostos sobre a renda, financiamento ou correção da diária. Projeção não é promessa de rentabilidade.</p>
+      </div>
+      <p style="margin-top:18px;"><a class="btn btn-gold" id="simCta" target="_blank" rel="noopener" href="#">💬 Quero a tabela e uma simulação personalizada</a></p>
+    </div>
+  </div>
+  <h2>Condições de pagamento</h2>
+  <p>Resumo das condições do empreendimento. O que ainda estiver como “a confirmar” eu envio atualizado pelo WhatsApp.</p>
+  {conds}
+</div>"""
+    return page("Simulador de Investimento Imobiliário em João Pessoa — Renda e Valorização | Dorgival Neto",
+                "Simule o retorno de um imóvel de temporada em João Pessoa em três cenários (conservador, base e otimista): renda com diária e valorização. Projeção, não promessa de rentabilidade.",
+                "/simulador/", body, SIM_JS, active="")
+
+
+# ------------------------------------------------------------------ privacidade (LGPD)
+def privacidade_page():
+    body = """<div class="article">
+  <span class="eyebrow">Privacidade</span>
+  <h1>Política de Privacidade</h1>
+  <div class="meta">Atualizada em 23 de outubro de 2026</div>
+  <p>Este site é mantido por <b>Dorgival Neto Negócios Imobiliários Ltda</b> (CNPJ 63.932.753/0001-55), responsável pelo tratamento dos dados descritos abaixo, conforme a Lei Geral de Proteção de Dados (LGPD, Lei 13.709/2018).</p>
+  <h2>Quais dados coletamos</h2>
+  <ul>
+    <li><b>Dados que você informa</b> nos formulários: nome, e-mail, WhatsApp e as informações que você escrever (por exemplo, dados do imóvel numa avaliação, ou seu depoimento).</li>
+    <li><b>Dados de navegação</b>, apenas se você aceitar os cookies de medição: páginas visitadas, tipo de aparelho e origem do acesso, de forma agregada.</li>
+  </ul>
+  <h2>Para que usamos</h2>
+  <ul>
+    <li>Enviar o material que você pediu (guias em PDF) e responder à sua solicitação.</li>
+    <li>Entrar em contato por WhatsApp ou e-mail sobre o assunto que você demonstrou interesse — como imóveis, avaliações ou parcerias.</li>
+    <li>Publicar o seu depoimento, somente quando você autorizar.</li>
+    <li>Entender como o site é usado e melhorá-lo (medição, só com o seu aceite).</li>
+  </ul>
+  <h2>Com quem os dados passam</h2>
+  <p>Usamos prestadores para operar o site: hospedagem (Vercel), recebimento de formulários (Formspree), e-mail e planilha de contatos (Google) e, se você aceitar os cookies de medição, Google Analytics e Meta. Não vendemos seus dados.</p>
+  <h2>Cookies</h2>
+  <p>O site só carrega ferramentas de medição depois que você clica em “Aceitar” no aviso de cookies. Se recusar, tudo continua funcionando. Para mudar sua escolha, use o botão abaixo.</p>
+  <p><button type="button" class="btn btn-outline btn-sm" onclick="DN.resetConsent()">Rever minha escolha de cookies</button></p>
+  <h2>Por quanto tempo guardamos</h2>
+  <p>Mantemos seus dados pelo tempo necessário para atender à sua solicitação e manter o relacionamento comercial, ou até você pedir a exclusão.</p>
+  <h2>Seus direitos</h2>
+  <p>Você pode pedir confirmação de que tratamos seus dados, acesso, correção, anonimização, portabilidade, informação sobre compartilhamento e a exclusão, além de revogar o consentimento a qualquer momento. Escreva para <a href="mailto:dorgivalneto.corretor@gmail.com">dorgivalneto.corretor@gmail.com</a> ou chame no WhatsApp.</p>
+</div>"""
+    return page("Política de Privacidade | Dorgival Neto", "Como o site de Dorgival Neto trata seus dados pessoais, cookies de medição e seus direitos pela LGPD.",
+                "/privacidade.html", body, active="")
 
 
 # ------------------------------------------------------------------ mercado (blog)
@@ -564,7 +745,7 @@ def main():
         patch_static(fname, cfg)
 
     urls = [("/", "1.0"), ("/imoveis.html", "0.9"), ("/joao-pessoa.html", "0.7"), ("/avaliacao.html", "0.8"),
-            ("/parceiros.html", "0.5"), ("/mercado/", "0.7")]
+            ("/parceiros.html", "0.5"), ("/mercado/", "0.7"), ("/simulador/", "0.7"), ("/privacidade.html", "0.2")]
     for p in PROPS:
         write("imovel/%s/index.html" % p["id"], property_page(p))
         urls.append(("/imovel/%s/" % p["id"], "0.9"))
@@ -573,6 +754,8 @@ def main():
         urls.append(("/bairro/%s/" % slugify(b), "0.8"))
     write("avaliacao.html", avaliacao_page())
     write("parceiros.html", parceiros_page())
+    write("simulador/index.html", simulador_page())
+    write("privacidade.html", privacidade_page())
     posts = json.loads(read("tools/posts.json"))
     for path, content in mercado_pages(posts).items():
         write(path, content)

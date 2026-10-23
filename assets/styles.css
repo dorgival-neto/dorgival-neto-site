@@ -331,3 +331,33 @@ details.more[open] summary::after{content:" ▴";}
 .foot-links{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:center;margin-bottom:14px;font-size:12.5px;}
 .foot-links a{color:#cfcdc6;}
 .foot-links a:hover{color:var(--gold);}
+
+/* ---- aviso de cookies ---- */
+.cookie-banner{position:fixed;left:16px;right:16px;bottom:16px;max-width:620px;z-index:9999;background:var(--black);color:var(--off);border:1px solid rgba(214,179,103,.45);border-radius:var(--radius);padding:18px 20px;box-shadow:0 10px 40px rgba(0,0,0,.35);display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+.cookie-banner p{margin:0;font-size:13px;line-height:1.55;flex:1 1 280px;color:#d8d6cf;}
+.cookie-banner a{color:var(--gold-2);text-decoration:underline;}
+.cookie-actions{display:flex;gap:10px;}
+.cookie-banner .btn-outline{border-color:rgba(255,255,255,.4);color:#fff;}
+
+/* ---- simulador de investimento ---- */
+.sim-disclaimer{margin-top:22px;background:#fff6dc;border:2px solid var(--gold);border-radius:var(--radius);padding:16px 18px;font-size:15px;line-height:1.6;color:var(--black);font-weight:600;}
+.sim-disclaimer span{font-weight:400;}
+.sim-grid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:26px;align-items:start;margin-top:26px;}
+.sim-grid .form-dark{margin-top:0;padding:26px;}
+.sim-grid .form-dark input,.sim-grid .form-dark select{margin-bottom:14px;}
+.sim-hint{font-size:11.5px;color:#a8a7a3;margin:-8px 0 14px;line-height:1.45;}
+.sim-result{background:var(--white);border:1px solid #e8e4d9;border-radius:var(--radius);padding:20px;overflow-x:auto;}
+.sim-warn{display:none;background:#fdecec;border:1px solid #e5484d;color:#b4232a;border-radius:var(--radius);padding:12px 14px;font-size:13.5px;line-height:1.55;font-weight:600;margin-bottom:16px;}
+.sim-warn.on{display:block;}
+.sim-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:480px;}
+.sim-table th,.sim-table td{padding:10px 8px;text-align:right;border-bottom:1px solid #eee9da;}
+.sim-table th:first-child,.sim-table td:first-child{text-align:left;color:#39383a;}
+.sim-table thead th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--gray);border-bottom:2px solid var(--gold);}
+.sim-table tr.key td{font-weight:700;background:#faf7ee;}
+.sim-table td.neg{color:#b4232a;}
+.sim-note{font-size:12px;color:var(--gray);margin-top:12px;line-height:1.55;}
+.cond-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:14.5px;}
+.cond-table td{padding:11px 10px;border-bottom:1px solid #e8e4d9;}
+.cond-table td:first-child{font-weight:600;width:34%;}
+.cond-table .pend{color:var(--gray);font-style:italic;}
+@media (max-width:860px){.sim-grid{grid-template-columns:minmax(0,1fr);}}

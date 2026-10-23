@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
+const { appendLead } = require('./_sheet');
 
 const MAIL_USER = process.env.GMAIL_USER || 'dorgivalneto.corretor@gmail.com';
 
@@ -19,13 +20,22 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const { nome, email, guia } = req.body || {};
+  const { nome, email, guia, whatsapp } = req.body || {};
   const guiaInfo = GUIAS[guia];
 
   if (!nome || !isValidEmail(email) || !guiaInfo) {
     res.status(400).json({ error: 'dados invalidos' });
     return;
   }
+
+  // O contato é registrado antes do envio: se o e-mail falhar, o cadastro não se perde.
+  await appendLead({
+    origem: `guia-${guia}`,
+    nome: String(nome).slice(0, 120),
+    email,
+    whatsapp: typeof whatsapp === 'string' ? whatsapp.slice(0, 30) : '',
+    detalhes: guiaInfo.label
+  });
 
   if (!process.env.GMAIL_APP_PASSWORD) {
     console.error('send-guia: GMAIL_APP_PASSWORD nao configurada');

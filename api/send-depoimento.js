@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { appendLead } = require('./_sheet');
 
 const MAIL_USER = process.env.GMAIL_USER || 'dorgivalneto.corretor@gmail.com';
 
@@ -37,6 +38,13 @@ module.exports = async (req, res) => {
       contentType: arquivo.contentType || 'application/octet-stream'
     }];
   }
+
+  await appendLead({
+    origem: 'depoimento',
+    nome: `${nome} ${sobrenome}`.slice(0, 120),
+    whatsapp: String(whatsapp).slice(0, 30),
+    detalhes: String(texto).slice(0, 1500)
+  });
 
   if (!process.env.GMAIL_APP_PASSWORD) {
     console.error('send-depoimento: GMAIL_APP_PASSWORD nao configurada');
