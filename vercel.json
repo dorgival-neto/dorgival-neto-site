@@ -3,5 +3,37 @@
     "api/send-guia.js": {
       "includeFiles": "api/_files/*.pdf"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/imovel/elevatto-bessa",
+      "destination": "/imovel/DN-BES-001/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/elevatto-bessa/",
+      "destination": "/imovel/DN-BES-001/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/bancarios-reformado",
+      "destination": "/imovel/DN-BAN-001/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/bancarios-reformado/",
+      "destination": "/imovel/DN-BAN-001/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/bancarios-69m2",
+      "destination": "/imovel/DN-BAN-002/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/bancarios-69m2/",
+      "destination": "/imovel/DN-BAN-002/",
+      "permanent": true
+    }
+  ]
 }

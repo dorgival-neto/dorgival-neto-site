@@ -231,7 +231,7 @@ def page(title, desc, path, body, scripts="", extra_head="", active="", **seo):
 def card_static(p):
     chips = "".join('<span class="card-chip">%s</span>' % esc(c) for c in invest_chips(p))
     tr = "".join('<span class="card-track">%s</span>' % TRILHA[t] for t in p.get("trilhas", []))
-    u = "/imovel/%s/" % p["id"]
+    u = "/imovel/%s/" % p["codigo"]
     specs = '<span>🛏 %s</span><span>🚿 %s</span>%s<span>📐 %sm²</span>' % (
         p.get("quartos", 0), p.get("banheiros", 0), ('<span>🚗 %s</span>' % p["vagas"]) if p.get("vagas") else "", num(p.get("areaUtil", 0)))
     return f"""<article class="card">
@@ -250,7 +250,7 @@ def card_static(p):
 
 # ------------------------------------------------------------------ página do imóvel
 def property_page(p):
-    path = "/imovel/%s/" % p["id"]
+    path = "/imovel/%s/" % p["codigo"]
     url = BASE + path
     fotos = p["fotos"]
     cover = "/" + fotos[0]
@@ -298,6 +298,7 @@ def property_page(p):
         <div class="p-thumbs" id="pThumbs">{thumbs}</div>
       </div>
       <div class="p-section">
+        <button type="button" class="code-tag" data-copy="{esc(p['codigo'])}" title="Toque para copiar o código"><span class="k">Código do imóvel</span><span class="v">{esc(p['codigo'])}</span><span class="cp">Copiar</span></button>
         <h1 class="p-title">{esc(p['titulo'])}</h1>
         <div class="card-loc" style="margin-top:6px;">{esc(p['bairro'])} · {esc(p['cidade'])}</div>
         <div class="card-tracks" style="margin-top:10px;">{tr}</div>
@@ -308,7 +309,8 @@ def property_page(p):
       {inv_html}
     </div>
     <aside class="p-side">
-      <div class="p-code">Código {esc(p['codigo'])} · {esc(p['status'])}</div>
+      <button type="button" class="code-tag" data-copy="{esc(p['codigo'])}" title="Toque para copiar o código"><span class="k">Código do imóvel</span><span class="v">{esc(p['codigo'])}</span><span class="cp">Copiar</span></button>
+      <div class="p-code" style="margin-top:10px;">{esc(p['status'])}</div>
       <div class="p-price">{esc(price_txt(p))}</div>
       {cond}
       <div class="p-actions">
@@ -339,6 +341,11 @@ def property_page(p):
   document.getElementById('pNext').onclick = function(){{ go(i + 1); }};
   thumbs.forEach(function(t){{ t.onclick = function(){{ go(parseInt(t.getAttribute('data-i'))); }}; }});
   document.getElementById('btnShare').onclick = function(){{ DN.share(P); }};
+  document.querySelectorAll('[data-copy]').forEach(function(b){{ b.onclick = function(){{
+    var v = b.getAttribute('data-copy');
+    var done = function(){{ DN.toast('Código ' + v + ' copiado'); }};
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(done, done); else done();
+  }}; }});
   var fav = document.querySelector('.fav-btn'); if (DN.isFav(ID)) fav.classList.add('on');
   var outros = PROPERTIES.filter(function(x){{ return x.id !== ID; }}).sort(function(a, b){{ return (b.bairro === P.bairro) - (a.bairro === P.bairro); }}).slice(0, 3);
   var box = document.getElementById('similares');
@@ -586,8 +593,8 @@ def simulador_page():
     <form class="form-dark" id="simForm" onsubmit="return false;" autocomplete="off">
       <div><label>Imóvel</label><select id="simImovel"></select></div>
       <label>Preço do imóvel (R$)</label><input id="simPreco" type="text" inputmode="decimal">
-      <label>Diária média (R$)</label><input id="simDiaria" type="text" inputmode="decimal">
-      <div class="sim-hint">Valor inicial ilustrativo — ajuste conforme a sua pesquisa de mercado ou peça uma estimativa a mim.</div>
+      <label>Diária média (R$)</label><input id="simDiaria" type="text" inputmode="decimal" placeholder="Informe a diária média">
+      <div class="sim-hint">A diária varia muito conforme a região, o bairro e o tipo de empreendimento. Use a sua pesquisa de mercado ou peça uma estimativa a mim.</div>
       <label>Condomínio (R$ por mês)</label><input id="simCond" type="text" inputmode="decimal" placeholder="Preencha para um resultado fiel">
       <label>IPTU (R$ por ano)</label><input id="simIptu" type="text" inputmode="decimal" placeholder="Preencha para um resultado fiel">
       <label>Prazo da análise</label>
@@ -747,8 +754,8 @@ def main():
     urls = [("/", "1.0"), ("/imoveis.html", "0.9"), ("/joao-pessoa.html", "0.7"), ("/avaliacao.html", "0.8"),
             ("/parceiros.html", "0.5"), ("/mercado/", "0.7"), ("/simulador/", "0.7"), ("/privacidade.html", "0.2")]
     for p in PROPS:
-        write("imovel/%s/index.html" % p["id"], property_page(p))
-        urls.append(("/imovel/%s/" % p["id"], "0.9"))
+        write("imovel/%s/index.html" % p["codigo"], property_page(p))
+        urls.append(("/imovel/%s/" % p["codigo"], "0.9"))
     for b in BAIRROS:
         write("bairro/%s/index.html" % slugify(b), bairro_page(b))
         urls.append(("/bairro/%s/" % slugify(b), "0.8"))
@@ -768,6 +775,15 @@ def main():
     sm += "</urlset>\n"
     write("sitemap.xml", sm)
     write(".vercelignore", "tools/\n")
+
+    # endereços antigos (pelo nome interno) levam ao endereço pelo código
+    redirects = []
+    for p in PROPS:
+        dest = "/imovel/%s/" % p["codigo"]
+        for s in ("/imovel/%s" % p["id"], "/imovel/%s/" % p["id"]):
+            redirects.append({"source": s, "destination": dest, "permanent": True})
+    vercel = {"functions": {"api/send-guia.js": {"includeFiles": "api/_files/*.pdf"}}, "redirects": redirects}
+    write("vercel.json", json.dumps(vercel, indent=2) + "\n")
     print("ok: %d imóveis, %d bairros, %d posts, %d urls no sitemap" % (len(PROPS), len(BAIRROS), len(posts), len(urls)))
 
 

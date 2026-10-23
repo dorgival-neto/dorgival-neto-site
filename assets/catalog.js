@@ -10,7 +10,7 @@
   DN.money = function (v) {
     return Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
   };
-  DN.url = function (p) { return '/imovel/' + p.id + '/'; };
+  DN.url = function (p) { return '/imovel/' + p.codigo + '/'; };
   DN.wa = function (msg) { return 'https://wa.me/' + cfg().whatsapp + '?text=' + encodeURIComponent(msg); };
   DN.bookUrl = function (p) {
     return DN.wa('Olá Dorgival! Quero ver o book/tabela do imóvel ' + p.codigo + ' — ' + p.titulo + ' (' + p.bairro + ').');

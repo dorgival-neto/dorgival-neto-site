@@ -102,7 +102,8 @@
 <script>
 (function(){
   var legacy = location.hash.replace('#','');
-  if (legacy && PROPERTIES.some(function(p){ return p.id === legacy; })) { location.replace('/imovel/' + legacy + '/'); return; }
+  var hit = legacy && PROPERTIES.filter(function(p){ return p.id === legacy; })[0];
+  if (hit) { location.replace('/imovel/' + hit.codigo + '/'); return; }
 
   var params = new URLSearchParams(location.search);
   var trilha = ['investir','morar','favoritos'].indexOf(params.get('trilha')) !== -1 ? params.get('trilha') : 'todos';

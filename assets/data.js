@@ -4,8 +4,9 @@
    este arquivo com os dados do novo imóvel.
 
    Campos de cada imóvel:
-   - id: endereço da página (ex.: /imovel/elevatto-bessa/) — não mude depois de divulgar
-   - codigo: DN-<BAIRRO 3 letras>-<sequência>, ex.: DN-BES-001
+   - id: nome interno do imóvel (favoritos e comparador) — não mude depois
+   - codigo: DN-<BAIRRO 3 letras>-<sequência>, ex.: DN-BES-001. É também o
+     endereço da página (/imovel/DN-BES-001/): não mude depois de divulgar
    - trilhas: ["investir"], ["morar"] ou as duas
    - investimento (opcional): aPartirDe (true/false), entrega, entrada,
      parcela, posicao, pagamento — só aparece o que estiver preenchido
@@ -34,7 +35,7 @@ const PROPERTIES = [
       pagamento: "Fluxo de pagamento facilitado",
       unidadeRef: "Preço e metragem da unidade 1404"
     },
-    simulador: { diaria: 450, condominio: null, iptu: null },
+    simulador: { diaria: null, condominio: null, iptu: null },
     titulo: "Elevatto — Lançamento no Bessa",
     tipo: "Venda",
     status: "Lançamento",
