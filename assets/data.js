@@ -172,5 +172,44 @@ const PROPERTIES = [
       "assets/imoveis/SL0001/wc.jpg"
     ],
     destaque: true
+  },
+  {
+    id: "360-house-tambau",
+    codigo: "AP0004",
+    categoria: "Apartamento",
+    trilhas: ["morar"],
+    titulo: "360 House — 3 suítes e 145m² em Tambaú",
+    tipo: "Venda",
+    status: "Alto padrão",
+    bairro: "Tambaú",
+    cidade: "João Pessoa",
+    preco: 1780000,
+    areaUtil: 145,
+    areaTotal: 145,
+    quartos: 3,
+    suites: 3,
+    banheiros: 4,
+    descricao: "O espaço de uma casa, a vista dos seus sonhos. Localizado em Tambaú, o 360 House é um empreendimento único, inteligente e diferenciado, com localização privilegiada. Traz a comodidade e a sensação de morar em uma casa, com toda a segurança e a estrutura de um empreendimento de alto padrão. Além da exclusividade de ser um apartamento por andar, tem grandes esquadrias para ventilação e iluminação naturais, todos os quartos voltados para o leste e espaços amplos. São 145m² com 3 suítes (1 master), sala ampla para 2 ambientes, varanda gourmet, cozinha, lavabo, área de serviço e DCE completo (o cliente pode optar por não ter o DCE). O empreendimento tem 2 elevadores, sendo o social com acesso por biometria, áreas comuns com acesso por biometria, placas de energia solar para alimentar as áreas comuns, guarda-volumes, academia, piscina adulto e infantil, salão de festas, playground e snooker bar. * Disponibilidade e valores sujeitos a alteração sem aviso prévio.",
+    diferenciais: ["Um apartamento por andar","3 suítes (1 master)","Varanda gourmet","DCE completo (opcional)","Quartos voltados para o leste","Elevador social com biometria","Energia solar nas áreas comuns","Piscina adulto e infantil","Academia","Snooker bar","Salão de festas","Playground","Guarda-volumes"],
+    fotos: [
+      "assets/imoveis/AP0004/sala-varanda.jpg",
+      "assets/imoveis/AP0004/sala-cozinha.jpg",
+      "assets/imoveis/AP0004/cozinha.jpg",
+      "assets/imoveis/AP0004/varanda.jpg",
+      "assets/imoveis/AP0004/suite-01.jpg",
+      "assets/imoveis/AP0004/suite-02.jpg",
+      "assets/imoveis/AP0004/suite-03.jpg",
+      "assets/imoveis/AP0004/fachada-entrada.jpg",
+      "assets/imoveis/AP0004/hall.jpg",
+      "assets/imoveis/AP0004/piscina.jpg",
+      "assets/imoveis/AP0004/academia.jpg",
+      "assets/imoveis/AP0004/salao-festas.jpg",
+      "assets/imoveis/AP0004/salao-festas-varanda.jpg",
+      "assets/imoveis/AP0004/snooker-bar.jpg",
+      "assets/imoveis/AP0004/playground.jpg",
+      "assets/imoveis/AP0004/area-gourmet.jpg",
+      "assets/imoveis/AP0004/area-externa.jpg"
+    ],
+    destaque: true
   }
 ];

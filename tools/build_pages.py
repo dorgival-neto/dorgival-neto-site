@@ -269,7 +269,7 @@ def property_page(p):
         p["status"], p["bairro"], quartos_txt, num(p.get("areaUtil", 0)), price_txt(p), p["codigo"])
     thumbs = "".join('<img src="/%s" alt="%s" class="%s" data-i="%d" loading="lazy">' % (f, esc(p["titulo"]), "on" if i == 0 else "", i) for i, f in enumerate(fotos))
     specs = []
-    if p.get("quartos"): specs.append(("Quartos", p["quartos"]))
+    if p.get("quartos") and p.get("suites") != p.get("quartos"): specs.append(("Quartos", p["quartos"]))  # todos suítes: mostra só "Suítes"
     if p.get("suites"): specs.append(("Suítes", p["suites"]))
     specs.append(("Banheiros", p.get("banheiros", 0)))
     if p.get("vagas"): specs.append(("Vagas", p["vagas"]))

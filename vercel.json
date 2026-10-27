@@ -114,6 +114,26 @@
       "source": "/imovel/sl0001/",
       "destination": "/imovel/SL0001/",
       "permanent": true
+    },
+    {
+      "source": "/imovel/360-house-tambau",
+      "destination": "/imovel/AP0004/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/360-house-tambau/",
+      "destination": "/imovel/AP0004/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/ap0004",
+      "destination": "/imovel/AP0004/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/ap0004/",
+      "destination": "/imovel/AP0004/",
+      "permanent": true
     }
   ]
 }
