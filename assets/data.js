@@ -5,8 +5,11 @@
 
    Campos de cada imóvel:
    - id: nome interno do imóvel (favoritos e comparador) — não mude depois
-   - codigo: DN-<BAIRRO 3 letras>-<sequência>, ex.: DN-BES-001. É também o
-     endereço da página (/imovel/DN-BES-001/): não mude depois de divulgar
+   - codigo: prefixo do tipo + 4 dígitos em ordem crescente por tipo, ex.: AP0001.
+     Prefixos: AP apartamento, FL flat, TE terreno, CA casa, SL sala comercial,
+     CO cobertura, GD garden. É também o endereço da página (/imovel/AP0001/) e o
+     nome da pasta das fotos (assets/imoveis/AP0001/): não mude depois de divulgar
+   - categoria: tipo do imóvel ("Apartamento", "Sala comercial"...), combina com o prefixo
    - trilhas: ["investir"], ["morar"] ou as duas
    - investimento (opcional): aPartirDe (true/false), entrega, entrada,
      parcela, posicao, pagamento — só aparece o que estiver preenchido
@@ -28,7 +31,8 @@ window.SITE_CONFIG = SITE_CONFIG;  // catalog.js e analytics.js leem por window
 const PROPERTIES = [
   {
     id: "elevatto-bessa",
-    codigo: "DN-BES-001",
+    codigo: "AP0001",
+    categoria: "Apartamento",
     trilhas: ["investir", "morar"],
     investimento: {
       aPartirDe: true,
@@ -50,30 +54,31 @@ const PROPERTIES = [
     descricao: "Lançamento assinado pelo Mookamboo Studio (arquiteto Augusto Magno) para a Nordeste Construções, no coração do Bessa — perto de praia, restaurantes, bares, shopping, farmácias e mercados. 148 unidades de 64m² a 148m², com varanda integrada e suíte master. Estrutura completa de lazer: piscina, deck, solarium, academia, espaço kids, cinema, salão de festas, espaços gourmet, espaço wine, lounge de convivência, salão de jogos, coworking e bicicletário. * Preço e área referentes à unidade 1404 (66,43m², 2 quartos com 1 suíte master). Fluxo de pagamento facilitado direto com a construtora.",
     diferenciais: ["Lançamento","Varanda integrada","Suíte master","Piscina","Academia","Espaço gourmet","Cinema","Coworking","Pagamento facilitado"],
     fotos: [
-      "assets/imoveis/elevatto/fachada-01.jpg",
-      "assets/imoveis/elevatto/sala.jpg",
-      "assets/imoveis/elevatto/cozinha.jpg",
-      "assets/imoveis/elevatto/recepcao-01.jpg",
-      "assets/imoveis/elevatto/recepcao-02.jpg",
-      "assets/imoveis/elevatto/academia-01.jpg",
-      "assets/imoveis/elevatto/academia-02.jpg",
-      "assets/imoveis/elevatto/gourmet-01.jpg",
-      "assets/imoveis/elevatto/gourmet-02.jpg",
-      "assets/imoveis/elevatto/winebar.jpg",
-      "assets/imoveis/elevatto/lounge.jpg",
-      "assets/imoveis/elevatto/salao-festas-01.jpg",
-      "assets/imoveis/elevatto/salao-festas-02.jpg",
-      "assets/imoveis/elevatto/cinema.jpg",
-      "assets/imoveis/elevatto/salao-jogos.jpg",
-      "assets/imoveis/elevatto/kids.jpg",
-      "assets/imoveis/elevatto/coworking.jpg",
-      "assets/imoveis/elevatto/bicicletario.jpg"
+      "assets/imoveis/AP0001/fachada-01.jpg",
+      "assets/imoveis/AP0001/sala.jpg",
+      "assets/imoveis/AP0001/cozinha.jpg",
+      "assets/imoveis/AP0001/recepcao-01.jpg",
+      "assets/imoveis/AP0001/recepcao-02.jpg",
+      "assets/imoveis/AP0001/academia-01.jpg",
+      "assets/imoveis/AP0001/academia-02.jpg",
+      "assets/imoveis/AP0001/gourmet-01.jpg",
+      "assets/imoveis/AP0001/gourmet-02.jpg",
+      "assets/imoveis/AP0001/winebar.jpg",
+      "assets/imoveis/AP0001/lounge.jpg",
+      "assets/imoveis/AP0001/salao-festas-01.jpg",
+      "assets/imoveis/AP0001/salao-festas-02.jpg",
+      "assets/imoveis/AP0001/cinema.jpg",
+      "assets/imoveis/AP0001/salao-jogos.jpg",
+      "assets/imoveis/AP0001/kids.jpg",
+      "assets/imoveis/AP0001/coworking.jpg",
+      "assets/imoveis/AP0001/bicicletario.jpg"
     ],
     destaque: true
   },
   {
     id: "bancarios-reformado",
-    codigo: "DN-BAN-001",
+    codigo: "AP0002",
+    categoria: "Apartamento",
     trilhas: ["morar"],
     titulo: "Apartamento reformado 3 quartos — Bancários",
     tipo: "Venda",
@@ -91,22 +96,23 @@ const PROPERTIES = [
     descricao: "Apartamento totalmente reformado no bairro dos Bancários, com móveis planejados em todos os ambientes, projeto de iluminação especial e fechadura eletrônica. Um dos quartos foi transformado em closet, mas pode voltar a ser dormitório. A 300m do Parque das Três Ruas, próximo a padarias, restaurantes, supermercados e farmácias. Condomínio com piscina, academia, salões de festa, quadra poliesportiva, playground e portaria 24h.",
     diferenciais: ["Reformado","Móveis planejados","Fechadura eletrônica","Piscina","Academia","Portaria 24h"],
     fotos: [
-      "assets/imoveis/bancarios-802b/20260912_100759.jpg",
-      "assets/imoveis/bancarios-802b/20260912_100808.jpg",
-      "assets/imoveis/bancarios-802b/20260912_100817.jpg",
-      "assets/imoveis/bancarios-802b/20260912_100825.jpg",
-      "assets/imoveis/bancarios-802b/20260912_100935.jpg",
-      "assets/imoveis/bancarios-802b/20260912_101034.jpg",
-      "assets/imoveis/bancarios-802b/20260912_100953.jpg",
-      "assets/imoveis/bancarios-802b/20260912_101006.jpg",
-      "assets/imoveis/bancarios-802b/20260824_172956.jpg",
-      "assets/imoveis/bancarios-802b/20260824_172946.jpg"
+      "assets/imoveis/AP0002/20260912_100759.jpg",
+      "assets/imoveis/AP0002/20260912_100808.jpg",
+      "assets/imoveis/AP0002/20260912_100817.jpg",
+      "assets/imoveis/AP0002/20260912_100825.jpg",
+      "assets/imoveis/AP0002/20260912_100935.jpg",
+      "assets/imoveis/AP0002/20260912_101034.jpg",
+      "assets/imoveis/AP0002/20260912_100953.jpg",
+      "assets/imoveis/AP0002/20260912_101006.jpg",
+      "assets/imoveis/AP0002/20260824_172956.jpg",
+      "assets/imoveis/AP0002/20260824_172946.jpg"
     ],
     destaque: true
   },
   {
     id: "bancarios-69m2",
-    codigo: "DN-BAN-002",
+    codigo: "AP0003",
+    categoria: "Apartamento",
     trilhas: ["morar"],
     titulo: "Apartamento 3 quartos com varanda — Bancários",
     tipo: "Venda",
@@ -123,15 +129,47 @@ const PROPERTIES = [
     descricao: "Excelente apartamento de 68m² de área privativa, com 3 quartos (1 suíte), sala para dois ambientes com varanda e cozinha integrada com móveis planejados. Uma ótima opção para quem busca conforto, praticidade e uma estrutura completa de lazer em uma das regiões mais consolidadas de João Pessoa. A 300m do Parque das Três Ruas, com fácil acesso a padarias, restaurantes, supermercados, colégios, farmácias, academias, Mangabeira Shopping, centros universitários e demais serviços da região. Condomínio com piscina adulto e infantil, 2 espaços gourmet, 2 salões de festas, quadra poliesportiva, salão de jogos, academia, playground, espaço kids, mini mercado, bicicletários, espaço de estudos e portaria 24h. * Disponibilidade e valores sujeitos a alteração sem aviso prévio.",
     diferenciais: ["Varanda","Cozinha planejada","Blindex nos banheiros","Aceita financiamento","Piscina","Academia","Portaria 24h"],
     fotos: [
-      "assets/imoveis/bancarios-504b/piscina.jpg",
-      "assets/imoveis/bancarios-504b/sala-tv.jpg",
-      "assets/imoveis/bancarios-504b/sala-cozinha.jpg",
-      "assets/imoveis/bancarios-504b/cozinha.jpg",
-      "assets/imoveis/bancarios-504b/quarto.jpg",
-      "assets/imoveis/bancarios-504b/banheiro.jpg",
-      "assets/imoveis/bancarios-504b/vista.jpg",
-      "assets/imoveis/bancarios-504b/lounge.jpg",
-      "assets/imoveis/bancarios-504b/lazer.jpg"
+      "assets/imoveis/AP0003/piscina.jpg",
+      "assets/imoveis/AP0003/sala-tv.jpg",
+      "assets/imoveis/AP0003/sala-cozinha.jpg",
+      "assets/imoveis/AP0003/cozinha.jpg",
+      "assets/imoveis/AP0003/quarto.jpg",
+      "assets/imoveis/AP0003/banheiro.jpg",
+      "assets/imoveis/AP0003/vista.jpg",
+      "assets/imoveis/AP0003/lounge.jpg",
+      "assets/imoveis/AP0003/lazer.jpg"
+    ],
+    destaque: true
+  },
+  {
+    id: "sala-jardim-oceania",
+    codigo: "SL0001",
+    categoria: "Sala comercial",
+    trilhas: ["investir"],
+    titulo: "Sala comercial 27m² porteira fechada — Jardim Oceania",
+    tipo: "Venda",
+    status: "Porteira fechada",
+    bairro: "Jardim Oceania",
+    cidade: "João Pessoa",
+    preco: 360000,
+    areaUtil: 27,
+    areaTotal: 27,
+    quartos: 0,
+    suites: 0,
+    banheiros: 1,
+    descricao: "Sala comercial de 27m² no Jardim Oceania, entregue porteira fechada: projetada, com 2 estações de trabalho, cadeiras, mesas, mesa de reunião, ar-condicionado, fechadura digital, máquina de café e frigobar — é só chegar e começar a operar. A sala conta com banheiro privativo e o edifício tem elevador, portaria 12h durante o dia e portaria virtual à noite, com reconhecimento facial, além de vagas de garagem rotativas. Uma opção prática para quem quer abrir o escritório sem obra, ou investir em um espaço pronto para uso. Aceita financiamento bancário. * Disponibilidade e valores sujeitos a alteração sem aviso prévio.",
+    diferenciais: ["Porteira fechada","Projetada","Ar-condicionado","Fechadura digital","Elevador","Portaria com reconhecimento facial","Garagem rotativa","Aceita financiamento"],
+    fotos: [
+      "assets/imoveis/SL0001/sala-reuniao.jpg",
+      "assets/imoveis/SL0001/estacoes-trabalho.jpg",
+      "assets/imoveis/SL0001/sala-reuniao-02.jpg",
+      "assets/imoveis/SL0001/ambiente.jpg",
+      "assets/imoveis/SL0001/estacoes-trabalho-02.jpg",
+      "assets/imoveis/SL0001/estacao-copa.jpg",
+      "assets/imoveis/SL0001/copa.jpg",
+      "assets/imoveis/SL0001/copa-02.jpg",
+      "assets/imoveis/SL0001/detalhe.jpg",
+      "assets/imoveis/SL0001/wc.jpg"
     ],
     destaque: true
   }

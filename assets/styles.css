@@ -362,10 +362,5 @@ details.more[open] summary::after{content:" ▴";}
 .cond-table .pend{color:var(--gray);font-style:italic;}
 @media (max-width:860px){.sim-grid{grid-template-columns:minmax(0,1fr);}}
 
-/* ---- código do imóvel em formato de tag ---- */
-.code-tag{display:inline-flex;align-items:center;gap:10px;background:var(--black);color:var(--white);border:2px solid var(--gold);border-radius:999px;padding:7px 8px 7px 16px;cursor:pointer;font-family:var(--font-body);line-height:1;}
-.code-tag .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-2);}
-.code-tag .v{font-size:17px;font-weight:700;letter-spacing:.04em;color:var(--white);}
-.code-tag .cp{font-size:11px;font-weight:600;background:var(--gold);color:var(--black);border-radius:999px;padding:6px 11px;}
-.code-tag:hover .cp{background:var(--gold-2);}
-@media (max-width:480px){.code-tag .k{display:none;}}
+/* código na foto da página do imóvel: mesmo visual do catálogo, toque copia */
+.p-main .card-code{cursor:pointer;}

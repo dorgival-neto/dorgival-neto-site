@@ -7,32 +7,72 @@
   "redirects": [
     {
       "source": "/imovel/elevatto-bessa",
-      "destination": "/imovel/DN-BES-001/",
+      "destination": "/imovel/AP0001/",
       "permanent": true
     },
     {
       "source": "/imovel/elevatto-bessa/",
-      "destination": "/imovel/DN-BES-001/",
+      "destination": "/imovel/AP0001/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/DN-BES-001",
+      "destination": "/imovel/AP0001/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/DN-BES-001/",
+      "destination": "/imovel/AP0001/",
       "permanent": true
     },
     {
       "source": "/imovel/bancarios-reformado",
-      "destination": "/imovel/DN-BAN-001/",
+      "destination": "/imovel/AP0002/",
       "permanent": true
     },
     {
       "source": "/imovel/bancarios-reformado/",
-      "destination": "/imovel/DN-BAN-001/",
+      "destination": "/imovel/AP0002/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/DN-BAN-001",
+      "destination": "/imovel/AP0002/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/DN-BAN-001/",
+      "destination": "/imovel/AP0002/",
       "permanent": true
     },
     {
       "source": "/imovel/bancarios-69m2",
-      "destination": "/imovel/DN-BAN-002/",
+      "destination": "/imovel/AP0003/",
       "permanent": true
     },
     {
       "source": "/imovel/bancarios-69m2/",
-      "destination": "/imovel/DN-BAN-002/",
+      "destination": "/imovel/AP0003/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/DN-BAN-002",
+      "destination": "/imovel/AP0003/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/DN-BAN-002/",
+      "destination": "/imovel/AP0003/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/sala-jardim-oceania",
+      "destination": "/imovel/SL0001/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/sala-jardim-oceania/",
+      "destination": "/imovel/SL0001/",
       "permanent": true
     }
   ]

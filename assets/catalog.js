@@ -98,7 +98,7 @@
       '<div class="card-price">' + DN.esc(DN.price(p)) + '</div>' +
       '<a class="card-title" href="' + DN.url(p) + '">' + DN.esc(p.titulo) + '</a>' +
       '<div class="card-loc">' + DN.esc(p.bairro) + ' · ' + DN.esc(p.cidade) + '</div>' +
-      '<div class="card-specs"><span>🛏 ' + (p.quartos || 0) + '</span><span>🚿 ' + (p.banheiros || 0) + '</span>' +
+      '<div class="card-specs">' + (p.quartos ? '<span>🛏 ' + p.quartos + '</span>' : '') + '<span>🚿 ' + (p.banheiros || 0) + '</span>' +
       (p.vagas ? '<span>🚗 ' + p.vagas + '</span>' : '') + '<span>📐 ' + (p.areaUtil || 0) + 'm²</span></div>' +
       (chips ? '<div class="card-chips">' + chips + '</div>' : '') +
       '<div class="card-actions">' +

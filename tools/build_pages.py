@@ -13,7 +13,7 @@ import unicodedata
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = "https://dorgivalneto.com.br"
-NOW_ISO = "2026-10-22"
+NOW_ISO = "2026-10-27"
 
 
 # ------------------------------------------------------------------ dados
@@ -112,6 +112,14 @@ def invest_chips(p):
 
 
 TRILHA = {"investir": "Para investir", "morar": "Para morar"}
+
+# prefixo do código por tipo de imóvel (código = prefixo + 4 dígitos, ex.: AP0001)
+PREFIXOS = {"Apartamento": "AP", "Flat": "FL", "Terreno": "TE", "Casa": "CA", "Sala comercial": "SL", "Cobertura": "CO", "Garden": "GD"}
+OLD_CODES = {"DN-BES-001": "AP0001", "DN-BAN-001": "AP0002", "DN-BAN-002": "AP0003"}  # códigos usados até 26/10/2026
+for _p in PROPS:
+    _pre = PREFIXOS.get(_p.get("categoria"))
+    assert _pre and re.fullmatch(_pre + r"\d{4}", _p["codigo"]), "código inválido para %s: %s" % (_p["id"], _p["codigo"])
+assert len({_p["codigo"] for _p in PROPS}) == len(PROPS), "código repetido"
 BAIRROS = sorted({p["bairro"] for p in PROPS})
 
 
@@ -232,8 +240,9 @@ def card_static(p):
     chips = "".join('<span class="card-chip">%s</span>' % esc(c) for c in invest_chips(p))
     tr = "".join('<span class="card-track">%s</span>' % TRILHA[t] for t in p.get("trilhas", []))
     u = "/imovel/%s/" % p["codigo"]
-    specs = '<span>🛏 %s</span><span>🚿 %s</span>%s<span>📐 %sm²</span>' % (
-        p.get("quartos", 0), p.get("banheiros", 0), ('<span>🚗 %s</span>' % p["vagas"]) if p.get("vagas") else "", num(p.get("areaUtil", 0)))
+    specs = '%s<span>🚿 %s</span>%s<span>📐 %sm²</span>' % (
+        ('<span>🛏 %s</span>' % p["quartos"]) if p.get("quartos") else "",
+        p.get("banheiros", 0), ('<span>🚗 %s</span>' % p["vagas"]) if p.get("vagas") else "", num(p.get("areaUtil", 0)))
     return f"""<article class="card">
   <a class="card-photo" href="{u}"><img src="/{p['fotos'][0]}" alt="{esc(p['titulo'])}" loading="lazy"><span class="card-badge">{esc(p['status'])}</span><span class="card-code">{esc(p['codigo'])}</span></a>
   <div class="card-body">
@@ -255,10 +264,14 @@ def property_page(p):
     fotos = p["fotos"]
     cover = "/" + fotos[0]
     t_title = "%s — %s | Dorgival Neto" % (p["titulo"], price_txt(p))
-    desc = "%s em %s, João Pessoa: %s quarto(s), %sm², %s. Código %s. Atendimento de Dorgival Neto, CRECI 17191-F." % (
-        p["status"], p["bairro"], p.get("quartos", 0), num(p.get("areaUtil", 0)), price_txt(p), p["codigo"])
+    quartos_txt = ("%s quarto(s), " % p["quartos"]) if p.get("quartos") else ""
+    desc = "%s em %s, João Pessoa: %s%sm², %s. Código %s. Atendimento de Dorgival Neto, CRECI 17191-F." % (
+        p["status"], p["bairro"], quartos_txt, num(p.get("areaUtil", 0)), price_txt(p), p["codigo"])
     thumbs = "".join('<img src="/%s" alt="%s" class="%s" data-i="%d" loading="lazy">' % (f, esc(p["titulo"]), "on" if i == 0 else "", i) for i, f in enumerate(fotos))
-    specs = [("Quartos", p.get("quartos", 0)), ("Suítes", p.get("suites", 0)), ("Banheiros", p.get("banheiros", 0))]
+    specs = []
+    if p.get("quartos"): specs.append(("Quartos", p["quartos"]))
+    if p.get("suites"): specs.append(("Suítes", p["suites"]))
+    specs.append(("Banheiros", p.get("banheiros", 0)))
     if p.get("vagas"): specs.append(("Vagas", p["vagas"]))
     specs += [("Área útil", num(p.get("areaUtil", 0)) + " m²"), ("Área total", num(p.get("areaTotal", 0)) + " m²")]
     specs_html = "".join('<div class="spec"><div class="v">%s</div><div class="k">%s</div></div>' % (v, k) for k, v in specs)
@@ -294,11 +307,10 @@ def property_page(p):
   <div class="prop-grid">
     <div>
       <div class="p-gallery">
-        <div class="p-main"><img id="pMain" src="/{fotos[0]}" alt="{esc(p['titulo'])}"><button class="p-nav prev" id="pPrev" aria-label="Foto anterior">‹</button><button class="p-nav next" id="pNext" aria-label="Próxima foto">›</button></div>
+        <div class="p-main"><img id="pMain" src="/{fotos[0]}" alt="{esc(p['titulo'])}"><span class="card-code" data-copy="{esc(p['codigo'])}" title="Toque para copiar o código">{esc(p['codigo'])}</span><button class="p-nav prev" id="pPrev" aria-label="Foto anterior">‹</button><button class="p-nav next" id="pNext" aria-label="Próxima foto">›</button></div>
         <div class="p-thumbs" id="pThumbs">{thumbs}</div>
       </div>
       <div class="p-section">
-        <button type="button" class="code-tag" data-copy="{esc(p['codigo'])}" title="Toque para copiar o código"><span class="k">Código do imóvel</span><span class="v">{esc(p['codigo'])}</span><span class="cp">Copiar</span></button>
         <h1 class="p-title">{esc(p['titulo'])}</h1>
         <div class="card-loc" style="margin-top:6px;">{esc(p['bairro'])} · {esc(p['cidade'])}</div>
         <div class="card-tracks" style="margin-top:10px;">{tr}</div>
@@ -309,8 +321,7 @@ def property_page(p):
       {inv_html}
     </div>
     <aside class="p-side">
-      <button type="button" class="code-tag" data-copy="{esc(p['codigo'])}" title="Toque para copiar o código"><span class="k">Código do imóvel</span><span class="v">{esc(p['codigo'])}</span><span class="cp">Copiar</span></button>
-      <div class="p-code" style="margin-top:10px;">{esc(p['status'])}</div>
+      <div class="p-code">Código {esc(p['codigo'])} · {esc(p['status'])}</div>
       <div class="p-price">{esc(price_txt(p))}</div>
       {cond}
       <div class="p-actions">
@@ -774,14 +785,18 @@ def main():
         sm += "  <url><loc>%s%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>\n" % (BASE, u, NOW_ISO, pr)
     sm += "</urlset>\n"
     write("sitemap.xml", sm)
-    write(".vercelignore", "tools/\n")
+    write(".vercelignore", "tools/\ncadastro/\n")
 
-    # endereços antigos (pelo nome interno) levam ao endereço pelo código
+    # endereços antigos (pelo nome interno e pelos códigos DN-...) levam ao endereço pelo código
     redirects = []
     for p in PROPS:
         dest = "/imovel/%s/" % p["codigo"]
-        for s in ("/imovel/%s" % p["id"], "/imovel/%s/" % p["id"]):
-            redirects.append({"source": s, "destination": dest, "permanent": True})
+        olds = [p["id"]] + [old for old, new in OLD_CODES.items() if new == p["codigo"]]
+        for o in olds:
+            for s in ("/imovel/%s" % o, "/imovel/%s/" % o):
+                redirects.append({"source": s, "destination": dest, "permanent": True})
+    if os.environ.get("CASE_TEST"):  # teste temporário: a Vercel diferencia maiúsculas nos redirecionamentos?
+        redirects.append({"source": "/zz-case-test", "destination": "/imoveis.html", "permanent": False})
     vercel = {"functions": {"api/send-guia.js": {"includeFiles": "api/_files/*.pdf"}}, "redirects": redirects}
     write("vercel.json", json.dumps(vercel, indent=2) + "\n")
     print("ok: %d imóveis, %d bairros, %d posts, %d urls no sitemap" % (len(PROPS), len(BAIRROS), len(posts), len(urls)))
