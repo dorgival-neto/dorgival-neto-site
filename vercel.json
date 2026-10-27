@@ -74,6 +74,11 @@
       "source": "/imovel/sala-jardim-oceania/",
       "destination": "/imovel/SL0001/",
       "permanent": true
+    },
+    {
+      "source": "/zz-case-test",
+      "destination": "/imoveis.html",
+      "permanent": false
     }
   ]
 }
