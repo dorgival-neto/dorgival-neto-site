@@ -16,6 +16,16 @@
       "permanent": true
     },
     {
+      "source": "/imovel/ap0001",
+      "destination": "/imovel/AP0001/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/ap0001/",
+      "destination": "/imovel/AP0001/",
+      "permanent": true
+    },
+    {
       "source": "/imovel/DN-BES-001",
       "destination": "/imovel/AP0001/",
       "permanent": true
@@ -32,6 +42,16 @@
     },
     {
       "source": "/imovel/bancarios-reformado/",
+      "destination": "/imovel/AP0002/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/ap0002",
+      "destination": "/imovel/AP0002/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/ap0002/",
       "destination": "/imovel/AP0002/",
       "permanent": true
     },
@@ -56,6 +76,16 @@
       "permanent": true
     },
     {
+      "source": "/imovel/ap0003",
+      "destination": "/imovel/AP0003/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/ap0003/",
+      "destination": "/imovel/AP0003/",
+      "permanent": true
+    },
+    {
       "source": "/imovel/DN-BAN-002",
       "destination": "/imovel/AP0003/",
       "permanent": true
@@ -76,9 +106,14 @@
       "permanent": true
     },
     {
-      "source": "/zz-case-test",
-      "destination": "/imoveis.html",
-      "permanent": false
+      "source": "/imovel/sl0001",
+      "destination": "/imovel/SL0001/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/sl0001/",
+      "destination": "/imovel/SL0001/",
+      "permanent": true
     }
   ]
 }

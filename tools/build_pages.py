@@ -791,12 +791,11 @@ def main():
     redirects = []
     for p in PROPS:
         dest = "/imovel/%s/" % p["codigo"]
-        olds = [p["id"]] + [old for old, new in OLD_CODES.items() if new == p["codigo"]]
+        # a Vercel diferencia maiúsculas/minúsculas (testado): o código em minúsculas também leva à página
+        olds = [p["id"], p["codigo"].lower()] + [old for old, new in OLD_CODES.items() if new == p["codigo"]]
         for o in olds:
             for s in ("/imovel/%s" % o, "/imovel/%s/" % o):
                 redirects.append({"source": s, "destination": dest, "permanent": True})
-    if os.environ.get("CASE_TEST"):  # teste temporário: a Vercel diferencia maiúsculas nos redirecionamentos?
-        redirects.append({"source": "/zz-case-test", "destination": "/imoveis.html", "permanent": False})
     vercel = {"functions": {"api/send-guia.js": {"includeFiles": "api/_files/*.pdf"}}, "redirects": redirects}
     write("vercel.json", json.dumps(vercel, indent=2) + "\n")
     print("ok: %d imóveis, %d bairros, %d posts, %d urls no sitemap" % (len(PROPS), len(BAIRROS), len(posts), len(urls)))
