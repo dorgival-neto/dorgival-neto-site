@@ -365,6 +365,8 @@ details.more[open] summary::after{content:" ▴";}
 /* código na foto da página do imóvel: mesmo visual do catálogo, toque copia */
 .p-main .card-code{cursor:pointer;}
 
+.card-track.excl{background:var(--gold);color:var(--black);}
+
 /* ---- parceiros de serviços ---- */
 .par-photo{display:block;aspect-ratio:900/553;background:#0b0b0b;overflow:hidden;}
 .par-photo img{width:100%;height:100%;object-fit:cover;transition:transform .35s ease;}
@@ -382,8 +384,15 @@ details.more[open] summary::after{content:" ▴";}
 .par-side .par-photo{aspect-ratio:900/553;}
 .par-side-body{padding:22px;}
 .par-side h1{font-size:30px;}
-.par-pick{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px;}
-.par-pick .tab{padding:7px 14px;font-size:12.5px;}
+.par-pickbox{background:#fbf6e8;border:1.5px dashed var(--gold);border-radius:var(--radius);padding:14px 14px 6px;margin:18px 0;}
+.par-pick-title{font-weight:700;font-size:14.5px;}
+.par-pick-hint{font-size:12.5px;color:var(--gray);line-height:1.5;margin-top:3px;}
+.par-pick{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 8px;}
+.par-pick .tab{padding:9px 16px;font-size:13px;background:#fff;border:1.5px solid var(--gold);display:inline-flex;align-items:center;gap:7px;transition:background .15s,color .15s;}
+.par-pick .tab .mark{font-size:16px;font-weight:700;color:var(--gold);line-height:1;}
+.par-pick .tab:hover{background:#fff3d3;}
+.par-pick .tab.active{background:var(--black);border-color:var(--black);color:#fff;}
+.par-pick .tab.active .mark{color:var(--gold);}
 .par-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);font-weight:600;margin-top:16px;display:block;}
 .par-flyer{display:block;border-radius:var(--radius);overflow:hidden;border:1px solid #e8e4d9;box-shadow:var(--shadow);background:#0b0b0b;}
 .par-flyer img{display:block;width:100%;height:auto;}

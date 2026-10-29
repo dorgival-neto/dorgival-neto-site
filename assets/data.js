@@ -9,6 +9,9 @@
      Prefixos: AP apartamento, FL flat, TE terreno, CA casa, SL sala comercial,
      CO cobertura, GD garden. É também o endereço da página (/imovel/AP0001/) e o
      nome da pasta das fotos (assets/imoveis/AP0001/): não mude depois de divulgar
+   - exclusivo (opcional): true mostra a tag "Exclusividade" (imóvel só meu).
+     Nos demais, NÃO cite nome do empreendimento, construtora, arquiteto, rua,
+     número da unidade ou pontos de referência exatos (evita captação por terceiros)
    - categoria: tipo do imóvel ("Apartamento", "Sala comercial"...), combina com o prefixo
    - trilhas: ["investir"], ["morar"] ou as duas
    - investimento (opcional): aPartirDe (true/false), entrega, entrada,
@@ -30,17 +33,17 @@ window.SITE_CONFIG = SITE_CONFIG;  // catalog.js e analytics.js leem por window
 
 const PROPERTIES = [
   {
-    id: "elevatto-bessa",
+    id: "ap0001",
     codigo: "AP0001",
     categoria: "Apartamento",
     trilhas: ["investir", "morar"],
     investimento: {
       aPartirDe: true,
       pagamento: "Fluxo de pagamento facilitado",
-      unidadeRef: "Preço e metragem da unidade 1404"
+      unidadeRef: "Preço e metragem da unidade de 2 quartos (66,43m²)"
     },
     simulador: { diaria: null, condominio: null, iptu: null },
-    titulo: "Elevatto — Lançamento no Bessa",
+    titulo: "Lançamento 2 quartos com varanda integrada — Bessa",
     tipo: "Venda",
     status: "Lançamento",
     bairro: "Bessa",
@@ -51,7 +54,7 @@ const PROPERTIES = [
     quartos: 2,
     suites: 1,
     banheiros: 2,
-    descricao: "Lançamento assinado pelo Mookamboo Studio (arquiteto Augusto Magno) para a Nordeste Construções, no coração do Bessa — perto de praia, restaurantes, bares, shopping, farmácias e mercados. 148 unidades de 64m² a 148m², com varanda integrada e suíte master. Estrutura completa de lazer: piscina, deck, solarium, academia, espaço kids, cinema, salão de festas, espaços gourmet, espaço wine, lounge de convivência, salão de jogos, coworking e bicicletário. * Preço e área referentes à unidade 1404 (66,43m², 2 quartos com 1 suíte master). Fluxo de pagamento facilitado direto com a construtora.",
+    descricao: "Lançamento no coração do Bessa — perto de praia, restaurantes, bares, shopping, farmácias e mercados. Unidades com varanda integrada e suíte master. Estrutura completa de lazer: piscina, deck, solarium, academia, espaço kids, cinema, salão de festas, espaços gourmet, espaço wine, lounge de convivência, salão de jogos, coworking e bicicletário. * Preço e área referentes a uma unidade de 66,43m² (2 quartos, sendo 1 suíte master). Fluxo de pagamento facilitado direto com a construtora.",
     diferenciais: ["Lançamento","Varanda integrada","Suíte master","Piscina","Academia","Espaço gourmet","Cinema","Coworking","Pagamento facilitado"],
     fotos: [
       "assets/imoveis/AP0001/fachada-01.jpg",
@@ -93,7 +96,7 @@ const PROPERTIES = [
     suites: 1,
     banheiros: 2,
     vagas: 2,
-    descricao: "Apartamento totalmente reformado no bairro dos Bancários, com móveis planejados em todos os ambientes, projeto de iluminação especial e fechadura eletrônica. Um dos quartos foi transformado em closet, mas pode voltar a ser dormitório. A 300m do Parque das Três Ruas, próximo a padarias, restaurantes, supermercados e farmácias. Condomínio com piscina, academia, salões de festa, quadra poliesportiva, playground e portaria 24h.",
+    descricao: "Apartamento totalmente reformado no bairro dos Bancários, com móveis planejados em todos os ambientes, projeto de iluminação especial e fechadura eletrônica. Um dos quartos foi transformado em closet, mas pode voltar a ser dormitório. Próximo a parque, padarias, restaurantes, supermercados e farmácias. Condomínio com piscina, academia, salões de festa, quadra poliesportiva, playground e portaria 24h.",
     diferenciais: ["Reformado","Móveis planejados","Fechadura eletrônica","Piscina","Academia","Portaria 24h"],
     fotos: [
       "assets/imoveis/AP0002/20260912_100759.jpg",
@@ -112,6 +115,7 @@ const PROPERTIES = [
   {
     id: "bancarios-69m2",
     codigo: "AP0003",
+    exclusivo: true,
     categoria: "Apartamento",
     trilhas: ["morar"],
     titulo: "Apartamento 3 quartos com varanda — Bancários",
@@ -126,7 +130,7 @@ const PROPERTIES = [
     suites: 1,
     banheiros: 2,
     vagas: 1,
-    descricao: "Excelente apartamento de 68m² de área privativa, com 3 quartos (1 suíte), sala para dois ambientes com varanda e cozinha integrada com móveis planejados. Uma ótima opção para quem busca conforto, praticidade e uma estrutura completa de lazer em uma das regiões mais consolidadas de João Pessoa. A 300m do Parque das Três Ruas, com fácil acesso a padarias, restaurantes, supermercados, colégios, farmácias, academias, Mangabeira Shopping, centros universitários e demais serviços da região. Condomínio com piscina adulto e infantil, 2 espaços gourmet, 2 salões de festas, quadra poliesportiva, salão de jogos, academia, playground, espaço kids, mini mercado, bicicletários, espaço de estudos e portaria 24h. * Disponibilidade e valores sujeitos a alteração sem aviso prévio.",
+    descricao: "Excelente apartamento de 68m² de área privativa, com 3 quartos (1 suíte), sala para dois ambientes com varanda e cozinha integrada com móveis planejados. Uma ótima opção para quem busca conforto, praticidade e uma estrutura completa de lazer em uma das regiões mais consolidadas de João Pessoa. Próximo a parque, com fácil acesso a padarias, restaurantes, supermercados, colégios, farmácias, academias, shopping, centros universitários e demais serviços da região. Condomínio com piscina adulto e infantil, 2 espaços gourmet, 2 salões de festas, quadra poliesportiva, salão de jogos, academia, playground, espaço kids, mini mercado, bicicletários, espaço de estudos e portaria 24h. * Disponibilidade e valores sujeitos a alteração sem aviso prévio.",
     diferenciais: ["Varanda","Cozinha planejada","Blindex nos banheiros","Aceita financiamento","Piscina","Academia","Portaria 24h"],
     fotos: [
       "assets/imoveis/AP0003/piscina.jpg",
@@ -174,11 +178,11 @@ const PROPERTIES = [
     destaque: true
   },
   {
-    id: "360-house-tambau",
+    id: "ap0004",
     codigo: "AP0004",
     categoria: "Apartamento",
     trilhas: ["morar"],
-    titulo: "360 House — 3 suítes e 145m² em Tambaú",
+    titulo: "Apartamento 3 suítes e 145m² — Tambaú",
     tipo: "Venda",
     status: "Pronto para morar",
     bairro: "Tambaú",
@@ -190,7 +194,7 @@ const PROPERTIES = [
     suites: 3,
     banheiros: 4,
     vagas: 2,
-    descricao: "O espaço de uma casa, a vista dos seus sonhos. Localizado em Tambaú, o 360 House é um empreendimento único, inteligente e diferenciado, com localização privilegiada. Traz a comodidade e a sensação de morar em uma casa, com toda a segurança e a estrutura de um empreendimento de alto padrão. Além da exclusividade de ser um apartamento por andar, tem grandes esquadrias para ventilação e iluminação naturais, todos os quartos voltados para o leste e espaços amplos. São 145m² com 3 suítes (1 master), sala ampla para 2 ambientes, varanda gourmet, cozinha, lavabo, área de serviço e DCE completo (o cliente pode optar por não ter o DCE). O empreendimento tem 2 elevadores, sendo o social com acesso por biometria, áreas comuns com acesso por biometria, placas de energia solar para alimentar as áreas comuns, guarda-volumes, academia, piscina adulto e infantil, salão de festas, playground e snooker bar. * Disponibilidade e valores sujeitos a alteração sem aviso prévio.",
+    descricao: "O espaço de uma casa, a vista dos seus sonhos. Localizado em Tambaú, é um empreendimento único, inteligente e diferenciado, com localização privilegiada. Traz a comodidade e a sensação de morar em uma casa, com toda a segurança e a estrutura de um empreendimento de alto padrão. Além da exclusividade de ser um apartamento por andar, tem grandes esquadrias para ventilação e iluminação naturais, todos os quartos voltados para o leste e espaços amplos. São 145m² com 3 suítes (1 master), sala ampla para 2 ambientes, varanda gourmet, cozinha, lavabo, área de serviço e DCE completo (o cliente pode optar por não ter o DCE). O empreendimento tem 2 elevadores, sendo o social com acesso por biometria, áreas comuns com acesso por biometria, placas de energia solar para alimentar as áreas comuns, guarda-volumes, academia, piscina adulto e infantil, salão de festas, playground e snooker bar. * Disponibilidade e valores sujeitos a alteração sem aviso prévio.",
     diferenciais: ["Um apartamento por andar","3 suítes (1 master)","Varanda gourmet","DCE completo (opcional)","Quartos voltados para o leste","Elevador social com biometria","Energia solar nas áreas comuns","Piscina adulto e infantil","Academia","Snooker bar","Salão de festas","Playground","Guarda-volumes"],
     fotos: [
       "assets/imoveis/AP0004/sala-varanda.jpg",

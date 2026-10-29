@@ -63,11 +63,13 @@
       <input id="whats" name="whatsapp_digitado" type="tel" placeholder="83 9 9999-9999" required>
       <div class="field-error" id="whatsError">Digite um número de telefone válido e completo para o país selecionado.</div>
       <div class="form-row">
-        <div><label>Tipo de imóvel</label><select name="tipo_imovel"><option>Apartamento</option><option>Casa</option><option>Terreno</option><option>Sala comercial</option><option>Outro</option></select></div>
-        <div><label>Finalidade</label><select name="finalidade"><option>Venda</option><option>Compra</option><option>Garantia / financiamento</option><option>Revisão de impostos</option><option>Partilha / inventário</option><option>Processo judicial</option><option>Outra</option></select></div>
+        <div><label>Tipo de imóvel</label><select name="tipo_imovel" data-req="o tipo de imóvel" required><option value="" selected disabled>Selecione</option><option>Apartamento</option><option>Casa</option><option>Terreno</option><option>Sala comercial</option><option>Outro</option></select></div>
+        <div><label>Finalidade</label><select name="finalidade" data-req="a finalidade da avaliação" required><option value="" selected disabled>Selecione</option><option>Venda</option><option>Compra</option><option>Garantia / financiamento</option><option>Revisão de impostos</option><option>Partilha / inventário</option><option>Processo judicial</option><option>Outra</option></select></div>
       </div>
       <label>Bairro / cidade do imóvel</label><input name="localizacao" type="text" placeholder="Ex.: Bessa, João Pessoa" data-req="o bairro e a cidade do imóvel" required>
-      <label>Algo importante para saber? (opcional)</label><textarea name="mensagem" placeholder="Área aproximada, situação do imóvel, prazo..."></textarea>
+      <label>Descrição do imóvel</label><textarea name="descricao_imovel" rows="3" style="min-height:0;" placeholder="Tamanho (m²), número de quartos, banheiros, vagas, estado de conservação..." data-req="a descrição do imóvel" required></textarea>
+      <label>Informações adicionais (opcional)</label><input name="mensagem" type="text" placeholder="Prazo, situação do imóvel, outra informação importante...">
+
       <button class="btn btn-gold" type="submit" style="width:100%;justify-content:center;">Solicitar avaliação</button>
     </form>
   </div>

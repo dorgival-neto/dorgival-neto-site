@@ -114,9 +114,14 @@ def invest_chips(p):
 
 TRILHA = {"investir": "Para investir", "morar": "Para morar"}
 
+
+def excl_tag(p):
+    return '<span class="card-track excl">Exclusividade</span>' if p.get("exclusivo") else ""
+
 # prefixo do código por tipo de imóvel (código = prefixo + 4 dígitos, ex.: AP0001)
 PREFIXOS = {"Apartamento": "AP", "Flat": "FL", "Terreno": "TE", "Casa": "CA", "Sala comercial": "SL", "Cobertura": "CO", "Garden": "GD"}
 OLD_CODES = {"DN-BES-001": "AP0001", "DN-BAN-001": "AP0002", "DN-BAN-002": "AP0003"}  # códigos usados até 26/10/2026
+OLD_IDS = {"elevatto-bessa": "AP0001", "360-house-tambau": "AP0004"}  # ids que traziam o nome do empreendimento (trocados em 29/10/2026)
 for _p in PROPS:
     _pre = PREFIXOS.get(_p.get("categoria"))
     assert _pre and re.fullmatch(_pre + r"\d{4}", _p["codigo"]), "código inválido para %s: %s" % (_p["id"], _p["codigo"])
@@ -250,7 +255,7 @@ def page(title, desc, path, body, scripts="", extra_head="", active="", **seo):
 # ------------------------------------------------------------------ cards estáticos (bairro / semelhantes)
 def card_static(p):
     chips = "".join('<span class="card-chip">%s</span>' % esc(c) for c in invest_chips(p))
-    tr = "".join('<span class="card-track">%s</span>' % TRILHA[t] for t in p.get("trilhas", []))
+    tr = excl_tag(p) + "".join('<span class="card-track">%s</span>' % TRILHA[t] for t in p.get("trilhas", []))
     u = "/imovel/%s/" % p["codigo"]
     specs = '%s<span>🚿 %s</span>%s<span>📐 %sm²</span>' % (
         ('<span>🛏 %s</span>' % p["quartos"]) if p.get("quartos") else "",
@@ -288,7 +293,7 @@ def property_page(p):
     specs += [("Área útil", num(p.get("areaUtil", 0)) + " m²"), ("Área total", num(p.get("areaTotal", 0)) + " m²")]
     specs_html = "".join('<div class="spec"><div class="v">%s</div><div class="k">%s</div></div>' % (v, k) for k, v in specs)
     diffs = "".join('<span class="chip">%s</span>' % esc(d) for d in p.get("diferenciais", []))
-    tr = "".join('<span class="card-track">%s</span>' % TRILHA[t] for t in p.get("trilhas", []))
+    tr = excl_tag(p) + "".join('<span class="card-track">%s</span>' % TRILHA[t] for t in p.get("trilhas", []))
     inv = p.get("investimento") or {}
     inv_rows = []
     for k, label in (("entrega", "Entrega"), ("entrada", "Entrada"), ("parcela", "Parcelas"), ("posicao", "Posição"), ("pagamento", "Pagamento")):
@@ -458,11 +463,13 @@ def avaliacao_page():
       <label>Seu nome</label><input name="nome" type="text" placeholder="Como posso te chamar?" data-req="seu nome" required>
       {WHATS_FIELD}
       <div class="form-row">
-        <div><label>Tipo de imóvel</label><select name="tipo_imovel"><option>Apartamento</option><option>Casa</option><option>Terreno</option><option>Sala comercial</option><option>Outro</option></select></div>
-        <div><label>Finalidade</label><select name="finalidade"><option>Venda</option><option>Compra</option><option>Garantia / financiamento</option><option>Revisão de impostos</option><option>Partilha / inventário</option><option>Processo judicial</option><option>Outra</option></select></div>
+        <div><label>Tipo de imóvel</label><select name="tipo_imovel" data-req="o tipo de imóvel" required><option value="" selected disabled>Selecione</option><option>Apartamento</option><option>Casa</option><option>Terreno</option><option>Sala comercial</option><option>Outro</option></select></div>
+        <div><label>Finalidade</label><select name="finalidade" data-req="a finalidade da avaliação" required><option value="" selected disabled>Selecione</option><option>Venda</option><option>Compra</option><option>Garantia / financiamento</option><option>Revisão de impostos</option><option>Partilha / inventário</option><option>Processo judicial</option><option>Outra</option></select></div>
       </div>
       <label>Bairro / cidade do imóvel</label><input name="localizacao" type="text" placeholder="Ex.: Bessa, João Pessoa" data-req="o bairro e a cidade do imóvel" required>
-      <label>Algo importante para saber? (opcional)</label><textarea name="mensagem" placeholder="Área aproximada, situação do imóvel, prazo..."></textarea>
+      <label>Descrição do imóvel</label><textarea name="descricao_imovel" rows="3" style="min-height:0;" placeholder="Tamanho (m²), número de quartos, banheiros, vagas, estado de conservação..." data-req="a descrição do imóvel" required></textarea>
+      <label>Informações adicionais (opcional)</label><input name="mensagem" type="text" placeholder="Prazo, situação do imóvel, outra informação importante...">
+
       <button class="btn btn-gold" type="submit" style="width:100%;justify-content:center;">Solicitar avaliação</button>
     </form>
   </div>
@@ -539,8 +546,8 @@ def parceiros_index_page():
     if len(cats) > 1:
         tabs = '<div class="tabs" id="parTabs" style="justify-content:flex-start;"><button type="button" class="tab active" data-cat="">Todos</button>%s</div>' % "".join(
             '<button type="button" class="tab" data-cat="%s">%s</button>' % (esc(c), esc(c)) for c in cats)
-    ask = wa_link("Olá Dorgival! Vi sua página de parceiros e estou procurando um profissional. Você indica alguém?")
-    join = wa_link("Olá Dorgival! Presto serviços e gostaria de fazer parte da sua página de parceiros.")
+    ask = wa_link("Olá Dorgival! Vi sua página de parceiros e estou procurando um profissional na área de ...")
+    join = wa_link("Olá Dorgival! Eu vi o seu site e gostaria de fazer parte da sua página de parceiros. Eu presto serviços de ...")
     body = f"""<div class="wrap" style="padding-top:34px;padding-bottom:70px;">
   <div class="crumbs" style="padding-top:0;"><a href="/">Início</a> › Parceiros</div>
   <span class="eyebrow" style="display:block;margin-top:14px;">Parceiros</span>
@@ -577,8 +584,7 @@ def parceiros_index_page():
 def parceiro_page(par):
     path = "/parceiros/%s/" % par["slug"]
     cover = "/" + par["logo"]
-    cats = "".join('<span class="chip">%s</span>' % esc(c) for c in par["categorias"])
-    picks = "".join('<button type="button" class="tab" data-s="%s">%s</button>' % (esc(c), esc(c)) for c in par["categorias"])
+    picks = "".join('<button type="button" class="tab" aria-pressed="false" data-s="%s"><span class="mark">+</span>%s</button>' % (esc(c), esc(c)) for c in par["categorias"])
     alt = "Serviços da %s: %s" % (par["nome"], "; ".join(par["servicos"]))
     others = [p for p in PARCEIROS if p["slug"] != par["slug"]]
     more = ('<div class="p-section" style="margin-bottom:70px;"><h2>Outros parceiros</h2><div class="grid">%s</div></div>' % "".join(par_card(p) for p in others[:3])) if others else ""
@@ -592,11 +598,13 @@ def parceiro_page(par):
         <h1>{esc(par['nome'])}</h1>
         <div class="par-slogan">{esc(par['slogan'])}</div>
         <p style="font-size:14.5px;line-height:1.7;color:#39383a;margin-top:12px;">{esc(par['resumo'])}</p>
-        <div class="par-cats" style="margin-top:12px;">{cats}</div>
         <span class="par-label">Atendimento</span>
         <div style="font-size:14.5px;margin-top:4px;">📍 {esc(par['atendimento'])}</div>
-        <span class="par-label">Que serviço você precisa? (opcional)</span>
-        <div class="par-pick" id="parPick">{picks}</div>
+        <div class="par-pickbox">
+          <div class="par-pick-title">👇 Escolha o serviço que você precisa</div>
+          <div class="par-pick-hint">Toque em uma opção para ela ir já escrita na sua mensagem de WhatsApp (opcional).</div>
+          <div class="par-pick" id="parPick">{picks}</div>
+        </div>
         <div class="par-actions">
           <a class="btn btn-wa" id="parWa" data-partner="{par['slug']}" href="{par_wa(par)}" target="_blank" rel="noopener" style="justify-content:center;">💬 Chamar no WhatsApp · {esc(par['whatsappExibicao'])}</a>
           <button type="button" class="btn btn-outline btn-sm" id="parShare" style="justify-content:center;">↗ Compartilhar este parceiro</button>
@@ -619,7 +627,10 @@ def parceiro_page(par):
   }
   document.querySelectorAll('#parPick .tab').forEach(function(t){ t.onclick = function(){
     var s = t.getAttribute('data-s'); sel = (sel === s) ? '' : s;
-    document.querySelectorAll('#parPick .tab').forEach(function(x){ x.classList.toggle('active', x.getAttribute('data-s') === sel); });
+    document.querySelectorAll('#parPick .tab').forEach(function(x){
+      var on = x.getAttribute('data-s') === sel;
+      x.classList.toggle('active', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); x.firstChild.textContent = on ? '✓' : '+';
+    });
     wa.href = 'https://wa.me/' + PAR.whatsapp + '?text=' + encodeURIComponent(msg());
   }; });
   wa.addEventListener('click', function(){ DN.track('parceiro_whatsapp', { parceiro: PAR.slug, servico: sel || 'geral', origem: 'pagina' }); });
@@ -957,8 +968,8 @@ def main():
     for p in PROPS:
         dest = "/imovel/%s/" % p["codigo"]
         # a Vercel diferencia maiúsculas/minúsculas (testado): o código em minúsculas também leva à página
-        olds = [p["id"], p["codigo"].lower()] + [old for old, new in OLD_CODES.items() if new == p["codigo"]]
-        for o in olds:
+        olds = [p["id"], p["codigo"].lower()] + [old for old, new in {**OLD_CODES, **OLD_IDS}.items() if new == p["codigo"]]
+        for o in dict.fromkeys(olds):
             for s in ("/imovel/%s" % o, "/imovel/%s/" % o):
                 redirects.append({"source": s, "destination": dest, "permanent": True})
     # a página de corretores parceiros mudou de /parceiros.html para /corretor-parceiro.html

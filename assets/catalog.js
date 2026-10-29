@@ -84,7 +84,8 @@
     opts = opts || {};
     var foto = (p.fotos && p.fotos[0]) || '';
     var chips = investChips(p).map(function (c) { return '<span class="card-chip">' + DN.esc(c) + '</span>'; }).join('');
-    var tr = (p.trilhas || []).map(function (t) { return '<span class="card-track">' + DN.trilhaLabel[t] + '</span>'; }).join('');
+    var tr = (p.exclusivo ? '<span class="card-track excl">Exclusividade</span>' : '') +
+      (p.trilhas || []).map(function (t) { return '<span class="card-track">' + DN.trilhaLabel[t] + '</span>'; }).join('');
     var fav = DN.isFav(p.id) ? ' on' : '';
     return '<article class="card" data-id="' + p.id + '">' +
       '<a class="card-photo" href="' + DN.url(p) + '">' +

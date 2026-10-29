@@ -6,16 +6,6 @@
   },
   "redirects": [
     {
-      "source": "/imovel/elevatto-bessa",
-      "destination": "/imovel/AP0001/",
-      "permanent": true
-    },
-    {
-      "source": "/imovel/elevatto-bessa/",
-      "destination": "/imovel/AP0001/",
-      "permanent": true
-    },
-    {
       "source": "/imovel/ap0001",
       "destination": "/imovel/AP0001/",
       "permanent": true
@@ -32,6 +22,16 @@
     },
     {
       "source": "/imovel/DN-BES-001/",
+      "destination": "/imovel/AP0001/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/elevatto-bessa",
+      "destination": "/imovel/AP0001/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/elevatto-bessa/",
       "destination": "/imovel/AP0001/",
       "permanent": true
     },
@@ -116,22 +116,22 @@
       "permanent": true
     },
     {
-      "source": "/imovel/360-house-tambau",
-      "destination": "/imovel/AP0004/",
-      "permanent": true
-    },
-    {
-      "source": "/imovel/360-house-tambau/",
-      "destination": "/imovel/AP0004/",
-      "permanent": true
-    },
-    {
       "source": "/imovel/ap0004",
       "destination": "/imovel/AP0004/",
       "permanent": true
     },
     {
       "source": "/imovel/ap0004/",
+      "destination": "/imovel/AP0004/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/360-house-tambau",
+      "destination": "/imovel/AP0004/",
+      "permanent": true
+    },
+    {
+      "source": "/imovel/360-house-tambau/",
       "destination": "/imovel/AP0004/",
       "permanent": true
     },
