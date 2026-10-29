@@ -364,3 +364,30 @@ details.more[open] summary::after{content:" ▴";}
 
 /* código na foto da página do imóvel: mesmo visual do catálogo, toque copia */
 .p-main .card-code{cursor:pointer;}
+
+/* ---- parceiros de serviços ---- */
+.par-photo{display:block;aspect-ratio:900/553;background:#0b0b0b;overflow:hidden;}
+.par-photo img{width:100%;height:100%;object-fit:cover;transition:transform .35s ease;}
+.card:hover .par-photo img{transform:scale(1.03);}
+.par-card .card-title{font-family:var(--font-display);font-size:22px;font-weight:700;}
+.par-slogan{font-size:12.5px;color:var(--gray);margin-top:2px;}
+.par-cats{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.par-cta{background:var(--black);color:var(--off);border-radius:var(--radius);padding:28px;margin-top:44px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+.par-cta h3{color:#fff;font-size:22px;}
+.par-cta p{color:#cfcdc6;font-size:14px;margin-top:6px;max-width:520px;line-height:1.6;}
+.par-cta .acts{display:flex;gap:10px;flex-wrap:wrap;}
+.par-note{font-size:12px;color:var(--gray);line-height:1.6;margin-top:18px;}
+.par-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:34px;align-items:start;margin-top:18px;}
+.par-side{background:#fff;border:1px solid #e8e4d9;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;position:sticky;top:110px;}
+.par-side .par-photo{aspect-ratio:900/553;}
+.par-side-body{padding:22px;}
+.par-side h1{font-size:30px;}
+.par-pick{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px;}
+.par-pick .tab{padding:7px 14px;font-size:12.5px;}
+.par-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);font-weight:600;margin-top:16px;display:block;}
+.par-flyer{display:block;border-radius:var(--radius);overflow:hidden;border:1px solid #e8e4d9;box-shadow:var(--shadow);background:#0b0b0b;}
+.par-flyer img{display:block;width:100%;height:auto;}
+.par-actions{display:flex;flex-direction:column;gap:10px;}
+.btn-wa{background:#25d366;color:#0b2b16;}
+.btn-wa:hover{background:#1fbd5b;}
+@media (max-width:900px){.par-grid{grid-template-columns:minmax(0,1fr);}.par-side{position:static;}}

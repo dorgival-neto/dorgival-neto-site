@@ -1,8 +1,9 @@
 """Gera as páginas estáticas do site a partir de assets/data.js.
 
 Uso:  python tools/build_pages.py
-Gera: imovel/<id>/index.html, bairro/<slug>/index.html, avaliacao.html,
-      parceiros.html, mercado/..., sitemap.xml e ajusta nav/rodapé/SEO das
+Gera: imovel/<codigo>/index.html, bairro/<slug>/index.html, avaliacao.html,
+      corretor-parceiro.html, parceiros/ (lista + uma página por parceiro, de
+      tools/parceiros.json), mercado/..., sitemap.xml e ajusta nav/rodapé/SEO das
       páginas escritas à mão (index, imoveis, joao-pessoa, depoimento).
 """
 import html as H
@@ -122,6 +123,15 @@ for _p in PROPS:
 assert len({_p["codigo"] for _p in PROPS}) == len(PROPS), "código repetido"
 BAIRROS = sorted({p["bairro"] for p in PROPS})
 
+# parceiros de serviços (tools/parceiros.json); só os com "ativo": true aparecem
+PARCEIROS = [x for x in json.loads(read("tools/parceiros.json"))["parceiros"] if x.get("ativo", True)]
+for _x in PARCEIROS:
+    assert re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", _x["slug"]), "slug inválido: %s" % _x["slug"]
+    assert re.fullmatch(r"55\d{10,11}", _x["whatsapp"]), "whatsapp do parceiro %s: use 55 + DDD + número" % _x["slug"]
+    for _f in (_x["logo"], _x["imagemServicos"]):
+        assert os.path.exists(os.path.join(ROOT, _f)), "imagem não encontrada: %s" % _f
+assert len({_x["slug"] for _x in PARCEIROS}) == len(PARCEIROS), "slug de parceiro repetido"
+
 
 # ------------------------------------------------------------------ pedaços comuns
 def nav_inner(active=""):
@@ -133,6 +143,7 @@ def nav_inner(active=""):
         ("/#depoimentos", "Depoimentos"),
         ("/#quemsou", "Quem sou eu"),
         ("/mercado/", "Mercado"),
+        ("/parceiros/", "Parceiros"),
     ]
     out = []
     for href, label in items:
@@ -146,7 +157,8 @@ def foot_links():
     links = [
         ("/imoveis.html", "Imóveis"),
         ("/avaliacao.html", "Avalie seu imóvel"),
-        ("/parceiros.html", "Sou corretor parceiro"),
+        ("/parceiros/", "Parceiros de serviços"),
+        ("/corretor-parceiro.html", "Sou corretor parceiro"),
         ("/mercado/", "Mercado"),
         ("/simulador/", "Simulador de investimento"),
         ("/#guia", "Guia de compra"),
@@ -462,7 +474,7 @@ def avaliacao_page():
                 "/avaliacao.html", body, ITI_JS + "\n" + js, extra_head=ITI_CSS, active="/avaliacao.html")
 
 
-def parceiros_page():
+def corretor_parceiro_page():
     body = f"""<div class="article" style="max-width:880px;">
   <span class="eyebrow">Parcerias</span>
   <h1>Sou corretor parceiro</h1>
@@ -485,7 +497,156 @@ def parceiros_page():
     js = LEAD_JS.replace("__ORIGEM__", "parceiro").replace("__WAMSG__", "Olá Dorgival! Sou corretor(a) e acabei de enviar um contato de parceria pelo site.")
     return page("Sou Corretor Parceiro | Parcerias em Imóveis em João Pessoa | Dorgival Neto",
                 "Corretor ou imobiliária? Vamos trabalhar juntos em lançamentos e imóveis em João Pessoa. Fale com Dorgival Neto, CRECI 17191-F.",
-                "/parceiros.html", body, ITI_JS + "\n" + js, extra_head=ITI_CSS, active="/parceiros.html")
+                "/corretor-parceiro.html", body, ITI_JS + "\n" + js, extra_head=ITI_CSS, active="")
+
+
+# ------------------------------------------------------------------ parceiros de serviços (/parceiros/)
+def par_msg(par, servico=None):
+    return "Olá, %s! Vim através da indicação do corretor Dorgival Neto, pela página de parceiros do site dorgivalneto.com.br. %sGostaria de pedir um orçamento." % (
+        par["nome"], ("Preciso de: %s. " % servico) if servico else "")
+
+
+def par_wa(par, servico=None):
+    from urllib.parse import quote
+    return "https://wa.me/%s?text=%s" % (par["whatsapp"], quote(par_msg(par, servico), safe=""))
+
+
+def par_card(par):
+    u = "/parceiros/%s/" % par["slug"]
+    cats = "".join('<span class="card-chip">%s</span>' % esc(c) for c in par["categorias"])
+    return f"""<article class="card par-card" data-cats="{esc('|'.join(par['categorias']))}">
+  <a class="par-photo" href="{u}"><img src="/{par['logo']}" alt="Logomarca {esc(par['nome'])}" loading="lazy"></a>
+  <div class="card-body">
+    <a class="card-title" href="{u}">{esc(par['nome'])}</a>
+    <div class="par-slogan">{esc(par['slogan'])}</div>
+    <div class="card-loc" style="margin-top:6px;">📍 {esc(par['atendimento'])}</div>
+    <div class="par-cats">{cats}</div>
+    <div class="card-actions"><a class="btn btn-wa btn-sm" data-partner="{par['slug']}" href="{par_wa(par)}" target="_blank" rel="noopener">💬 WhatsApp</a><a class="btn btn-outline btn-sm" href="{u}">Ver parceiro</a></div>
+  </div>
+</article>"""
+
+
+PAR_NOTE = "Os parceiros são profissionais que atendem os meus clientes. Orçamento, prazo e execução do serviço são combinados diretamente entre você e o profissional."
+
+
+def parceiros_index_page():
+    cats = []
+    for par in PARCEIROS:
+        for c in par["categorias"]:
+            if c not in cats:
+                cats.append(c)
+    tabs = ""
+    if len(cats) > 1:
+        tabs = '<div class="tabs" id="parTabs" style="justify-content:flex-start;"><button type="button" class="tab active" data-cat="">Todos</button>%s</div>' % "".join(
+            '<button type="button" class="tab" data-cat="%s">%s</button>' % (esc(c), esc(c)) for c in cats)
+    ask = wa_link("Olá Dorgival! Vi sua página de parceiros e estou procurando um profissional. Você indica alguém?")
+    join = wa_link("Olá Dorgival! Presto serviços e gostaria de fazer parte da sua página de parceiros.")
+    body = f"""<div class="wrap" style="padding-top:34px;padding-bottom:70px;">
+  <div class="crumbs" style="padding-top:0;"><a href="/">Início</a> › Parceiros</div>
+  <span class="eyebrow" style="display:block;margin-top:14px;">Parceiros</span>
+  <h1 style="font-size:34px;margin-top:6px;">Profissionais para cuidar do seu imóvel</h1>
+  <p style="color:var(--gray);margin-top:8px;font-size:14.5px;max-width:680px;line-height:1.7;">Quem compra, vende, reforma ou aluga um imóvel sempre precisa de bons profissionais por perto. Reuni aqui os parceiros que atendem os meus clientes: é só escolher e chamar direto no WhatsApp, já com uma mensagem pronta me citando como indicação.</p>
+  {tabs}
+  <div class="grid" id="parGrid">{''.join(par_card(p) for p in PARCEIROS)}</div>
+  <p class="par-note">{PAR_NOTE}</p>
+  <div class="par-cta">
+    <div><h3>Não achou o profissional que precisa?</h3><p>Me conte o que você procura que eu indico alguém. E se você presta serviços para o mercado imobiliário e quer fazer parte desta página, fale comigo.</p></div>
+    <div class="acts"><a class="btn btn-gold btn-sm" href="{ask}" target="_blank" rel="noopener">Pedir uma indicação</a><a class="btn btn-outline-gold btn-sm" href="{join}" target="_blank" rel="noopener">Quero ser parceiro</a></div>
+  </div>
+</div>"""
+    js = r"""<script>
+(function(){
+  var tabs = document.querySelectorAll('#parTabs .tab'), cards = document.querySelectorAll('#parGrid .par-card');
+  tabs.forEach(function(t){ t.onclick = function(){
+    tabs.forEach(function(x){ x.classList.toggle('active', x === t); });
+    var c = t.getAttribute('data-cat');
+    cards.forEach(function(el){ el.style.display = (!c || el.getAttribute('data-cats').split('|').indexOf(c) > -1) ? '' : 'none'; });
+    if (c) DN.track('parceiros_filtro', { categoria: c });
+  }; });
+  document.querySelectorAll('[data-partner]').forEach(function(a){ a.addEventListener('click', function(){ DN.track('parceiro_whatsapp', { parceiro: a.getAttribute('data-partner'), origem: 'lista' }); }); });
+})();
+</script>"""
+    ld = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Início", "item": BASE + "/"},
+        {"@type": "ListItem", "position": 2, "name": "Parceiros", "item": BASE + "/parceiros/"}]}
+    return page("Parceiros de Serviços para o seu Imóvel em João Pessoa | Dorgival Neto",
+                "Eletricista, montador de móveis, bombeiro hidráulico e outros profissionais que atendem os clientes de Dorgival Neto em João Pessoa. Chame direto no WhatsApp.",
+                "/parceiros/", body, js, active="/parceiros/", jsonld=[ld])
+
+
+def parceiro_page(par):
+    path = "/parceiros/%s/" % par["slug"]
+    cover = "/" + par["logo"]
+    cats = "".join('<span class="chip">%s</span>' % esc(c) for c in par["categorias"])
+    picks = "".join('<button type="button" class="tab" data-s="%s">%s</button>' % (esc(c), esc(c)) for c in par["categorias"])
+    alt = "Serviços da %s: %s" % (par["nome"], "; ".join(par["servicos"]))
+    others = [p for p in PARCEIROS if p["slug"] != par["slug"]]
+    more = ('<div class="p-section" style="margin-bottom:70px;"><h2>Outros parceiros</h2><div class="grid">%s</div></div>' % "".join(par_card(p) for p in others[:3])) if others else ""
+    body = f"""<div class="wrap">
+  <div class="crumbs"><a href="/">Início</a> › <a href="/parceiros/">Parceiros</a> › {esc(par['nome'])}</div>
+  <div class="par-grid">
+    <aside class="par-side">
+      <div class="par-photo"><img src="{cover}" alt="Logomarca {esc(par['nome'])}"></div>
+      <div class="par-side-body">
+        <span class="eyebrow">Parceiro</span>
+        <h1>{esc(par['nome'])}</h1>
+        <div class="par-slogan">{esc(par['slogan'])}</div>
+        <p style="font-size:14.5px;line-height:1.7;color:#39383a;margin-top:12px;">{esc(par['resumo'])}</p>
+        <div class="par-cats" style="margin-top:12px;">{cats}</div>
+        <span class="par-label">Atendimento</span>
+        <div style="font-size:14.5px;margin-top:4px;">📍 {esc(par['atendimento'])}</div>
+        <span class="par-label">Que serviço você precisa? (opcional)</span>
+        <div class="par-pick" id="parPick">{picks}</div>
+        <div class="par-actions">
+          <a class="btn btn-wa" id="parWa" data-partner="{par['slug']}" href="{par_wa(par)}" target="_blank" rel="noopener" style="justify-content:center;">💬 Chamar no WhatsApp · {esc(par['whatsappExibicao'])}</a>
+          <button type="button" class="btn btn-outline btn-sm" id="parShare" style="justify-content:center;">↗ Compartilhar este parceiro</button>
+        </div>
+        <p class="par-note">{PAR_NOTE}</p>
+      </div>
+    </aside>
+    <div>
+      <a class="par-flyer" href="/{par['imagemServicos']}" target="_blank" rel="noopener" title="Abrir a imagem em tamanho maior"><img src="/{par['imagemServicos']}" alt="{esc(alt)}"></a>
+    </div>
+  </div>
+  {more}
+</div>"""
+    js = """<script>
+(function(){
+  var PAR = __PAR__, sel = '';
+  var wa = document.getElementById('parWa');
+  function msg(){
+    return 'Olá, ' + PAR.nome + '! Vim através da indicação do corretor Dorgival Neto, pela página de parceiros do site dorgivalneto.com.br. ' + (sel ? 'Preciso de: ' + sel + '. ' : '') + 'Gostaria de pedir um orçamento.';
+  }
+  document.querySelectorAll('#parPick .tab').forEach(function(t){ t.onclick = function(){
+    var s = t.getAttribute('data-s'); sel = (sel === s) ? '' : s;
+    document.querySelectorAll('#parPick .tab').forEach(function(x){ x.classList.toggle('active', x.getAttribute('data-s') === sel); });
+    wa.href = 'https://wa.me/' + PAR.whatsapp + '?text=' + encodeURIComponent(msg());
+  }; });
+  wa.addEventListener('click', function(){ DN.track('parceiro_whatsapp', { parceiro: PAR.slug, servico: sel || 'geral', origem: 'pagina' }); });
+  document.getElementById('parShare').onclick = function(){
+    var url = location.origin + '/parceiros/' + PAR.slug + '/', data = { title: PAR.nome + ' — parceiro de Dorgival Neto', text: PAR.nome + ' — ' + PAR.slogan, url: url };
+    DN.track('share', { item_id: PAR.slug, method: 'parceiro' });
+    if (navigator.share) { navigator.share(data).catch(function(){}); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(function(){ DN.toast('Link copiado!'); }, function(){ window.prompt('Copie o link:', url); });
+    else window.prompt('Copie o link:', url);
+  };
+})();
+</script>""".replace("__PAR__", json.dumps({"slug": par["slug"], "nome": par["nome"], "slogan": par["slogan"], "whatsapp": par["whatsapp"]}, ensure_ascii=False))
+    ld = [{
+        "@context": "https://schema.org", "@type": "LocalBusiness", "name": par["nome"], "image": BASE + cover,
+        "description": par["resumo"], "telephone": "+55 " + par["whatsappExibicao"], "url": BASE + path,
+        "areaServed": {"@type": "City", "name": "João Pessoa"},
+    }, {
+        "@context": "https://schema.org", "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Início", "item": BASE + "/"},
+            {"@type": "ListItem", "position": 2, "name": "Parceiros", "item": BASE + "/parceiros/"},
+            {"@type": "ListItem", "position": 3, "name": par["nome"], "item": BASE + path},
+        ],
+    }]
+    title = "%s — %s em João Pessoa | Parceiro de Dorgival Neto" % (par["nome"], par["slogan"].replace(" • ", ", ").title())
+    desc = "%s Atendimento: %s. Chame direto no WhatsApp pela página de parceiros de Dorgival Neto." % (par["resumo"], par["atendimento"])
+    return page(title, desc, path, body, js, active="/parceiros/", image=cover, jsonld=ld)
 
 
 # ------------------------------------------------------------------ simulador de investimento
@@ -763,7 +924,10 @@ def main():
         patch_static(fname, cfg)
 
     urls = [("/", "1.0"), ("/imoveis.html", "0.9"), ("/joao-pessoa.html", "0.7"), ("/avaliacao.html", "0.8"),
-            ("/parceiros.html", "0.5"), ("/mercado/", "0.7"), ("/simulador/", "0.7"), ("/privacidade.html", "0.2")]
+            ("/corretor-parceiro.html", "0.5"), ("/parceiros/", "0.7"), ("/mercado/", "0.7"), ("/simulador/", "0.7"), ("/privacidade.html", "0.2")]
+    for par in PARCEIROS:
+        write("parceiros/%s/index.html" % par["slug"], parceiro_page(par))
+        urls.append(("/parceiros/%s/" % par["slug"], "0.6"))
     for p in PROPS:
         write("imovel/%s/index.html" % p["codigo"], property_page(p))
         urls.append(("/imovel/%s/" % p["codigo"], "0.9"))
@@ -771,7 +935,8 @@ def main():
         write("bairro/%s/index.html" % slugify(b), bairro_page(b))
         urls.append(("/bairro/%s/" % slugify(b), "0.8"))
     write("avaliacao.html", avaliacao_page())
-    write("parceiros.html", parceiros_page())
+    write("corretor-parceiro.html", corretor_parceiro_page())
+    write("parceiros/index.html", parceiros_index_page())
     write("simulador/index.html", simulador_page())
     write("privacidade.html", privacidade_page())
     posts = json.loads(read("tools/posts.json"))
@@ -796,6 +961,8 @@ def main():
         for o in olds:
             for s in ("/imovel/%s" % o, "/imovel/%s/" % o):
                 redirects.append({"source": s, "destination": dest, "permanent": True})
+    # a página de corretores parceiros mudou de /parceiros.html para /corretor-parceiro.html
+    redirects.append({"source": "/parceiros.html", "destination": "/corretor-parceiro.html", "permanent": True})
     vercel = {"functions": {"api/send-guia.js": {"includeFiles": "api/_files/*.pdf"}}, "redirects": redirects}
     write("vercel.json", json.dumps(vercel, indent=2) + "\n")
     print("ok: %d imóveis, %d bairros, %d posts, %d urls no sitemap" % (len(PROPS), len(BAIRROS), len(posts), len(urls)))

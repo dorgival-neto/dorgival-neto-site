@@ -134,6 +134,11 @@
       "source": "/imovel/ap0004/",
       "destination": "/imovel/AP0004/",
       "permanent": true
+    },
+    {
+      "source": "/parceiros.html",
+      "destination": "/corretor-parceiro.html",
+      "permanent": true
     }
   ]
 }

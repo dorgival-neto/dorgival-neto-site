@@ -1,0 +1,26 @@
+{
+  "_ajuda": "Cadastro dos parceiros de serviços (página /parceiros/). Para incluir um parceiro: copie um bloco de 'parceiros', troque os dados e coloque as imagens em assets/parceiros/<slug>/ (logo.jpg e servicos.jpg). 'ativo': false esconde o parceiro sem apagar. 'whatsapp' = só números com 55 e DDD. 'servicos' alimenta apenas o texto alternativo da imagem e a descrição para o Google.",
+  "parceiros": [
+    {
+      "slug": "lima-services",
+      "ativo": true,
+      "nome": "Lima Services",
+      "slogan": "Montagens • Reparos • Instalações",
+      "categorias": ["Montador de móveis", "Eletricista", "Bombeiro hidráulico", "Serviços gerais"],
+      "atendimento": "João Pessoa e região",
+      "whatsapp": "5583988672965",
+      "whatsappExibicao": "(83) 98867-2965",
+      "logo": "assets/parceiros/lima-services/logo.jpg",
+      "imagemServicos": "assets/parceiros/lima-services/servicos.jpg",
+      "resumo": "Montagem de móveis, serviços elétricos e hidráulicos, instalações em geral, iluminação e pequenos reparos residenciais.",
+      "servicos": [
+        "Serviços elétricos: troca de tomadas, interruptores, disjuntores, instalação de chuveiros e luminárias",
+        "Serviços hidráulicos: troca de torneiras, sifões, reparo em vazamentos, mecanismo de caixa acoplada",
+        "Montagem de móveis: guarda-roupas, painéis de TV, cômodas, mesas, estantes e cadeiras",
+        "Instalações em geral: suportes para TV, cortinas, persianas, varais, nichos e prateleiras",
+        "Iluminação: lustres, pendentes, plafons, arandelas, refletores",
+        "Pequenos reparos: portas, fechaduras, pinturas, ajustes em móveis e marido de aluguel"
+      ]
+    }
+  ]
+}
