@@ -866,15 +866,21 @@ def mercado_pages(posts):
         path = "/mercado/%s/" % p["slug"]
         art = {"@context": "https://schema.org", "@type": "Article", "headline": p["title"], "datePublished": p["date"],
                "author": {"@type": "Person", "name": "Dorgival Neto"}, "mainEntityOfPage": BASE + path,
-               "image": BASE + "/assets/og-image.jpg"}
+               "image": BASE + p.get("image", "/assets/og-image.jpg")}
+        fig = ""
+        if p.get("image"):
+            assert os.path.exists(os.path.join(ROOT, p["image"].lstrip("/"))), p["image"]
+            fig = '<figure class="post-fig"><img src="%s" alt="%s" width="%s" height="%s"></figure>' % (
+                p["image"], esc(p.get("imageAlt", p["title"])), p.get("imageW", ""), p.get("imageH", ""))
         body = f"""<article class="article">
   <div class="crumbs" style="padding-top:0;"><a href="/mercado/">Mercado</a> › {esc(p['title'])}</div>
   <h1>{esc(p['title'])}</h1>
   <div class="meta">Por Dorgival Neto · {pt_date(p['date'])}</div>
-  {p['body']}
+  {fig}{p['body']}
   <div class="form-dark" style="text-align:center;margin-top:40px;"><h3 style="color:#fff;font-size:22px;">Quer conversar sobre o seu objetivo?</h3><p style="color:#cfcdc6;margin-top:8px;font-size:14px;">Me conte se você quer investir ou morar e eu te mostro as melhores opções.</p><a class="btn btn-gold" style="margin-top:18px;" href="/imoveis.html">Ver imóveis</a></div>
 </article>"""
-        out["mercado/%s/index.html" % p["slug"]] = page(p["title"] + " | Dorgival Neto", p["description"], path, body, active="/mercado/", og_type="article", jsonld=[art])
+        out["mercado/%s/index.html" % p["slug"]] = page(p["title"] + " | Dorgival Neto", p["description"], path, body, active="/mercado/", og_type="article", jsonld=[art],
+                                                  image=p.get("image", "/assets/og-image.jpg"))
     return out
 
 
