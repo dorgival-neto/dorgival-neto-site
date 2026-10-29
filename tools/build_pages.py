@@ -849,6 +849,16 @@ def pt_date(iso):
     return "%d de %s de %s" % (int(d), meses[int(m) - 1], y)
 
 
+def post_cta(c):
+    """Quadro escuro no fim da notícia, apontando para a seção do site ligada ao assunto (campo 'cta' em posts.json)."""
+    for k in ("title", "text", "label", "href"):
+        assert c.get(k), "cta sem %s" % k
+    second = ('<a class="btn btn-outline-gold" href="%s">%s</a>' % (c["href2"], esc(c["label2"]))) if c.get("href2") else ""
+    return ('<div class="form-dark" style="text-align:center;margin-top:40px;"><h3 style="color:#fff;font-size:22px;">%s</h3>'
+            '<p style="color:#cfcdc6;margin-top:8px;font-size:14px;">%s</p>'
+            '<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:18px;"><a class="btn btn-gold" href="%s">%s</a>%s</div></div>') % (esc(c["title"]), esc(c["text"]), c["href"], esc(c["label"]), second)
+
+
 def mercado_pages(posts):
     out = {}
     cards = "".join('<a class="post-card" href="/mercado/%s/"><div class="meta" style="margin:0 0 6px;color:var(--gray);font-size:12px;">%s</div><h3>%s</h3><p>%s</p></a>' % (
@@ -877,7 +887,7 @@ def mercado_pages(posts):
   <h1>{esc(p['title'])}</h1>
   <div class="meta">Por Dorgival Neto · {pt_date(p['date'])}</div>
   {fig}{p['body']}
-  <div class="form-dark" style="text-align:center;margin-top:40px;"><h3 style="color:#fff;font-size:22px;">Quer conversar sobre o seu objetivo?</h3><p style="color:#cfcdc6;margin-top:8px;font-size:14px;">Me conte se você quer investir ou morar e eu te mostro as melhores opções.</p><a class="btn btn-gold" style="margin-top:18px;" href="/imoveis.html">Ver imóveis</a></div>
+  {post_cta(p['cta'])}
 </article>"""
         out["mercado/%s/index.html" % p["slug"]] = page(p["title"] + " | Dorgival Neto", p["description"], path, body, active="/mercado/", og_type="article", jsonld=[art],
                                                   image=p.get("image", "/assets/og-image.jpg"))
