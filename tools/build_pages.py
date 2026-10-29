@@ -601,8 +601,8 @@ def parceiro_page(par):
         <span class="par-label">Atendimento</span>
         <div style="font-size:14.5px;margin-top:4px;">📍 {esc(par['atendimento'])}</div>
         <div class="par-pickbox">
-          <div class="par-pick-title">👇 Escolha o serviço que você precisa</div>
-          <div class="par-pick-hint">Toque em uma opção para ela ir já escrita na sua mensagem de WhatsApp (opcional).</div>
+          <div class="par-pick-title">👇 Escolha os serviços que você precisa</div>
+          <div class="par-pick-hint">Você pode marcar mais de uma opção. Elas vão já escritas na sua mensagem de WhatsApp (opcional).</div>
           <div class="par-pick" id="parPick">{picks}</div>
         </div>
         <div class="par-actions">
@@ -620,20 +620,26 @@ def parceiro_page(par):
 </div>"""
     js = """<script>
 (function(){
-  var PAR = __PAR__, sel = '';
+  var PAR = __PAR__, sel = [];
   var wa = document.getElementById('parWa');
-  function msg(){
-    return 'Olá, ' + PAR.nome + '! Vim através da indicação do corretor Dorgival Neto, pela página de parceiros do site dorgivalneto.com.br. ' + (sel ? 'Preciso de: ' + sel + '. ' : '') + 'Gostaria de pedir um orçamento.';
+  function lista(){
+    return sel.length > 1 ? sel.slice(0, -1).join(', ') + ' e ' + sel[sel.length - 1] : sel.join('');
   }
-  document.querySelectorAll('#parPick .tab').forEach(function(t){ t.onclick = function(){
-    var s = t.getAttribute('data-s'); sel = (sel === s) ? '' : s;
-    document.querySelectorAll('#parPick .tab').forEach(function(x){
-      var on = x.getAttribute('data-s') === sel;
+  function msg(){
+    return 'Olá, ' + PAR.nome + '! Vim através da indicação do corretor Dorgival Neto, pela página de parceiros do site dorgivalneto.com.br. ' + (sel.length ? 'Preciso de: ' + lista() + '. ' : '') + 'Gostaria de pedir um orçamento.';
+  }
+  var tabs = document.querySelectorAll('#parPick .tab');
+  tabs.forEach(function(t){ t.onclick = function(){
+    var s = t.getAttribute('data-s'), i = sel.indexOf(s);
+    if (i > -1) sel.splice(i, 1); else sel.push(s);
+    sel = Array.prototype.map.call(tabs, function(x){ return x.getAttribute('data-s'); }).filter(function(v){ return sel.indexOf(v) > -1; });
+    tabs.forEach(function(x){
+      var on = sel.indexOf(x.getAttribute('data-s')) > -1;
       x.classList.toggle('active', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); x.firstChild.textContent = on ? '✓' : '+';
     });
     wa.href = 'https://wa.me/' + PAR.whatsapp + '?text=' + encodeURIComponent(msg());
   }; });
-  wa.addEventListener('click', function(){ DN.track('parceiro_whatsapp', { parceiro: PAR.slug, servico: sel || 'geral', origem: 'pagina' }); });
+  wa.addEventListener('click', function(){ DN.track('parceiro_whatsapp', { parceiro: PAR.slug, servico: sel.length ? sel.join(', ') : 'geral', origem: 'pagina' }); });
   document.getElementById('parShare').onclick = function(){
     var url = location.origin + '/parceiros/' + PAR.slug + '/', data = { title: PAR.nome + ' — parceiro de Dorgival Neto', text: PAR.nome + ' — ' + PAR.slogan, url: url };
     DN.track('share', { item_id: PAR.slug, method: 'parceiro' });
