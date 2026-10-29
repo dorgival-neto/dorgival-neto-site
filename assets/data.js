@@ -180,7 +180,7 @@ const PROPERTIES = [
     trilhas: ["morar"],
     titulo: "360 House — 3 suítes e 145m² em Tambaú",
     tipo: "Venda",
-    status: "Alto padrão",
+    status: "Pronto para morar",
     bairro: "Tambaú",
     cidade: "João Pessoa",
     preco: 1780000,
@@ -189,6 +189,7 @@ const PROPERTIES = [
     quartos: 3,
     suites: 3,
     banheiros: 4,
+    vagas: 2,
     descricao: "O espaço de uma casa, a vista dos seus sonhos. Localizado em Tambaú, o 360 House é um empreendimento único, inteligente e diferenciado, com localização privilegiada. Traz a comodidade e a sensação de morar em uma casa, com toda a segurança e a estrutura de um empreendimento de alto padrão. Além da exclusividade de ser um apartamento por andar, tem grandes esquadrias para ventilação e iluminação naturais, todos os quartos voltados para o leste e espaços amplos. São 145m² com 3 suítes (1 master), sala ampla para 2 ambientes, varanda gourmet, cozinha, lavabo, área de serviço e DCE completo (o cliente pode optar por não ter o DCE). O empreendimento tem 2 elevadores, sendo o social com acesso por biometria, áreas comuns com acesso por biometria, placas de energia solar para alimentar as áreas comuns, guarda-volumes, academia, piscina adulto e infantil, salão de festas, playground e snooker bar. * Disponibilidade e valores sujeitos a alteração sem aviso prévio.",
     diferenciais: ["Um apartamento por andar","3 suítes (1 master)","Varanda gourmet","DCE completo (opcional)","Quartos voltados para o leste","Elevador social com biometria","Energia solar nas áreas comuns","Piscina adulto e infantil","Academia","Snooker bar","Salão de festas","Playground","Guarda-volumes"],
     fotos: [
