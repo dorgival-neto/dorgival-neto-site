@@ -1,5 +1,5 @@
 {
-  "_ajuda": "Cadastro dos parceiros de serviços (página /parceiros/). Para incluir um parceiro: copie um bloco de 'parceiros', troque os dados e coloque as imagens em assets/parceiros/<slug>/ (logo.jpg e servicos.jpg). 'ativo': false esconde o parceiro sem apagar. 'whatsapp' = só números com 55 e DDD. 'servicos' alimenta apenas o texto alternativo da imagem e a descrição para o Google.",
+  "_ajuda": "Cadastro dos parceiros de serviços (página /parceiros/). Para incluir um parceiro: copie um bloco de 'parceiros', troque os dados e coloque as imagens em assets/parceiros/<slug>/ (logo.jpg e servicos.jpg). 'ativo': false esconde o parceiro sem apagar. 'whatsapp' = só números com 55 e DDD. 'opcoes' (opcional) são os serviços que o cliente marca na página do parceiro; se faltar, usa 'categorias'. 'servicos' alimenta apenas o texto alternativo da imagem e a descrição para o Google.",
   "parceiros": [
     {
       "slug": "lima-services",
@@ -20,6 +20,29 @@
         "Instalações em geral: suportes para TV, cortinas, persianas, varais, nichos e prateleiras",
         "Iluminação: lustres, pendentes, plafons, arandelas, refletores",
         "Pequenos reparos: portas, fechaduras, pinturas, ajustes em móveis e marido de aluguel"
+      ]
+    },
+    {
+      "slug": "alpha-gesso",
+      "ativo": true,
+      "nome": "Alpha Gesso",
+      "slogan": "Gesso • Drywall • Acabamentos",
+      "categorias": ["Gesso e drywall"],
+      "opcoes": ["Forro de gesso", "Parede em drywall", "Sancas e cortineiros", "Divisória em drywall", "Boiserie de gesso", "Molduras e acabamentos", "Chafé e suportes de carga"],
+      "atendimento": "João Pessoa e região",
+      "whatsapp": "5583999635935",
+      "whatsappExibicao": "(83) 99963-5935",
+      "logo": "assets/parceiros/alpha-gesso/logo.jpg",
+      "imagemServicos": "assets/parceiros/alpha-gesso/servicos.jpg",
+      "resumo": "Projetos, execução e acabamento em gesso e drywall, do residencial ao comercial: forros, paredes, divisórias, sancas, cortineiros, boiserie e molduras.",
+      "servicos": [
+        "Forros de gesso: forro liso e soluções personalizadas",
+        "Paredes em drywall: paredes simples e com chapa dupla",
+        "Sancas e cortineiros: detalhes para valorizar a iluminação e o ambiente",
+        "Divisórias em drywall: soluções para dividir e organizar ambientes",
+        "Boiserie de gesso: revestimentos decorativos para paredes",
+        "Molduras e acabamentos: detalhes e finalizações em gesso",
+        "Chafé e suportes de carga: execução e instalação conforme a necessidade da obra"
       ]
     }
   ]

@@ -584,7 +584,7 @@ def parceiros_index_page():
 def parceiro_page(par):
     path = "/parceiros/%s/" % par["slug"]
     cover = "/" + par["logo"]
-    picks = "".join('<button type="button" class="tab" aria-pressed="false" data-s="%s"><span class="mark">+</span>%s</button>' % (esc(c), esc(c)) for c in par["categorias"])
+    picks = "".join('<button type="button" class="tab" aria-pressed="false" data-s="%s"><span class="mark">+</span>%s</button>' % (esc(c), esc(c)) for c in par.get("opcoes", par["categorias"]))
     alt = "Serviços da %s: %s" % (par["nome"], "; ".join(par["servicos"]))
     others = [p for p in PARCEIROS if p["slug"] != par["slug"]]
     more = ('<div class="p-section" style="margin-bottom:70px;"><h2>Outros parceiros</h2><div class="grid">%s</div></div>' % "".join(par_card(p) for p in others[:3])) if others else ""
