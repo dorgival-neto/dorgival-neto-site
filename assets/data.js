@@ -9,6 +9,8 @@
      Prefixos: AP apartamento, FL flat, TE terreno, CA casa, SL sala comercial,
      CO cobertura, GD garden. É também o endereço da página (/imovel/AP0001/) e o
      nome da pasta das fotos (assets/imoveis/AP0001/): não mude depois de divulgar
+   - titulo_en / titulo_es: título nas páginas em inglês e espanhol (/en/ e /es/);
+     se faltar, aparece o título em português
    - exclusivo (opcional): true mostra a tag "Exclusividade" (imóvel só meu).
      Nos demais, NÃO cite nome do empreendimento, construtora, arquiteto, rua,
      número da unidade ou pontos de referência exatos (evita captação por terceiros)
@@ -46,6 +48,8 @@ const PROPERTIES = [
       unidadeRef: "Preço e metragem da unidade de 2 quartos (66,43m²)"
     },
     titulo: "Lançamento 2 quartos com varanda integrada — Bessa",
+    titulo_en: "New launch: 2-bedroom with integrated balcony — Bessa",
+    titulo_es: "Lanzamiento de 2 dormitorios con balcón integrado — Bessa",
     tipo: "Venda",
     status: "Lançamento",
     bairro: "Bessa",
@@ -86,6 +90,8 @@ const PROPERTIES = [
     categoria: "Apartamento",
     trilhas: ["morar"],
     titulo: "Apartamento reformado 3 quartos — Bancários",
+    titulo_en: "Renovated 3-bedroom apartment — Bancários",
+    titulo_es: "Apartamento renovado de 3 dormitorios — Bancários",
     tipo: "Venda",
     status: "Pronto para morar",
     bairro: "Bancários",
@@ -121,6 +127,8 @@ const PROPERTIES = [
     categoria: "Apartamento",
     trilhas: ["morar"],
     titulo: "Apartamento 3 quartos com varanda — Bancários",
+    titulo_en: "3-bedroom apartment with balcony — Bancários",
+    titulo_es: "Apartamento de 3 dormitorios con balcón — Bancários",
     tipo: "Venda",
     status: "Pronto para morar",
     bairro: "Bancários",
@@ -153,6 +161,8 @@ const PROPERTIES = [
     categoria: "Sala comercial",
     trilhas: ["investir"],
     titulo: "Sala comercial 27m² porteira fechada — Jardim Oceania",
+    titulo_en: "27 m² turnkey commercial office — Jardim Oceania",
+    titulo_es: "Oficina comercial de 27 m² lista para operar — Jardim Oceania",
     tipo: "Venda",
     status: "Porteira fechada",
     bairro: "Jardim Oceania",
@@ -185,6 +195,8 @@ const PROPERTIES = [
     categoria: "Apartamento",
     trilhas: ["morar"],
     titulo: "Apartamento 3 suítes e 145m² — Tambaú",
+    titulo_en: "3-suite apartment, 145 m² — Tambaú",
+    titulo_es: "Apartamento de 3 suites, 145 m² — Tambaú",
     tipo: "Venda",
     status: "Pronto para morar",
     bairro: "Tambaú",

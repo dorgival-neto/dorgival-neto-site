@@ -7,23 +7,43 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   };
+  // idioma da página (<html lang>): pt (padrão), en ou es — usado nas páginas /en/ e /es/
+  var LANG = (document.documentElement.lang || 'pt').slice(0, 2).toLowerCase();
+  if (LANG !== 'en' && LANG !== 'es') LANG = 'pt';
+  DN.lang = LANG;
+  var LOCALE = { pt: 'pt-BR', en: 'en-US', es: 'es-CL' }[LANG];
+  var TXT = {
+    pt: { from: 'a partir de ', month: '/mês', book: 'Agendar apresentação', hi: 'Olá Dorgival! Tenho interesse no imóvel ',
+          ask: ', e gostaria de agendar uma apresentação do empreendimento e receber informações sobre os valores de investimento', saw: '. Vi no seu site: ', excl: 'Exclusividade' },
+    en: { from: 'from ', month: '/month', book: 'Schedule a presentation', hi: "Hello Dorgival! I'm interested in property ",
+          ask: ', and I would like to schedule a presentation of the development and receive information about investment values', saw: '. I saw it on your website: ', excl: 'Exclusive' },
+    es: { from: 'desde ', month: '/mes', book: 'Agendar una presentación', hi: '¡Hola Dorgival! Me interesa el inmueble ',
+          ask: ', y me gustaría agendar una presentación del emprendimiento y recibir información sobre los valores de inversión', saw: '. Lo vi en tu sitio web: ', excl: 'Exclusividad' }
+  }[LANG];
+  var STATUS = {
+    en: { 'Lançamento': 'Launch', 'Na planta': 'Off-plan', 'Em construção': 'Under construction', 'Pronto para morar': 'Ready to move in', 'Porteira fechada': 'Turnkey' },
+    es: { 'Lançamento': 'Lanzamiento', 'Na planta': 'En planos', 'Em construção': 'En construcción', 'Pronto para morar': 'Listo para habitar', 'Porteira fechada': 'Llave en mano' }
+  }[LANG] || {};
+  DN.title = function (p) { return p['titulo_' + LANG] || p.titulo; };
+  DN.statusLabel = function (p) { return STATUS[p.status] || p.status; };
   DN.money = function (v) {
-    return Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+    var n = Number(v || 0);
+    if (LANG === 'pt') return n.toLocaleString(LOCALE, { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+    return 'R$ ' + n.toLocaleString(LOCALE, { maximumFractionDigits: 0 });
   };
   DN.url = function (p) { return '/imovel/' + p.codigo + '/'; };
   DN.wa = function (msg) { return 'https://wa.me/' + cfg().whatsapp + '?text=' + encodeURIComponent(msg); };
   DN.price = function (p) {
-    var pre = p.investimento && p.investimento.aPartirDe ? 'a partir de ' : '';
-    return pre + DN.money(p.preco) + (p.tipo === 'Aluguel' ? '/mês' : '');
+    var pre = p.investimento && p.investimento.aPartirDe ? TXT.from : '';
+    return pre + DN.money(p.preco) + (p.tipo === 'Aluguel' ? TXT.month : '');
   };
   // só lançamento / na planta / em construção tem book e tabela de vendas
   DN.hasBook = function (p) { return ['Lançamento', 'Na planta', 'Em construção'].indexOf(p.status) !== -1; };
   // mensagem de WhatsApp com código, dados e link direto do imóvel (igual a wa_imovel em build_pages.py)
   DN.waImovel = function (p) {
     var site = cfg().siteUrl || location.origin;
-    return DN.wa('Olá Dorgival! Tenho interesse no imóvel ' + p.codigo + ' (' + p.titulo + '), ' + DN.price(p) +
-      (DN.hasBook(p) ? ', e gostaria de agendar uma apresentação do empreendimento e receber informações sobre os valores de investimento' : '') +
-      '. Vi no seu site: ' + site + DN.url(p));
+    return DN.wa(TXT.hi + p.codigo + ' (' + DN.title(p) + '), ' + DN.price(p) +
+      (DN.hasBook(p) ? TXT.ask : '') + TXT.saw + site + DN.url(p));
   };
   DN.trilhaLabel = { investir: 'Para investir', morar: 'Para morar' };
 
@@ -90,7 +110,7 @@
     opts = opts || {};
     var foto = (p.fotos && p.fotos[0]) || '';
     var chips = investChips(p).map(function (c) { return '<span class="card-chip">' + DN.esc(c) + '</span>'; }).join('');
-    var tr = (p.exclusivo ? '<span class="card-track excl">Exclusividade</span>' : '') +
+    var tr = (p.exclusivo ? '<span class="card-track excl">' + TXT.excl + '</span>' : '') +
       (p.trilhas || []).map(function (t) { return '<span class="card-track">' + DN.trilhaLabel[t] + '</span>'; }).join('');
     var fav = DN.isFav(p.id) ? ' on' : '';
     return '<article class="card" data-id="' + p.id + '">' +
@@ -121,13 +141,13 @@
   DN.teaserHTML = function (p) {
     var foto = (p.fotos && p.fotos[0]) || '';
     return '<div class="cat-card">' +
-      '<a class="cat-link" href="' + DN.url(p) + '" aria-label="' + DN.esc(p.titulo) + '"></a>' +
-      '<img src="/' + foto + '" alt="' + DN.esc(p.titulo) + '" loading="lazy">' +
+      '<a class="cat-link" href="' + DN.url(p) + '" aria-label="' + DN.esc(DN.title(p)) + '"></a>' +
+      '<img src="/' + foto + '" alt="' + DN.esc(DN.title(p)) + '" loading="lazy">' +
       '<div class="overlay">' +
-      '<span class="tag">' + DN.esc(p.status) + ' · ' + DN.esc(p.codigo) + '</span>' +
+      '<span class="tag">' + DN.esc(DN.statusLabel(p)) + ' · ' + DN.esc(p.codigo) + '</span>' +
       '<div class="price">' + DN.esc(DN.price(p)) + '</div>' +
       '<div class="loc">' + DN.esc(p.bairro) + ' · ' + DN.esc(p.cidade) + '</div>' +
-      (DN.hasBook(p) ? '<a class="cat-book" data-book="' + p.id + '" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener">Agendar apresentação</a>' : '') +
+      (DN.hasBook(p) ? '<a class="cat-book" data-book="' + p.id + '" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener">' + TXT.book + '</a>' : '') +
       '</div></div>';
   };
 

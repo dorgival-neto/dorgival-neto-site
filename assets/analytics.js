@@ -35,12 +35,17 @@
     var box = document.createElement('div');
     box.className = 'cookie-banner';
     box.setAttribute('role', 'dialog');
-    box.setAttribute('aria-label', 'Aviso de cookies');
+    var L = {
+      pt: ['Aviso de cookies', 'Uso cookies de medição para entender como o site é usado e melhorar a sua experiência. Você pode aceitar ou recusar — o site funciona igual. ', 'Política de Privacidade', 'Aceitar', 'Recusar'],
+      en: ['Cookie notice', 'I use measurement cookies to understand how the site is used and to improve your experience. You can accept or decline — the site works the same. ', 'Privacy Policy (in Portuguese)', 'Accept', 'Decline'],
+      es: ['Aviso de cookies', 'Uso cookies de medición para entender cómo se usa el sitio y mejorar tu experiencia. Puedes aceptar o rechazar: el sitio funciona igual. ', 'Política de Privacidad (en portugués)', 'Aceptar', 'Rechazar']
+    }[DN.lang || 'pt'] || null;
+    if (!L) L = ['Aviso de cookies', 'Uso cookies de medição para entender como o site é usado e melhorar a sua experiência. Você pode aceitar ou recusar — o site funciona igual. ', 'Política de Privacidade', 'Aceitar', 'Recusar'];
+    box.setAttribute('aria-label', L[0]);
     box.innerHTML =
-      '<p>Uso cookies de medição para entender como o site é usado e melhorar a sua experiência. ' +
-      'Você pode aceitar ou recusar — o site funciona igual. <a href="/privacidade.html">Política de Privacidade</a></p>' +
-      '<div class="cookie-actions"><button type="button" class="btn btn-gold btn-sm" data-c="granted">Aceitar</button>' +
-      '<button type="button" class="btn btn-outline btn-sm" data-c="denied">Recusar</button></div>';
+      '<p>' + L[1] + '<a href="/privacidade.html">' + L[2] + '</a></p>' +
+      '<div class="cookie-actions"><button type="button" class="btn btn-gold btn-sm" data-c="granted">' + L[3] + '</button>' +
+      '<button type="button" class="btn btn-outline btn-sm" data-c="denied">' + L[4] + '</button></div>';
     box.addEventListener('click', function (e) {
       var v = e.target.getAttribute && e.target.getAttribute('data-c');
       if (!v) return;

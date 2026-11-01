@@ -163,7 +163,7 @@ def nav_inner(active=""):
         ("/joao-pessoa.html", "João Pessoa"),
         ("/#depoimentos", "Depoimentos"),
         ("/#quemsou", "Quem sou eu"),
-        ("/mercado/", "Mercado"),
+        ("/mercado/", "Notícias e Mercado"),
         ("/parceiros/", "Parceiros"),
     ]
     out = []
@@ -180,14 +180,14 @@ def foot_links():
         ("/avaliacao.html", "Avalie seu imóvel"),
         ("/parceiros/", "Parceiros de serviços"),
         ("/corretor-parceiro.html", "Sou corretor parceiro"),
-        ("/mercado/", "Mercado"),
+        ("/mercado/", "Notícias e Mercado"),
         ("/simulador/", "Simulador de investimento"),
         ("/#guia", "Guia de compra"),
     ] + [("/bairro/%s/" % slugify(b), "Imóveis em %s" % b) for b in BAIRROS] + [("/privacidade.html", "Privacidade")]
     return "".join('<a href="%s">%s</a>' % l for l in links)
 
 
-def seo_block(title, desc, path, image="/assets/og-image.jpg", noindex=False, og_type="website", jsonld=None):
+def seo_block(title, desc, path, image="/assets/og-image.jpg", noindex=False, og_type="website", jsonld=None, locale="pt_BR", alternates=None):
     url = BASE + path
     img = image if image.startswith("http") else BASE + image
     lines = [
@@ -195,6 +195,8 @@ def seo_block(title, desc, path, image="/assets/og-image.jpg", noindex=False, og
         '<meta name="description" content="%s">' % esc(desc),
         '<link rel="canonical" href="%s">' % url,
     ]
+    for hl, href in (alternates or []):
+        lines.append('<link rel="alternate" hreflang="%s" href="%s">' % (hl, BASE + href))
     if noindex:
         lines.append('<meta name="robots" content="noindex, follow">')
     lines += [
@@ -203,7 +205,7 @@ def seo_block(title, desc, path, image="/assets/og-image.jpg", noindex=False, og
         '<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">',
         '<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">',
         '<meta property="og:type" content="%s">' % og_type,
-        '<meta property="og:locale" content="pt_BR">',
+        '<meta property="og:locale" content="%s">' % locale,
         '<meta property="og:site_name" content="Dorgival Neto">',
         '<meta property="og:title" content="%s">' % esc(title),
         '<meta property="og:description" content="%s">' % esc(desc),
@@ -232,31 +234,54 @@ _SVG = {
     "instagram": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17.3" cy="6.7" r="0.9" fill="currentColor" stroke="none"/></svg>',
     "linkedin": '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>',
     "email": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 6.5l8 6.5 8-6.5"/></svg>',
+    "maps": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 21.5s7-6.1 7-11.8a7 7 0 0 0-14 0c0 5.7 7 11.8 7 11.8z"/><circle cx="12" cy="9.7" r="2.6"/></svg>',
+}
+
+# bandeiras redondas do seletor de idioma
+_FLAG = {
+    "pt": '<svg viewBox="0 0 36 36"><defs><clipPath id="fl-pt"><circle cx="18" cy="18" r="18"/></clipPath></defs><g clip-path="url(#fl-pt)"><rect width="36" height="36" fill="#009c3b"/><polygon points="18,5 33,18 18,31 3,18" fill="#ffdf00"/><circle cx="18" cy="18" r="6.6" fill="#002776"/><path d="M11.8 16.4c4.2-1.1 8.7-.7 12.4 1.6" stroke="#fff" stroke-width="1.3" fill="none"/></g></svg>',
+    "en": '<svg viewBox="0 0 36 36"><defs><clipPath id="fl-en"><circle cx="18" cy="18" r="18"/></clipPath></defs><g clip-path="url(#fl-en)"><rect width="36" height="36" fill="#fff"/><g fill="#b22234"><rect y="0" width="36" height="2.77"/><rect y="5.54" width="36" height="2.77"/><rect y="11.08" width="36" height="2.77"/><rect y="16.62" width="36" height="2.77"/><rect y="22.16" width="36" height="2.77"/><rect y="27.7" width="36" height="2.77"/><rect y="33.23" width="36" height="2.77"/></g><rect width="17" height="19.4" fill="#3c3b6e"/><g fill="#fff"><circle cx="4" cy="4" r="1"/><circle cx="8.5" cy="4" r="1"/><circle cx="13" cy="4" r="1"/><circle cx="6.2" cy="8.5" r="1"/><circle cx="10.8" cy="8.5" r="1"/><circle cx="4" cy="13" r="1"/><circle cx="8.5" cy="13" r="1"/><circle cx="13" cy="13" r="1"/><circle cx="6.2" cy="17" r="1"/><circle cx="10.8" cy="17" r="1"/></g></g></svg>',
+    "es": '<svg viewBox="0 0 36 36"><defs><clipPath id="fl-es"><circle cx="18" cy="18" r="18"/></clipPath></defs><g clip-path="url(#fl-es)"><rect width="36" height="36" fill="#aa151b"/><rect y="9" width="36" height="18" fill="#f1bf00"/></g></svg>',
+}
+_LANG_LINKS = [("pt", "/", "Português", "pt-BR"), ("en", "/en/", "English", "en"), ("es", "/es/", "Español", "es")]
+_FOOT_I18N = {
+    "pt": dict(label="Idioma do site", addr="Atendimento presencial na Invista Imóveis", rights="Todos os direitos reservados.", maps="Localização no Google Maps"),
+    "en": dict(label="Site language", addr="In-person service at Invista Imóveis", rights="All rights reserved.", maps="Location on Google Maps"),
+    "es": dict(label="Idioma del sitio", addr="Atención presencial en Invista Imóveis", rights="Todos los derechos reservados.", maps="Ubicación en Google Maps"),
 }
 
 
-def footer_html(style=""):
+def footer_html(style="", lang="pt"):
     """Rodapé único do site inteiro (gerado aqui e aplicado também às páginas escritas à mão)."""
-    soc = [("WhatsApp", wa_link("Olá Dorgival! Vim pelo site e gostaria de falar com você."), "whatsapp", True),
+    t = _FOOT_I18N[lang]
+    msg = {"pt": "Olá Dorgival! Vim pelo site e gostaria de falar com você.",
+           "en": "Hello Dorgival! I found your website and would like to talk to you.",
+           "es": "¡Hola Dorgival! Vi tu sitio web y me gustaría hablar contigo."}[lang]
+    soc = [("WhatsApp", wa_link(msg), "whatsapp", True),
            ("Instagram", INSTAGRAM, "instagram", True), ("LinkedIn", LINKEDIN, "linkedin", True),
-           ("E-mail", "mailto:" + EMAIL, "email", False)]
+           ("E-mail", "mailto:" + EMAIL, "email", False),
+           (t["maps"], INVISTA_MAPA, "maps", True)]
     icons = "".join('<a href="%s" aria-label="%s" title="%s"%s>%s</a>' % (
         h, n, n, ' target="_blank" rel="noopener"' if ext else "", _SVG[k]) for n, h, k, ext in soc)
+    flags = "".join('<a href="%s" hreflang="%s" lang="%s" aria-label="%s" title="%s"%s>%s</a>' % (
+        href, hl, hl, nm, nm, ' class="cur" aria-current="true"' if code == lang else "", _FLAG[code]) for code, href, nm, hl in _LANG_LINKS)
+    links = foot_links() if lang == "pt" else '<a href="/privacidade.html">%s</a>' % {"en": "Privacy Policy (in Portuguese)", "es": "Política de Privacidad (en portugués)"}[lang]
     st = (' style="%s"' % style) if style else ""
     return f"""<footer class="site-footer"{st}>
   <div class="wrap" style="text-align:center;">
     <img class="logo" src="/assets/logo-branco.png" alt="Dorgival Neto" style="margin:0 auto 16px;">
     <div class="foot-social">{icons}</div>
-    <p class="foot-addr">Atendimento presencial na Invista Imóveis<br>{INVISTA_END} · <a href="{INVISTA_MAPA}" target="_blank" rel="noopener">Ver no mapa</a></p>
-    <div class="foot-links"><!--FOOTLINKS-->{foot_links()}<!--/FOOTLINKS--></div>
-    <div class="foot-bottom"><div>© Dorgival Neto Negócios Imobiliários Ltda.</div><div>CRECI 17191-F | CNAI 52963</div><div>Todos os direitos reservados.</div></div>
+    <p class="foot-addr">{t['addr']}<br>{INVISTA_END}</p>
+    <div class="foot-lang"><span>{t['label']}</span><div>{flags}</div></div>
+    <div class="foot-links"><!--FOOTLINKS-->{links}<!--/FOOTLINKS--></div>
+    <div class="foot-bottom"><div>© Dorgival Neto Negócios Imobiliários Ltda.</div><div>CRECI 17191-F | CNAI 52963</div><div>{t['rights']}</div></div>
   </div>
 </footer>"""
 
 
-def page(title, desc, path, body, scripts="", extra_head="", active="", **seo):
+def page(title, desc, path, body, scripts="", extra_head="", active="", lang="pt-BR", nav_html=None, foot_html=None, home_href="/", fab_msg=None, **seo):
     return f"""<!doctype html>
-<html lang="pt-BR">
+<html lang="{lang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -268,9 +293,9 @@ def page(title, desc, path, body, scripts="", extra_head="", active="", **seo):
 
 <header class="site-nav">
   <div class="nav-inner">
-    <a href="/"><img class="logo" src="/assets/logo-branco.png" alt="Dorgival Neto"></a>
+    <a href="{home_href}"><img class="logo" src="/assets/logo-branco.png" alt="Dorgival Neto"></a>
     <nav class="nav-links" id="navLinks">
-      {nav_inner(active)}
+      {nav_html or nav_inner(active)}
     </nav>
     <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
   </div>
@@ -278,9 +303,9 @@ def page(title, desc, path, body, scripts="", extra_head="", active="", **seo):
 
 {body}
 
-<a id="fabWa" class="fab-wa" href="{wa_link('Olá Dorgival! Vim pelo site e gostaria de falar com você.')}" target="_blank" rel="noopener">💬 WhatsApp</a>
+<a id="fabWa" class="fab-wa" href="{wa_link(fab_msg or 'Olá Dorgival! Vim pelo site e gostaria de falar com você.')}" target="_blank" rel="noopener">💬 WhatsApp</a>
 
-{footer_html()}
+{foot_html or footer_html()}
 
 {CORE_JS}
 {scripts}
@@ -942,7 +967,7 @@ def mercado_pages(posts):
     cards = "".join('<a class="post-card" href="/mercado/%s/"><div class="meta" style="margin:0 0 6px;color:var(--gray);font-size:12px;">%s</div><h3>%s</h3><p>%s</p></a>' % (
         p["slug"], pt_date(p["date"]), esc(p["title"]), esc(p["description"])) for p in sorted(posts, key=lambda x: x["date"], reverse=True))
     body = f"""<div class="article" style="max-width:880px;">
-  <span class="eyebrow">Mercado</span>
+  <span class="eyebrow">Notícias e Mercado</span>
   <h1>O mercado imobiliário de João Pessoa</h1>
   <p>Análises e indicadores para quem quer comprar, vender ou investir com mais segurança.</p>
   <div class="post-list">{cards}</div>
@@ -961,7 +986,7 @@ def mercado_pages(posts):
             fig = '<figure class="post-fig"><img src="%s" alt="%s" width="%s" height="%s"></figure>' % (
                 p["image"], esc(p.get("imageAlt", p["title"])), p.get("imageW", ""), p.get("imageH", ""))
         body = f"""<article class="article">
-  <div class="crumbs" style="padding-top:0;"><a href="/mercado/">Mercado</a> › {esc(p['title'])}</div>
+  <div class="crumbs" style="padding-top:0;"><a href="/mercado/">Notícias e Mercado</a> › {esc(p['title'])}</div>
   <h1>{esc(p['title'])}</h1>
   <div class="meta">Por Dorgival Neto · {pt_date(p['date'])}</div>
   {fig}{p['body']}
@@ -975,7 +1000,7 @@ def mercado_pages(posts):
 # ------------------------------------------------------------------ páginas escritas à mão
 STATIC = {
     "index.html": dict(
-        path="/", active="/",
+        path="/", active="/", alternates=True,
         title="Corretor de Imóveis em João Pessoa | Dorgival Neto — CRECI 17191-F",
         desc="Administrador, corretor, perito e avaliador imobiliário em João Pessoa. Imóveis de médio e alto padrão, lançamentos e investimento. CRECI 17191-F · CNAI 52963.",
         jsonld=True),
@@ -1004,12 +1029,75 @@ AGENT_LD = {
 }
 
 
+HOME_ALTS = [("pt-BR", "/"), ("en", "/en/"), ("es", "/es/"), ("x-default", "/")]
+
+
+def home_i18n(lang):
+    """Gera /en/ e /es/ a partir do index.html (texto em português trocado pelas traduções de tools/i18n_home.py)."""
+    import i18n_home as I
+    col = {"en": 1, "es": 2}[lang]
+    ui = I.UI[lang]
+    h = read("index.html").replace("\r\n", "\n")
+    a = h.index('<section class="hero"')
+    b = h.index("<!-- MODAL GUIA -->")
+    body = h[a:b]
+    # sem o guia em PDF (só existe em português) nem o atalho para ele
+    body = re.sub(r"<!-- GUIA DE COMPRA -->.*?</section>\n\n", "", body, count=1, flags=re.S)
+    body, n = re.subn(r'\s*<a class="btn btn-outline" href="joao-pessoa.html#guiaJP">[^<]*</a>', "", body)
+    assert n == 1, "atalho do guia de João Pessoa não encontrado"
+    # caminhos absolutos (as páginas ficam em /en/ e /es/)
+    for old, new in (('src="assets/', 'src="/assets/'), ('poster="assets/', 'poster="/assets/'), ('href="imoveis.html"', 'href="/imoveis.html"'),
+                     ('href="joao-pessoa.html"', 'href="/joao-pessoa.html"'), ('href="depoimento.html"', 'href="/depoimento.html"')):
+        assert old in body, old
+        body = body.replace(old, new)
+    # depoimentos (traduzidos do original), na ordem
+    cards = list(re.finditer(r'(<div class="testi-card">.*?<p>)(.*?)(</p>)', body, flags=re.S))
+    assert len(cards) == len(I.QUOTES), (len(cards), len(I.QUOTES))
+    for m, q in reversed(list(zip(cards, I.QUOTES))):
+        body = body[:m.start(2)] + q[col - 1] + body[m.end(2):]
+    for row in I.REPLACE:
+        pt, tr = row[0], row[col]
+        assert pt in body, "texto da home mudou; tradução órfã: " + pt[:70]
+        body = body.replace(pt, tr)
+    body = body.replace('<p class="center" style="margin-top:38px;color:var(--gray)', '<p class="center" style="margin-top:38px;color:var(--gray)')
+    body = body.replace('<a class="btn btn-gold" href="/imoveis.html">%s</a>' % ("View all properties" if lang == "en" else "Ver todos los inmuebles"),
+                        '<a class="btn btn-gold" href="/imoveis.html">%s</a>\n      <p style="color:var(--gray);font-size:12.5px;margin-top:14px;">%s</p>' % (
+                            "View all properties" if lang == "en" else "Ver todos los inmuebles", ui["pt_note"]), 1)
+    # script: carrossel e vitrine copiados da home em português, com os rótulos traduzidos
+    js = h[h.index("let teaserCarousel = null;"):h.index("applyContact();\ninitPhoneInput();")]
+    for old, new in (("'Ir para '", "'%s'" % ui["carousel"][0]), ("'imóvel')", "'%s')" % ui["carousel"][1])):
+        assert old in js, old
+        js = js.replace(old, new)
+    tail = """
+function applyContact(){
+  const wa = SITE_CONFIG.whatsapp;
+  const link = m => `https://wa.me/${wa}?text=${encodeURIComponent(m)}`;
+  document.getElementById('fabWa').href = link(%s);
+  document.getElementById('ctaWaBtn').href = link(%s);
+  const svc = %s;
+  svc.forEach((m, i) => { const el = document.getElementById('svcWa' + (i + 1)); if (el) el.href = link(m); });
+}
+applyContact();
+initCarousel('testiTrack', 'testiPrev', 'testiNext', 'testiDots', %s);
+renderTeaser();
+""" % (json.dumps(ui["fab_msg"], ensure_ascii=False), json.dumps(ui["fab_msg"], ensure_ascii=False),
+       json.dumps(ui["svc"], ensure_ascii=False), json.dumps(ui["carousel"][2], ensure_ascii=False))
+    scripts = "<script>\n" + js + tail + "</script>"
+    nav = "\n      ".join('<a href="%s"%s>%s</a>' % (href, ' style="color:var(--gold);"' if i == 0 else "", label) for i, (href, label) in enumerate(ui["nav"]))
+    nav += '\n      <a class="nav-cta" href="#contato">%s</a>' % ui["cta"]
+    path = "/%s/" % lang
+    alts = [("pt-BR", "/"), ("en", "/en/"), ("es", "/es/"), ("x-default", "/")]
+    return page(ui["title"], ui["desc"], path, body, scripts, lang=ui["lang"], nav_html=nav, foot_html=footer_html(lang=lang),
+                home_href=path, fab_msg=ui["fab_msg"], locale=ui["locale"], alternates=alts, jsonld=[AGENT_LD])
+
+
 def patch_static(fname, cfg):
     h = read(fname)
     h = re.sub(r"<title>.*?</title>", "<title>%s</title>" % esc(cfg["title"]), h, count=1, flags=re.S)
     h = re.sub(r'[ \t]*<meta name="description" content="[^"]*">\r?\n', "", h)
     h = re.sub(r"<!-- SEO:start -->.*?<!-- SEO:end -->\r?\n", "", h, flags=re.S)
-    block = seo_block(cfg["title"], cfg["desc"], cfg["path"], noindex=cfg.get("noindex", False), jsonld=[AGENT_LD] if cfg.get("jsonld") else None)
+    alts = HOME_ALTS if cfg.get("alternates") else None
+    block = seo_block(cfg["title"], cfg["desc"], cfg["path"], noindex=cfg.get("noindex", False), jsonld=[AGENT_LD] if cfg.get("jsonld") else None, alternates=alts)
     m = re.search(r'<meta name="viewport"[^>]*>\r?\n', h)
     h = h[:m.end()] + block + h[m.end():]
     # nav
@@ -1035,7 +1123,7 @@ def main():
         patch_static(fname, cfg)
 
     urls = [("/", "1.0"), ("/imoveis.html", "0.9"), ("/joao-pessoa.html", "0.7"), ("/avaliacao.html", "0.8"),
-            ("/corretor-parceiro.html", "0.5"), ("/parceiros/", "0.7"), ("/mercado/", "0.7"), ("/simulador/", "0.7"), ("/privacidade.html", "0.2")]
+            ("/corretor-parceiro.html", "0.5"), ("/parceiros/", "0.7"), ("/mercado/", "0.7"), ("/simulador/", "0.7"), ("/en/", "0.6"), ("/es/", "0.6"), ("/privacidade.html", "0.2")]
     for par in PARCEIROS:
         write("parceiros/%s/index.html" % par["slug"], parceiro_page(par))
         urls.append(("/parceiros/%s/" % par["slug"], "0.6"))
@@ -1049,6 +1137,8 @@ def main():
     write("corretor-parceiro.html", corretor_parceiro_page())
     write("parceiros/index.html", parceiros_index_page())
     write("simulador/index.html", simulador_page())
+    for lg in ("en", "es"):
+        write("%s/index.html" % lg, home_i18n(lg))
     write("privacidade.html", privacidade_page())
     posts = json.loads(read("tools/posts.json"))
     for path, content in mercado_pages(posts).items():
