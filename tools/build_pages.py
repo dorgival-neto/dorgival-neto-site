@@ -573,8 +573,8 @@ def corretor_parceiro_page():
 
 # ------------------------------------------------------------------ parceiros de serviços (/parceiros/)
 def par_msg(par, servico=None):
-    return "Olá, %s! Vim através da indicação do corretor Dorgival Neto, pela página de parceiros do site dorgivalneto.com.br. %sGostaria de pedir um orçamento." % (
-        par["nome"], ("Preciso de: %s. " % servico) if servico else "")
+    return "Olá, %s! Vim através da indicação do corretor Dorgival Neto, pela página de parceiros do site dorgivalneto.com.br. %sGostaria de %s." % (
+        par["nome"], ("Preciso de: %s. " % servico) if servico else "", par.get("pedido", "pedir um orçamento"))
 
 
 def par_wa(par, servico=None):
@@ -690,7 +690,7 @@ def parceiro_page(par):
     return sel.length > 1 ? sel.slice(0, -1).join(', ') + ' e ' + sel[sel.length - 1] : sel.join('');
   }
   function msg(){
-    return 'Olá, ' + PAR.nome + '! Vim através da indicação do corretor Dorgival Neto, pela página de parceiros do site dorgivalneto.com.br. ' + (sel.length ? 'Preciso de: ' + lista() + '. ' : '') + 'Gostaria de pedir um orçamento.';
+    return 'Olá, ' + PAR.nome + '! Vim através da indicação do corretor Dorgival Neto, pela página de parceiros do site dorgivalneto.com.br. ' + (sel.length ? 'Preciso de: ' + lista() + '. ' : '') + 'Gostaria de ' + PAR.pedido + '.';
   }
   var tabs = document.querySelectorAll('#parPick .tab');
   tabs.forEach(function(t){ t.onclick = function(){
@@ -712,7 +712,7 @@ def parceiro_page(par):
     else window.prompt('Copie o link:', url);
   };
 })();
-</script>""".replace("__PAR__", json.dumps({"slug": par["slug"], "nome": par["nome"], "slogan": par["slogan"], "whatsapp": par["whatsapp"]}, ensure_ascii=False))
+</script>""".replace("__PAR__", json.dumps({"slug": par["slug"], "nome": par["nome"], "slogan": par["slogan"], "whatsapp": par["whatsapp"], "pedido": par.get("pedido", "pedir um orçamento")}, ensure_ascii=False))
     ld = [{
         "@context": "https://schema.org", "@type": "LocalBusiness", "name": par["nome"], "image": BASE + cover,
         "description": par["resumo"], "telephone": "+55 " + par["whatsappExibicao"], "url": BASE + path,
