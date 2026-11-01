@@ -16,13 +16,9 @@
    - trilhas: ["investir"], ["morar"] ou as duas
    - investimento (opcional): aPartirDe (true/false), entrega, entrada,
      parcela, posicao, pagamento — só aparece o que estiver preenchido
-   - simulador (opcional): modo ("temporada" ou "anual"; padrão temporada),
-     diaria (R$, temporada), aluguel (R$/mês, locação anual), condominio (R$/mês),
-     iptu (R$/ano), entrada (R$), parcela (R$/mês na obra), entregaMeses —
-     valores iniciais do simulador de investimento (/simulador/). Deixe null o que
-     ainda não souber: o visitante preenche e o simulador avisa se ficar vazio.
-     O botão "Simular investimento" e a presença no simulador seguem o status:
-     só Lançamento / Na planta / Em construção.
+   - O simulador (/simulador/) abre sempre zerado, sem dados do imóvel. O botão
+     "Simular investimento" aparece só quando o status é Lançamento / Na planta /
+     Em construção.
    - status: "Lançamento", "Na planta" e "Em construção" mostram o botão de
      book/tabela; imóvel pronto (ou porteira fechada) não tem book.
    ============================================================ */
@@ -31,6 +27,7 @@ const SITE_CONFIG = {
   whatsapp: "5583996336569",       // Dorgival Neto — número oficial
   siteUrl: "https://dorgivalneto.com.br",   // usado nos links das mensagens de WhatsApp
   instagram: "https://instagram.com/dorgivalneto.imoveis",
+  linkedin: "https://www.linkedin.com/in/dorgival-neto",
   email: "dorgivalneto.corretor@gmail.com",
   ga4Id: "G-8GRWXGK9C0",           // Google Analytics 4 (conta dorgivalneto.corretor@gmail.com)
   pixelId: ""                      // ex.: "1234567890" (Meta Pixel)
@@ -48,7 +45,6 @@ const PROPERTIES = [
       pagamento: "Fluxo de pagamento facilitado",
       unidadeRef: "Preço e metragem da unidade de 2 quartos (66,43m²)"
     },
-    simulador: { diaria: null, condominio: null, iptu: null },
     titulo: "Lançamento 2 quartos com varanda integrada — Bessa",
     tipo: "Venda",
     status: "Lançamento",

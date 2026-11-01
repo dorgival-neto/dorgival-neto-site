@@ -69,6 +69,10 @@ DATA = read("assets/data.js")
 PROPS = js_array_to_json(DATA, "PROPERTIES")
 WA = re.search(r'whatsapp:\s*"(\d+)"', DATA).group(1)
 INSTAGRAM = re.search(r'instagram:\s*"([^"]+)"', DATA).group(1)
+LINKEDIN = re.search(r'linkedin:\s*"([^"]+)"', DATA).group(1)
+EMAIL = re.search(r'email:\s*"([^"]+)"', DATA).group(1)
+INVISTA_END = "R. Ivanice Martins da Câmara, 61 · Jardim Oceania, João Pessoa – PB · CEP 58037-115"
+INVISTA_MAPA = "https://maps.app.goo.gl/pDK5F2TGNSeX4AjL7"
 
 esc = lambda s: H.escape(str(s), quote=True)
 
@@ -220,7 +224,34 @@ FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel
          '<link rel="stylesheet" href="/assets/styles.css">')
 ITI_CSS = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">'
 ITI_JS = '<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>'
-CORE_JS = ('<script src="/assets/data.js"></script>\n<script src="/assets/catalog.js"></script>\n<script src="/assets/analytics.js"></script>')
+CORE_JS = ('<script src="/assets/data.js"></script>\n<script src="/assets/catalog.js"></script>\n<script src="/assets/analytics.js"></script>\n<script src="/assets/site.js"></script>')
+
+# ícones do rodapé (cada um com link; sem @ nem texto)
+_SVG = {
+    "whatsapp": '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.93 7.93 0 0 0 3.85 1h.01A7.94 7.94 0 0 0 20 12.05a7.9 7.9 0 0 0-2.4-5.73zM12.06 18.6h-.01a6.55 6.55 0 0 1-3.35-.92l-.24-.14-2.49.65.67-2.43-.16-.25a6.58 6.58 0 0 1 5.6-10.1 6.53 6.53 0 0 1 4.63 1.92 6.5 6.5 0 0 1 1.93 4.63 6.6 6.6 0 0 1-6.58 6.64zm3.6-4.93c-.2-.1-1.17-.58-1.35-.64-.18-.07-.31-.1-.44.1-.13.2-.5.64-.62.77-.11.13-.23.14-.42.05-.2-.1-.83-.3-1.58-.98-.58-.52-.98-1.16-1.1-1.36-.11-.2-.01-.3.09-.41.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.07-.14.03-.27-.03-.37-.07-.1-.32-.77-.44-1.06-.11-.28-.23-.24-.32-.24-.08 0-.18-.01-.28-.01-.1 0-.26.04-.4.19-.13.15-.51.5-.51 1.2 0 .71.51 1.4.58 1.5.07.1.99 1.51 2.4 2.06 1.42.55 1.42.37 1.68.35.26-.03.85-.35.97-.68.12-.34.12-.62.09-.68-.03-.06-.11-.1-.24-.16z"/></svg>',
+    "instagram": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17.3" cy="6.7" r="0.9" fill="currentColor" stroke="none"/></svg>',
+    "linkedin": '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>',
+    "email": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 6.5l8 6.5 8-6.5"/></svg>',
+}
+
+
+def footer_html(style=""):
+    """Rodapé único do site inteiro (gerado aqui e aplicado também às páginas escritas à mão)."""
+    soc = [("WhatsApp", wa_link("Olá Dorgival! Vim pelo site e gostaria de falar com você."), "whatsapp", True),
+           ("Instagram", INSTAGRAM, "instagram", True), ("LinkedIn", LINKEDIN, "linkedin", True),
+           ("E-mail", "mailto:" + EMAIL, "email", False)]
+    icons = "".join('<a href="%s" aria-label="%s" title="%s"%s>%s</a>' % (
+        h, n, n, ' target="_blank" rel="noopener"' if ext else "", _SVG[k]) for n, h, k, ext in soc)
+    st = (' style="%s"' % style) if style else ""
+    return f"""<footer class="site-footer"{st}>
+  <div class="wrap" style="text-align:center;">
+    <img class="logo" src="/assets/logo-branco.png" alt="Dorgival Neto" style="margin:0 auto 16px;">
+    <div class="foot-social">{icons}</div>
+    <p class="foot-addr">Atendimento presencial na Invista Imóveis<br>{INVISTA_END} · <a href="{INVISTA_MAPA}" target="_blank" rel="noopener">Ver no mapa</a></p>
+    <div class="foot-links"><!--FOOTLINKS-->{foot_links()}<!--/FOOTLINKS--></div>
+    <div class="foot-bottom"><div>© Dorgival Neto Negócios Imobiliários Ltda.</div><div>CRECI 17191-F | CNAI 52963</div><div>Todos os direitos reservados.</div></div>
+  </div>
+</footer>"""
 
 
 def page(title, desc, path, body, scripts="", extra_head="", active="", **seo):
@@ -249,13 +280,7 @@ def page(title, desc, path, body, scripts="", extra_head="", active="", **seo):
 
 <a id="fabWa" class="fab-wa" href="{wa_link('Olá Dorgival! Vim pelo site e gostaria de falar com você.')}" target="_blank" rel="noopener">💬 WhatsApp</a>
 
-<footer class="site-footer">
-  <div class="wrap" style="text-align:center;">
-    <img class="logo" src="/assets/logo-branco.png" alt="Dorgival Neto" style="margin:0 auto 14px;">
-    <div class="foot-links"><!--FOOTLINKS-->{foot_links()}<!--/FOOTLINKS--></div>
-    <div class="foot-bottom" style="margin-top:0;border-top:none;">CRECI 17191-F · CNAI 52963</div>
-  </div>
-</footer>
+{footer_html()}
 
 {CORE_JS}
 {scripts}
@@ -358,7 +383,7 @@ def property_page(p):
       {cond}
       <div class="p-actions">
         {wa_btn}
-        {'<a class="btn btn-outline" href="/simulador/">📈 Simular investimento</a>' if has_book(p) else ''}
+        {'<a class="btn btn-outline" href="/simulador/?imovel=' + p['codigo'] + '">📈 Simular investimento</a>' if has_book(p) else ''}
         <div class="p-row">
           <button type="button" class="btn btn-outline btn-sm" id="btnShare">↗ Compartilhar</button>
           <button type="button" class="btn fav-btn btn-sm" data-fav="{p['id']}">♥ Favoritar</button>
@@ -683,18 +708,18 @@ def parceiro_page(par):
 # ------------------------------------------------------------------ simulador de investimento
 SIM_JS = r"""<script>
 (function(){
-  var SIM = PROPERTIES.filter(DN.hasBook);
-  if (!SIM.length) return;
   var CEN = [
     { nome: 'Conservador', occ: 0.50, val: 0.08 },
     { nome: 'Base', occ: 0.60, val: 0.10 },
     { nome: 'Otimista', occ: 0.70, val: 0.12 }
   ];
   var ADM = { temporada: 0.20, anual: 0.10 };
-  var INCC = 0.06;
-  var MONEY = ['simPreco', 'simDiaria', 'simAluguel', 'simCond', 'simIptu', 'simEntrada', 'simParcela'];
+  var MONEY = ['simPreco', 'simDiaria', 'simAluguel', 'simCond', 'simIptu'];
   var $ = function(id){ return document.getElementById(id); };
   var used = false;
+  // vindo da página de um imóvel (?imovel=AP0001), a mensagem de WhatsApp cita o imóvel
+  var ref = (new URLSearchParams(location.search).get('imovel') || '').toUpperCase();
+  var prop = PROPERTIES.filter(function(p){ return p.codigo === ref; })[0];
 
   function parse(v){
     var s = String(v == null ? '' : v).replace(/[^\d,.\-]/g, '');
@@ -705,7 +730,6 @@ SIM_JS = r"""<script>
   }
   function brl(v){ return (v < 0 ? '-' : '') + 'R$ ' + Math.abs(Math.round(v)).toLocaleString('pt-BR'); }
   function pct(v, d){ return (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: d || 0, maximumFractionDigits: d == null ? 1 : d }) + '%'; }
-  function fmt(n){ return Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   // máscara em reais: os dígitos digitados entram pela direita (ex.: 85075600 vira 850.756,00)
   function mask(el){
     var d = el.value.replace(/\D/g, '').replace(/^0+/, '');
@@ -714,8 +738,6 @@ SIM_JS = r"""<script>
     el.value = d.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + d.slice(-2);
   }
   function radio(name){ var r = document.querySelector('input[name="' + name + '"]:checked'); return r ? r.value : ''; }
-  function setRadio(name, v){ document.querySelector('input[name="' + name + '"][value="' + v + '"]').checked = true; }
-  function cur(){ return SIM.filter(function(p){ return p.id === $('simImovel').value; })[0] || SIM[0]; }
   function anosTxt(a){ return (Math.round(a * 10) / 10).toLocaleString('pt-BR') + (a === 1 ? ' ano' : ' anos'); }
 
   function notes(loc, sit){
@@ -730,11 +752,9 @@ SIM_JS = r"""<script>
       l.push('<b>Diária:</b> valor informado, constante ao longo do prazo.');
     }
     l.push('<b>Valorização do imóvel:</b> 8% (conservador), 10% (base) e 12% (otimista) ao ano, sobre o preço de hoje.');
-    if (sit === 'planta') {
-      l.push('<b>Entrega:</b> a renda só começa depois dos meses informados; a valorização conta desde a compra.');
-      l.push('<b>INCC:</b> 6% ao ano sobre o saldo devedor durante a obra (o índice costuma variar entre 3,5% e 6%). O saldo é o preço menos a entrada, abatido pelas parcelas, e o que restar é pago na entrega. A correção entra como custo.');
-    }
-    l.push('<b>Fora da conta:</b> imposto de renda, financiamento e reajuste de valores.');
+    if (sit === 'planta') l.push('<b>Entrega:</b> a renda só começa depois dos meses informados; a valorização conta desde a compra.');
+    l.push('<b>Fora da conta:</b> imposto de renda, financiamento, correções e reajustes de valores.');
+    l.push('<b>Referência:</b> os números são uma estimativa para orientar a conversa. Para valores e condições reais, agende uma apresentação.');
     l.push('Projeção não é promessa de rentabilidade.');
     return '<b>Premissas</b><ul>' + l.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>';
   }
@@ -750,27 +770,12 @@ SIM_JS = r"""<script>
     $('simNote').innerHTML = notes(loc, sit);
   }
 
-  function fill(p){
-    var s = p.simulador || {};
-    function money(id, v){ $(id).value = v ? fmt(v) : ''; }
-    money('simPreco', p.preco);
-    setRadio('simModo', s.modo === 'anual' ? 'anual' : 'temporada');
-    setRadio('simSit', s.situacao === 'pronto' ? 'pronto' : 'planta');
-    money('simDiaria', s.diaria); money('simAluguel', s.aluguel);
-    money('simCond', s.condominio); money('simIptu', s.iptu);
-    money('simEntrada', s.entrada); money('simParcela', s.parcela);
-    $('simMeses').value = s.entregaMeses != null ? s.entregaMeses : (s.entregaAnos ? Math.round(s.entregaAnos * 12) : '');
-    document.querySelectorAll('.cond').forEach(function(c){ c.style.display = c.getAttribute('data-id') === p.id ? '' : 'none'; });
-    applyModes();
-  }
-
   function calc(){
-    var p = cur(), loc = radio('simModo'), sit = radio('simSit'), anual = loc === 'anual', planta = sit === 'planta';
+    var loc = radio('simModo'), sit = radio('simSit'), anual = loc === 'anual', planta = sit === 'planta';
     var preco = parse($('simPreco').value), valor = parse($(anual ? 'simAluguel' : 'simDiaria').value);
     var cond = parse($('simCond').value), iptu = parse($('simIptu').value);
     var anos = parseInt($('simAnos').value, 10);
     var meses = planta ? Math.max(0, parseInt($('simMeses').value, 10) || 0) : 0;
-    var entrada = planta ? (parse($('simEntrada').value) || 0) : 0, parcela = planta ? (parse($('simParcela').value) || 0) : 0;
     var out = $('simTabela'), warn = $('simWarn'), cta = $('simCta');
     if (!(preco > 0) || !(valor > 0)) {
       out.innerHTML = '<p class="sim-note" style="margin:0;">' + (anual ? 'Informe o preço do imóvel e o aluguel mensal para ver a projeção.' : 'Informe o preço do imóvel e a diária média para ver a projeção.') + '</p>';
@@ -781,28 +786,18 @@ SIM_JS = r"""<script>
     var semCustos = !anual && (isNaN(cond) || isNaN(iptu));
     if (semCustos) avisos.push('⚠ Condomínio e/ou IPTU não preenchidos: esses custos foram considerados como R$ 0, então o resultado abaixo pode estar acima do real. Preencha os campos para uma projeção mais fiel.');
     if (planta && !(meses > 0)) avisos.push('⚠ Meses até a entrega não informados: a renda foi contada desde o início, então o resultado pode estar acima do real.');
-    var custos = (isNaN(cond) ? 0 : cond) * 12 + (isNaN(iptu) ? 0 : iptu);
-
-    // INCC: corrige o saldo devedor mês a mês durante a obra; o que restar é pago na entrega
-    var incc = 0, inccOk = planta && meses > 0 && (entrada > 0 || parcela > 0);
-    if (inccOk) {
-      var im = Math.pow(1 + INCC, 1 / 12) - 1, saldo = Math.max(0, preco - entrada), pagas = 0;
-      for (var m = 0; m < meses; m++) { saldo *= 1 + im; var pg = Math.min(parcela, saldo); saldo -= pg; pagas += pg; }
-      incc = Math.max(0, entrada + pagas + saldo - preco);
-    } else if (planta && meses > 0) {
-      avisos.push('⚠ Entrada e parcelas não preenchidas: a correção do INCC não foi calculada (R$ 0), então o resultado pode estar acima do real. Peça a tabela para preencher.');
-    }
     warn.innerHTML = avisos.join('<br>');
     warn.classList.toggle('on', avisos.length > 0);
+    var custos = (isNaN(cond) ? 0 : cond) * 12 + (isNaN(iptu) ? 0 : iptu);
 
     var adm = ADM[loc];
     var anosRenda = Math.max(0, anos - meses / 12);
     var rows = CEN.map(function(c){
       var bruta = anual ? valor * 12 : valor * 365 * c.occ, ad = bruta * adm, liq = bruta - ad - custos;
       var fut = preco * Math.pow(1 + c.val, anos), valoriz = fut - preco;
-      var renda = liq * anosRenda, ganho = valoriz + renda - incc;
+      var renda = liq * anosRenda, ganho = valoriz + renda;
       return { c: c, bruta: bruta, adm: ad, liq: liq, y: liq / preco, fut: fut, valoriz: valoriz, vp: valoriz / preco,
-               renda: renda, rp: renda / preco, ip: incc / preco, ganho: ganho, ret: ganho / preco };
+               renda: renda, rp: renda / preco, ganho: ganho, ret: ganho / preco };
     });
     function line(label, fn, cls, neg){
       return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + label + '</td>' + rows.map(function(r){
@@ -822,56 +817,32 @@ SIM_JS = r"""<script>
       line('Valorização acumulada sobre o preço', function(r){ return pct(r.vp, 1); }) +
       line('Renda acumulada (' + anosTxt(anosRenda) + ' de renda)', function(r){ return brl(r.renda); }, '', function(r){ return r.renda < 0; }) +
       line('Renda acumulada sobre o preço', function(r){ return pct(r.rp, 1); }, '', function(r){ return r.rp < 0; }) +
-      (planta ? line('Correção do INCC no saldo devedor', function(r){ return inccOk ? '-' + brl(incc).replace('-', '') : 'não calculada'; }) : '') +
-      (planta && inccOk ? line('Correção do INCC sobre o preço', function(r){ return '-' + pct(r.ip, 1); }) : '') +
       line('Ganho total estimado', function(r){ return brl(r.ganho); }, 'key', function(r){ return r.ganho < 0; }) +
       line('Retorno total sobre o preço', function(r){ return pct(r.ret, 1); }, 'key', function(r){ return r.ret < 0; }) +
       '</tbody></table>';
-    var base = rows[1];
+    var base = rows[1], site = (window.SITE_CONFIG && SITE_CONFIG.siteUrl) || location.origin;
     cta.style.display = '';
-    cta.href = DN.wa('Olá Dorgival! Fiz a simulação do ' + p.codigo + ' (' + p.titulo + ') no site: preço ' + brl(preco) + ', ' + (anual ? 'locação anual com aluguel de ' + brl(valor) + ' por mês' : 'locação por temporada com diária de ' + brl(valor)) + ', prazo ' + anos + ' anos. No cenário base deu ganho de ' + brl(base.ganho) + '. Gostaria de agendar uma apresentação do empreendimento e receber informações sobre os valores de investimento. ' + (cfgUrl() + DN.url(p)));
-    if (!used) { used = true; DN.track('simulador_uso', { item_id: p.id, modo: loc, situacao: sit }); }
+    cta.href = DN.wa('Olá Dorgival! Fiz uma simulação de investimento no seu site' + (prop ? ' para o imóvel ' + prop.codigo + ' (' + prop.titulo + ')' : '') + ': preço ' + brl(preco) + ', ' + (anual ? 'locação anual com aluguel de ' + brl(valor) + ' por mês' : 'locação por temporada com diária de ' + brl(valor)) + ', prazo ' + anos + ' anos. No cenário base deu ganho de ' + brl(base.ganho) + '. Gostaria de agendar uma apresentação do empreendimento e receber informações sobre os valores de investimento.' + (prop ? ' ' + site + DN.url(prop) : ''));
+    if (!used) { used = true; DN.track('simulador_uso', { item_id: prop ? prop.id : 'geral', modo: loc, situacao: sit }); }
   }
-  function cfgUrl(){ return (window.SITE_CONFIG && SITE_CONFIG.siteUrl) || location.origin; }
 
-  var sel = $('simImovel');
-  if (SIM.length > 1) {
-    sel.innerHTML = SIM.map(function(p){ return '<option value="' + p.id + '">' + p.titulo + '</option>'; }).join('');
-    sel.onchange = function(){ fill(cur()); calc(); };
-  } else { sel.parentNode.style.display = 'none'; sel.innerHTML = '<option value="' + SIM[0].id + '"></option>'; }
   document.querySelectorAll('input[name="simModo"], input[name="simSit"]').forEach(function(r){ r.addEventListener('change', function(){ applyModes(); calc(); }); });
   MONEY.forEach(function(id){ $(id).addEventListener('input', function(){ mask($(id)); calc(); }); });
   $('simMeses').addEventListener('input', function(){ $('simMeses').value = $('simMeses').value.replace(/\D/g, ''); calc(); });
   $('simAnos').addEventListener('change', calc);
-  fill(SIM[0]); calc();
+  applyModes(); calc();
 })();
 </script>"""
 
 
 def simulador_page():
-    sim = [p for p in PROPS if has_book(p)]  # simulador só para lançamento / na planta / em construção
-    names = ", ".join(p["titulo"] for p in sim)
-    rows_for = lambda p: [
-        ("Preço de referência", price_txt(p) + (" (%s)" % p["investimento"]["unidadeRef"].replace("Preço e metragem da ", "") if (p.get("investimento") or {}).get("unidadeRef") else "")),
-        ("Entrega", (p.get("investimento") or {}).get("entrega")),
-        ("Entrada", (p.get("investimento") or {}).get("entrada")),
-        ("Parcelas", (p.get("investimento") or {}).get("parcela")),
-        ("Posição", (p.get("investimento") or {}).get("posicao")),
-        ("Pagamento", (p.get("investimento") or {}).get("pagamento")),
-    ]
-    conds = ""
-    for p in sim:
-        trs = "".join('<tr><td>%s</td><td>%s</td></tr>' % (k, esc(v) if v else '<span class="pend">A confirmar — peça a tabela atualizada</span>') for k, v in rows_for(p))
-        conds += '<div class="cond" data-id="%s"><h3 style="font-size:20px;margin-top:6px;">%s</h3><table class="cond-table">%s</table></div>' % (p["id"], esc(p["titulo"]), trs)
-    first = sim[0] if sim else None
     body = f"""<div class="article" style="max-width:1000px;">
   <span class="eyebrow">Investimento</span>
   <h1>Simulador de investimento</h1>
-  <p>Veja, em três cenários, quanto um imóvel alugado por temporada (diária) ou por locação anual (aluguel mensal) pode render em renda e valorização ao longo dos anos: {esc(names)}. Ajuste os números e compare.</p>
+  <p>Veja, em três cenários, quanto um imóvel alugado por temporada (diária) ou por locação anual (aluguel mensal) pode render em renda e valorização ao longo dos anos. Ajuste os números e compare.</p>
   <div class="sim-disclaimer">⚠ Projeção não é promessa de rentabilidade. <span>Os resultados abaixo são simulações com premissas hipotéticas de diária, ocupação e valorização. O mercado pode ter desempenho diferente do projetado, inclusive com perda. Não é recomendação de investimento nem garantia de retorno — confirme valores e condições antes de decidir.</span></div>
   <div class="sim-grid">
     <form class="form-dark" id="simForm" onsubmit="return false;" autocomplete="off">
-      <div><label>Imóvel</label><select id="simImovel"></select></div>
       <label>Preço do imóvel (R$)</label><input id="simPreco" type="text" inputmode="numeric" placeholder="0,00">
       <label>Situação do imóvel</label>
       <div class="sim-modo" id="simSitBox">
@@ -881,9 +852,6 @@ def simulador_page():
       <div id="boxPlanta">
         <label>Meses até a entrega (sem renda)</label><input id="simMeses" type="text" inputmode="numeric" placeholder="Ex.: 36">
         <div class="sim-hint">Imóvel na planta só gera renda depois da entrega. Nesse período a renda não conta, mas a valorização sim.</div>
-        <label>Entrada (R$)</label><input id="simEntrada" type="text" inputmode="numeric" placeholder="0,00">
-        <label>Parcela mensal durante a obra (R$)</label><input id="simParcela" type="text" inputmode="numeric" placeholder="0,00">
-        <div class="sim-hint">Durante a obra, o saldo devedor é corrigido pelo INCC (adotamos 6% ao ano; o índice costuma variar entre 3,5% e 6%). Entrada e parcelas constam na tabela do empreendimento: preencha para calcular a correção.</div>
       </div>
       <label>Tipo de locação</label>
       <div class="sim-modo" id="simModo">
@@ -906,16 +874,13 @@ def simulador_page():
     </form>
     <div>
       <div class="sim-result">
-        <div class="sim-warn" id="simWarn">⚠ Condomínio e/ou IPTU não preenchidos: esses custos foram considerados como R$ 0, então o resultado abaixo pode estar acima do real. Preencha os campos para uma projeção mais fiel.</div>
+        <div class="sim-warn" id="simWarn"></div>
         <div id="simTabela"></div>
         <div class="sim-note" id="simNote"></div>
       </div>
       <p style="margin-top:18px;"><a class="btn btn-gold" id="simCta" target="_blank" rel="noopener" href="#">💬 Agendar apresentação e simulação personalizada</a></p>
     </div>
   </div>
-  <h2>Condições de pagamento</h2>
-  <p>Resumo das condições do empreendimento. O que ainda estiver como “a confirmar” eu envio atualizado pelo WhatsApp.</p>
-  {conds}
 </div>"""
     return page("Simulador de Investimento Imobiliário em João Pessoa — Renda e Valorização | Dorgival Neto",
                 "Simule o retorno de um imóvel em João Pessoa, por temporada ou locação anual, em três cenários (conservador, base e otimista): renda e valorização. Projeção, não promessa de rentabilidade.",
@@ -1035,7 +1000,7 @@ AGENT_LD = {
     "telephone": "+55 83 99633-6569", "email": "dorgivalneto.corretor@gmail.com", "identifier": "CRECI 17191-F",
     "areaServed": {"@type": "City", "name": "João Pessoa"},
     "address": {"@type": "PostalAddress", "addressLocality": "João Pessoa", "addressRegion": "PB", "addressCountry": "BR"},
-    "sameAs": [INSTAGRAM],
+    "sameAs": [INSTAGRAM, LINKEDIN],
 }
 
 
@@ -1050,18 +1015,18 @@ def patch_static(fname, cfg):
     # nav
     h = re.sub(r'(<nav class="nav-links" id="navLinks">).*?(</nav>)', lambda mm: mm.group(1) + "\n      " + nav_inner(cfg["active"]) + "\n    " + mm.group(2), h, count=1, flags=re.S)
     # rodapé
-    fl = "<!--FOOTLINKS-->%s<!--/FOOTLINKS-->" % foot_links()
-    if "<!--FOOTLINKS-->" in h:
-        h = re.sub(r"<!--FOOTLINKS-->.*?<!--/FOOTLINKS-->", lambda mm: fl, h, flags=re.S)
-    else:
-        h = h.replace('<div class="foot-bottom" style="margin-top:0;border-top:none;">', '<div class="foot-links">%s</div>\n    <div class="foot-bottom" style="margin-top:0;border-top:none;">' % fl, 1)
-    # scripts de análise
+    mf = re.search(r'<footer class="site-footer"([^>]*)>', h)
+    sty = re.search(r'style="([^"]*)"', mf.group(1))
+    h = re.sub(r'<footer class="site-footer"[^>]*>.*?</footer>', lambda mm: footer_html(sty.group(1) if sty else ""), h, count=1, flags=re.S)
+    # scripts de análise e comportamentos comuns (menu)
     if 'assets/analytics.js' not in h and '/assets/analytics.js' not in h:
         inc = ""
         if 'assets/data.js' not in h and '/assets/data.js' not in h:
             inc += '<script src="/assets/data.js"></script>\n'
         inc += '<script src="/assets/analytics.js"></script>\n'
         h = h.replace("</body>", inc + "</body>", 1)
+    if 'assets/site.js' not in h:
+        h = h.replace("</body>", '<script src="/assets/site.js"></script>\n</body>', 1)
     write(fname, h)
 
 
