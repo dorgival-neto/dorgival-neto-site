@@ -1059,7 +1059,9 @@ def home_i18n(lang):
         pt, tr = row[0], row[col]
         assert pt in body, "texto da home mudou; tradução órfã: " + pt[:70]
         body = body.replace(pt, tr)
-    body = body.replace('<p class="center" style="margin-top:38px;color:var(--gray)', '<p class="center" style="margin-top:38px;color:var(--gray)')
+    h2t = {"en": "Testimonials from Clients and Partners</h2>", "es": "Testimonios de Clientes y Aliados</h2>"}[lang]
+    assert h2t in body
+    body = body.replace(h2t, h2t + '\\n    <p class="center" style="color:var(--gray);font-size:12.5px;margin-top:8px;">%s</p>' % ui["testi_note"], 1)
     body = body.replace('<a class="btn btn-gold" href="/imoveis.html">%s</a>' % ("View all properties" if lang == "en" else "Ver todos los inmuebles"),
                         '<a class="btn btn-gold" href="/imoveis.html">%s</a>\n      <p style="color:var(--gray);font-size:12.5px;margin-top:14px;">%s</p>' % (
                             "View all properties" if lang == "en" else "Ver todos los inmuebles", ui["pt_note"]), 1)
