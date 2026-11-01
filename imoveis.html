@@ -189,7 +189,7 @@
       row('Vagas', items.map(function(p){ return p.vagas || '–'; })) +
       row('Trilha', items.map(function(p){ return (p.trilhas || []).map(function(t){ return DN.trilhaLabel[t]; }).join(' · ') || '–'; })) +
       row('Condições', items.map(function(p){ var c = DN.investChips(p); return c.length ? c.map(DN.esc).join('<br>') : '–'; })) +
-      row('', items.map(function(p){ return '<a class="btn btn-gold btn-sm" href="' + DN.bookUrl(p) + '" target="_blank" rel="noopener" data-book="' + p.id + '">Quero ver book/tabela</a>'; })) +
+      row('', items.map(function(p){ return DN.hasBook(p) ? '<a class="btn btn-gold btn-sm" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener" data-book="' + p.id + '">Quero ver book/tabela</a>' : '<a class="btn btn-gold btn-sm" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener">💬 Falar no WhatsApp</a>'; })) +
       '</table>';
     document.getElementById('compareTable').innerHTML = html;
     document.getElementById('compareOverlay').classList.add('open');

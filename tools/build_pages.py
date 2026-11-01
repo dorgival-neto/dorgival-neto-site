@@ -97,8 +97,18 @@ def wa_link(msg):
     return "https://wa.me/%s?text=%s" % (WA, quote(msg, safe=""))
 
 
-def book_link(p):
-    return wa_link("Olá Dorgival! Quero ver o book/tabela do imóvel %s — %s (%s)." % (p["codigo"], p["titulo"], p["bairro"]))
+BOOK_STATUS = ("Lançamento", "Na planta", "Em construção")  # só estes têm book e tabela de vendas
+
+
+def has_book(p):
+    return p["status"] in BOOK_STATUS
+
+
+def wa_imovel(p):
+    """Mensagem de WhatsApp com código, dados e link direto da página do imóvel (igual a DN.waImovel em catalog.js)."""
+    pedido = "Quero receber o book e a tabela do imóvel" if has_book(p) else "Tenho interesse no imóvel"
+    return wa_link("Olá Dorgival! %s %s (%s), %s. Vi no seu site: %s/imovel/%s/" % (
+        pedido, p["codigo"], p["titulo"], price_txt(p), BASE, p["codigo"]))
 
 
 def invest_chips(p):
@@ -269,7 +279,7 @@ def card_static(p):
     <div class="card-loc">{esc(p['bairro'])} · {esc(p['cidade'])}</div>
     <div class="card-specs">{specs}</div>
     {('<div class="card-chips">' + chips + '</div>') if chips else ''}
-    <div class="card-actions"><a class="btn btn-gold btn-sm" data-book="{p['id']}" href="{book_link(p)}" target="_blank" rel="noopener">Quero ver book/tabela</a><a class="btn btn-outline btn-sm" href="{u}">Ver detalhes</a></div>
+    <div class="card-actions">{('<a class="btn btn-gold btn-sm" data-book="' + p['id'] + '" href="' + wa_imovel(p) + '" target="_blank" rel="noopener">Quero ver book/tabela</a><a class="btn btn-outline btn-sm" href="' + u + '">Ver detalhes</a>') if has_book(p) else '<a class="btn btn-gold btn-sm" href="' + u + '">Ver detalhes</a>'}</div>
   </div>
 </article>"""
 
@@ -301,7 +311,10 @@ def property_page(p):
     if inv.get("unidadeRef"): inv_rows.append("<li><i>* %s.</i></li>" % esc(inv["unidadeRef"]))
     inv_html = ('<div class="p-section"><h2>Condições</h2><ul style="padding-left:20px;line-height:1.9;">%s</ul></div>' % "".join(inv_rows)) if inv_rows else ""
     cond = ('<div class="p-sub">Condomínio: %s</div>' % money(p["condominio"])) if p.get("condominio") else ""
-    wa_msg = wa_link("Olá Dorgival! Tenho interesse no imóvel %s — %s (%s) que vi no seu site." % (p["codigo"], p["titulo"], p["bairro"]))
+    if has_book(p):
+        wa_btn = '<a class="btn btn-gold" data-book="%s" href="%s" target="_blank" rel="noopener">💬 Receber book e tabela</a>' % (p["id"], wa_imovel(p))
+    else:
+        wa_btn = '<a class="btn btn-gold" href="%s" target="_blank" rel="noopener">💬 Falar no WhatsApp</a>' % wa_imovel(p)
     jsonld = [
         {
             "@context": "https://schema.org", "@type": "Product", "name": p["titulo"], "sku": p["codigo"],
@@ -342,8 +355,7 @@ def property_page(p):
       <div class="p-price">{esc(price_txt(p))}</div>
       {cond}
       <div class="p-actions">
-        <a class="btn btn-gold" data-book="{p['id']}" href="{book_link(p)}" target="_blank" rel="noopener">Quero ver book/tabela</a>
-        <a class="btn btn-outline" href="{wa_msg}" target="_blank" rel="noopener">💬 Falar no WhatsApp</a>
+        {wa_btn}
         {'<a class="btn btn-outline" href="/simulador/">📈 Simular investimento</a>' if p.get("simulador") else ''}
         <div class="p-row">
           <button type="button" class="btn btn-outline btn-sm" id="btnShare">↗ Compartilhar</button>
@@ -390,13 +402,13 @@ def bairro_page(b):
     lst = [p for p in PROPS if p["bairro"] == b]
     path = "/bairro/%s/" % slug
     title = "Imóveis à venda no %s, João Pessoa | Dorgival Neto" % b
-    desc = "%d imóvel(is) à venda no %s, em João Pessoa, selecionados por Dorgival Neto (CRECI 17191-F). Veja fotos, valores e peça o book/tabela." % (len(lst), b)
+    desc = "%d imóvel(is) à venda no %s, em João Pessoa, selecionados por Dorgival Neto (CRECI 17191-F). Veja fotos, valores e fale direto com o corretor." % (len(lst), b)
     others = "".join('<a class="tab" href="/bairro/%s/">%s</a>' % (slugify(x), esc(x)) for x in BAIRROS if x != b)
     body = f"""<div class="wrap" style="padding-top:34px;padding-bottom:70px;">
   <div class="crumbs" style="padding-top:0;"><a href="/">Início</a> › <a href="/imoveis.html">Imóveis</a> › {esc(b)}</div>
   <span class="eyebrow" style="display:block;margin-top:14px;">Bairro</span>
   <h1 style="font-size:32px;margin-top:6px;">Imóveis à venda no {esc(b)}, João Pessoa</h1>
-  <p style="color:var(--gray);margin-top:8px;font-size:14.5px;max-width:640px;">Veja os imóveis disponíveis no bairro {esc(b)} selecionados por Dorgival Neto (CRECI 17191-F). Todos têm código de referência: é só citá-lo ao falar comigo para receber o book ou a tabela.</p>
+  <p style="color:var(--gray);margin-top:8px;font-size:14.5px;max-width:640px;">Veja os imóveis disponíveis no bairro {esc(b)} selecionados por Dorgival Neto (CRECI 17191-F). Todos têm código de referência: é só citá-lo ao falar comigo.</p>
   <div class="grid">{''.join(card_static(p) for p in lst)}</div>
   {('<h2 style="font-size:22px;margin-top:44px;">Outros bairros</h2><div class="tabs" style="justify-content:flex-start;">' + others + '</div>') if others else ''}
   <div class="center" style="margin-top:40px;"><a class="btn btn-outline" href="/imoveis.html">Ver todos os imóveis</a></div>
@@ -672,11 +684,11 @@ SIM_JS = r"""<script>
   var SIM = PROPERTIES.filter(function(p){ return p.simulador; });
   if (!SIM.length) return;
   var CEN = [
-    { nome: 'Conservador', occ: 0.45, val: 0.10 },
-    { nome: 'Base', occ: 0.55, val: 0.12 },
-    { nome: 'Otimista', occ: 0.65, val: 0.15 }
+    { nome: 'Conservador', occ: 0.45, val: 0.08 },
+    { nome: 'Base', occ: 0.55, val: 0.10 },
+    { nome: 'Otimista', occ: 0.65, val: 0.12 }
   ];
-  var ADM = 0.20;
+  var ADM = { temporada: 0.20, anual: 0.10 };
   var $ = function(id){ return document.getElementById(id); };
   var used = false;
 
@@ -690,37 +702,55 @@ SIM_JS = r"""<script>
   function brl(v){ return (v < 0 ? '-' : '') + 'R$ ' + Math.abs(Math.round(v)).toLocaleString('pt-BR'); }
   function pct(v, d){ return (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: d || 0, maximumFractionDigits: d == null ? 1 : d }) + '%'; }
   function cur(){ return SIM.filter(function(p){ return p.id === $('simImovel').value; })[0] || SIM[0]; }
+  function modo(){ var r = document.querySelector('input[name="simModo"]:checked'); return r ? r.value : 'temporada'; }
+
+  function applyModo(){
+    var m = modo();
+    $('boxTemp').style.display = m === 'temporada' ? '' : 'none';
+    $('boxAnual').style.display = m === 'anual' ? '' : 'none';
+    $('simCustoHint').style.display = m === 'anual' ? '' : 'none';
+    $('simCond').placeholder = $('simIptu').placeholder = m === 'anual' ? 'Opcional' : 'Preencha para um resultado fiel';
+    document.querySelectorAll('#simModo label').forEach(function(l){ l.classList.toggle('on', l.querySelector('input').checked); });
+    $('simNote').innerHTML = m === 'anual'
+      ? 'Premissas: aluguel recebido nos 12 meses do ano, sem vacância; administração de 10% sobre o aluguel; valorização de 8% / 10% / 12% ao ano (conservador / base / otimista), valores constantes ao longo do prazo, sem impostos sobre a renda, financiamento ou reajuste do aluguel. Na locação anual, condomínio e IPTU costumam ficar com o inquilino. Projeção não é promessa de rentabilidade.'
+      : 'Premissas: administração de 20% sobre a receita bruta; ocupação de 45% / 55% / 65% e valorização de 8% / 10% / 12% ao ano (conservador / base / otimista), valores constantes ao longo do prazo, sem impostos sobre a renda, financiamento ou correção da diária. Projeção não é promessa de rentabilidade.';
+  }
 
   function fill(p){
+    var s = p.simulador;
     $('simPreco').value = p.preco ? String(p.preco).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
-    $('simDiaria').value = p.simulador.diaria || '';
-    $('simCond').value = p.simulador.condominio == null ? '' : p.simulador.condominio;
-    $('simIptu').value = p.simulador.iptu == null ? '' : p.simulador.iptu;
-    $('simEntrega').value = p.simulador.entregaAnos || 0;
+    document.querySelector('input[name="simModo"][value="' + (s.modo === 'anual' ? 'anual' : 'temporada') + '"]').checked = true;
+    $('simDiaria').value = s.diaria || '';
+    $('simAluguel').value = s.aluguel || '';
+    $('simCond').value = s.condominio == null ? '' : s.condominio;
+    $('simIptu').value = s.iptu == null ? '' : s.iptu;
+    $('simEntrega').value = s.entregaAnos || 0;
     document.querySelectorAll('.cond').forEach(function(c){ c.style.display = c.getAttribute('data-id') === p.id ? '' : 'none'; });
+    applyModo();
   }
 
   function calc(){
-    var p = cur();
-    var preco = parse($('simPreco').value), diaria = parse($('simDiaria').value);
+    var p = cur(), m = modo(), anual = m === 'anual';
+    var preco = parse($('simPreco').value), valor = parse($(anual ? 'simAluguel' : 'simDiaria').value);
     var cond = parse($('simCond').value), iptu = parse($('simIptu').value);
     var anos = parseInt($('simAnos').value, 10);
     var entrega = Math.max(0, parseFloat($('simEntrega').value) || 0);
     var out = $('simTabela'), warn = $('simWarn'), cta = $('simCta');
-    if (!(preco > 0) || !(diaria > 0)) {
-      out.innerHTML = '<p class="sim-note" style="margin:0;">Informe o preço do imóvel e a diária média para ver a projeção.</p>';
+    if (!(preco > 0) || !(valor > 0)) {
+      out.innerHTML = '<p class="sim-note" style="margin:0;">' + (anual ? 'Informe o preço do imóvel e o aluguel mensal para ver a projeção.' : 'Informe o preço do imóvel e a diária média para ver a projeção.') + '</p>';
       warn.classList.remove('on'); cta.style.display = 'none';
       return;
     }
-    var semCustos = isNaN(cond) || isNaN(iptu);
+    var semCustos = !anual && (isNaN(cond) || isNaN(iptu));
     warn.classList.toggle('on', semCustos);
     var custos = (isNaN(cond) ? 0 : cond) * 12 + (isNaN(iptu) ? 0 : iptu);
+    var adm = ADM[m];
     var anosRenda = Math.max(0, anos - entrega);
     var rows = CEN.map(function(c){
-      var bruta = diaria * 365 * c.occ, adm = bruta * ADM, liq = bruta - adm - custos;
+      var bruta = anual ? valor * 12 : valor * 365 * c.occ, ad = bruta * adm, liq = bruta - ad - custos;
       var fut = preco * Math.pow(1 + c.val, anos), valoriz = fut - preco;
       var renda = liq * anosRenda, ganho = valoriz + renda;
-      return { c: c, bruta: bruta, adm: adm, liq: liq, y: liq / preco, fut: fut, renda: renda, ganho: ganho, ret: ganho / preco };
+      return { c: c, bruta: bruta, adm: ad, liq: liq, y: liq / preco, fut: fut, renda: renda, ganho: ganho, ret: ganho / preco };
     });
     function line(label, fn, cls, neg){
       return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + label + '</td>' + rows.map(function(r){
@@ -728,10 +758,10 @@ SIM_JS = r"""<script>
       }).join('') + '</tr>';
     }
     out.innerHTML = '<table class="sim-table"><thead><tr><th></th>' + CEN.map(function(c){ return '<th>' + c.nome + '</th>'; }).join('') + '</tr></thead><tbody>' +
-      line('Ocupação da diária', function(r){ return pct(r.c.occ); }) +
-      line('Receita bruta por ano', function(r){ return brl(r.bruta); }) +
-      line('Administração (' + pct(ADM) + ')', function(r){ return '-' + brl(r.adm).replace('-', ''); }) +
-      line('Condomínio + IPTU por ano', function(r){ return semCustos && !custos ? 'não informado' : '-' + brl(custos).replace('-', ''); }) +
+      (anual ? '' : line('Ocupação da diária', function(r){ return pct(r.c.occ); })) +
+      line(anual ? 'Aluguel por ano (12 meses)' : 'Receita bruta por ano', function(r){ return brl(r.bruta); }) +
+      line('Administração (' + pct(adm) + ')', function(r){ return '-' + brl(r.adm).replace('-', ''); }) +
+      line(anual ? 'Condomínio + IPTU por ano (a seu cargo)' : 'Condomínio + IPTU por ano', function(r){ return semCustos && !custos ? 'não informado' : (custos ? '-' + brl(custos).replace('-', '') : brl(0)); }) +
       line('Renda líquida por ano', function(r){ return brl(r.liq); }, 'key', function(r){ return r.liq < 0; }) +
       line('Rendimento líquido sobre o preço', function(r){ return pct(r.y, 1) + ' a.a.'; }, '', function(r){ return r.y < 0; }) +
       line('Valorização do imóvel', function(r){ return pct(r.c.val) + ' a.a.'; }) +
@@ -742,8 +772,8 @@ SIM_JS = r"""<script>
       '</tbody></table>';
     var base = rows[1];
     cta.style.display = '';
-    cta.href = DN.wa('Olá Dorgival! Fiz a simulação do ' + p.codigo + ' (' + p.titulo + ') no site: preço ' + brl(preco) + ', diária ' + brl(diaria) + ', prazo ' + anos + ' anos. No cenário base deu ganho de ' + brl(base.ganho) + '. Quero a tabela e uma simulação personalizada.');
-    if (!used) { used = true; DN.track('simulador_uso', { item_id: p.id }); }
+    cta.href = DN.wa('Olá Dorgival! Fiz a simulação do ' + p.codigo + ' (' + p.titulo + ') no site: preço ' + brl(preco) + ', ' + (anual ? 'locação anual com aluguel de ' + brl(valor) + ' por mês' : 'locação por temporada com diária de ' + brl(valor)) + ', prazo ' + anos + ' anos. No cenário base deu ganho de ' + brl(base.ganho) + '. Quero a tabela e uma simulação personalizada. ' + location.origin + DN.url(p));
+    if (!used) { used = true; DN.track('simulador_uso', { item_id: p.id, modo: m }); }
   }
 
   var sel = $('simImovel');
@@ -751,7 +781,8 @@ SIM_JS = r"""<script>
     sel.innerHTML = SIM.map(function(p){ return '<option value="' + p.id + '">' + p.titulo + '</option>'; }).join('');
     sel.onchange = function(){ fill(cur()); calc(); };
   } else { sel.parentNode.style.display = 'none'; sel.innerHTML = '<option value="' + SIM[0].id + '"></option>'; }
-  ['simPreco', 'simDiaria', 'simCond', 'simIptu', 'simEntrega', 'simAnos'].forEach(function(id){ $(id).addEventListener('input', calc); $(id).addEventListener('change', calc); });
+  document.querySelectorAll('input[name="simModo"]').forEach(function(r){ r.addEventListener('change', function(){ applyModo(); calc(); }); });
+  ['simPreco', 'simDiaria', 'simAluguel', 'simCond', 'simIptu', 'simEntrega', 'simAnos'].forEach(function(id){ $(id).addEventListener('input', calc); $(id).addEventListener('change', calc); });
   fill(SIM[0]); calc();
 })();
 </script>"""
@@ -776,16 +807,28 @@ def simulador_page():
     body = f"""<div class="article" style="max-width:1000px;">
   <span class="eyebrow">Investimento</span>
   <h1>Simulador de investimento</h1>
-  <p>Veja, em três cenários, quanto um imóvel de temporada (diária) pode render em renda e valorização ao longo dos anos: {esc(names)}. Ajuste os números e compare.</p>
+  <p>Veja, em três cenários, quanto um imóvel alugado por temporada (diária) ou por locação anual (aluguel mensal) pode render em renda e valorização ao longo dos anos: {esc(names)}. Ajuste os números e compare.</p>
   <div class="sim-disclaimer">⚠ Projeção não é promessa de rentabilidade. <span>Os resultados abaixo são simulações com premissas hipotéticas de diária, ocupação e valorização. O mercado pode ter desempenho diferente do projetado, inclusive com perda. Não é recomendação de investimento nem garantia de retorno — confirme valores e condições antes de decidir.</span></div>
   <div class="sim-grid">
     <form class="form-dark" id="simForm" onsubmit="return false;" autocomplete="off">
       <div><label>Imóvel</label><select id="simImovel"></select></div>
       <label>Preço do imóvel (R$)</label><input id="simPreco" type="text" inputmode="decimal">
-      <label>Diária média (R$)</label><input id="simDiaria" type="text" inputmode="decimal" placeholder="Informe a diária média">
-      <div class="sim-hint">A diária varia muito conforme a região, o bairro e o tipo de empreendimento. Use a sua pesquisa de mercado ou peça uma estimativa a mim.</div>
+      <label>Tipo de locação</label>
+      <div class="sim-modo" id="simModo">
+        <label class="on"><input type="radio" name="simModo" value="temporada" checked> Locação por temporada</label>
+        <label><input type="radio" name="simModo" value="anual"> Locação anual (aluguel mensal)</label>
+      </div>
+      <div id="boxTemp">
+        <label>Diária média (R$)</label><input id="simDiaria" type="text" inputmode="decimal" placeholder="Informe a diária média">
+        <div class="sim-hint">A diária varia muito conforme a região, o bairro e o tipo de empreendimento. Use a sua pesquisa de mercado ou peça uma estimativa a mim.</div>
+      </div>
+      <div id="boxAnual" style="display:none;">
+        <label>Aluguel mensal (R$)</label><input id="simAluguel" type="text" inputmode="decimal" placeholder="Informe o aluguel mensal">
+        <div class="sim-hint">Valor do aluguel do contrato anual. A simulação considera o imóvel alugado nos 12 meses do ano, sem vacância.</div>
+      </div>
       <label>Condomínio (R$ por mês)</label><input id="simCond" type="text" inputmode="decimal" placeholder="Preencha para um resultado fiel">
       <label>IPTU (R$ por ano)</label><input id="simIptu" type="text" inputmode="decimal" placeholder="Preencha para um resultado fiel">
+      <div class="sim-hint" id="simCustoHint" style="display:none;">Na locação anual, condomínio e IPTU costumam ficar por conta do inquilino. Preencha só se forem custo seu.</div>
       <label>Prazo da análise</label>
       <select id="simAnos"><option value="3">3 anos</option><option value="5" selected>5 anos</option><option value="7">7 anos</option><option value="10">10 anos</option></select>
       <label>Anos até a entrega (sem renda)</label><input id="simEntrega" type="text" inputmode="decimal" value="0">
@@ -795,7 +838,7 @@ def simulador_page():
       <div class="sim-result">
         <div class="sim-warn" id="simWarn">⚠ Condomínio e/ou IPTU não preenchidos: esses custos foram considerados como R$ 0, então o resultado abaixo pode estar acima do real. Preencha os campos para uma projeção mais fiel.</div>
         <div id="simTabela"></div>
-        <p class="sim-note">Premissas: administração de 20% sobre a receita bruta; ocupação de 45% / 55% / 65% e valorização de 10% / 12% / 15% ao ano (conservador / base / otimista), valores constantes ao longo do prazo, sem impostos sobre a renda, financiamento ou correção da diária. Projeção não é promessa de rentabilidade.</p>
+        <p class="sim-note" id="simNote">Premissas: administração de 20% sobre a receita bruta; ocupação de 45% / 55% / 65% e valorização de 8% / 10% / 12% ao ano (conservador / base / otimista), valores constantes ao longo do prazo, sem impostos sobre a renda, financiamento ou correção da diária. Projeção não é promessa de rentabilidade.</p>
       </div>
       <p style="margin-top:18px;"><a class="btn btn-gold" id="simCta" target="_blank" rel="noopener" href="#">💬 Quero a tabela e uma simulação personalizada</a></p>
     </div>
@@ -805,7 +848,7 @@ def simulador_page():
   {conds}
 </div>"""
     return page("Simulador de Investimento Imobiliário em João Pessoa — Renda e Valorização | Dorgival Neto",
-                "Simule o retorno de um imóvel de temporada em João Pessoa em três cenários (conservador, base e otimista): renda com diária e valorização. Projeção, não promessa de rentabilidade.",
+                "Simule o retorno de um imóvel em João Pessoa, por temporada ou locação anual, em três cenários (conservador, base e otimista): renda e valorização. Projeção, não promessa de rentabilidade.",
                 "/simulador/", body, SIM_JS, active="")
 
 

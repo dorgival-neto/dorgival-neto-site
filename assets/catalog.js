@@ -12,12 +12,17 @@
   };
   DN.url = function (p) { return '/imovel/' + p.codigo + '/'; };
   DN.wa = function (msg) { return 'https://wa.me/' + cfg().whatsapp + '?text=' + encodeURIComponent(msg); };
-  DN.bookUrl = function (p) {
-    return DN.wa('Olá Dorgival! Quero ver o book/tabela do imóvel ' + p.codigo + ' — ' + p.titulo + ' (' + p.bairro + ').');
-  };
   DN.price = function (p) {
     var pre = p.investimento && p.investimento.aPartirDe ? 'a partir de ' : '';
     return pre + DN.money(p.preco) + (p.tipo === 'Aluguel' ? '/mês' : '');
+  };
+  // só lançamento / na planta / em construção tem book e tabela de vendas
+  DN.hasBook = function (p) { return ['Lançamento', 'Na planta', 'Em construção'].indexOf(p.status) !== -1; };
+  // mensagem de WhatsApp com código, dados e link direto do imóvel (igual a wa_imovel em build_pages.py)
+  DN.waImovel = function (p) {
+    var site = cfg().siteUrl || location.origin;
+    return DN.wa('Olá Dorgival! ' + (DN.hasBook(p) ? 'Quero receber o book e a tabela do imóvel ' : 'Tenho interesse no imóvel ') +
+      p.codigo + ' (' + p.titulo + '), ' + DN.price(p) + '. Vi no seu site: ' + site + DN.url(p));
   };
   DN.trilhaLabel = { investir: 'Para investir', morar: 'Para morar' };
 
@@ -103,8 +108,10 @@
       (p.vagas ? '<span>🚗 ' + p.vagas + '</span>' : '') + '<span>📐 ' + (p.areaUtil || 0) + 'm²</span></div>' +
       (chips ? '<div class="card-chips">' + chips + '</div>' : '') +
       '<div class="card-actions">' +
-      '<a class="btn btn-gold btn-sm" data-book="' + p.id + '" href="' + DN.bookUrl(p) + '" target="_blank" rel="noopener">Quero ver book/tabela</a>' +
-      '<a class="btn btn-outline btn-sm" href="' + DN.url(p) + '">Ver detalhes</a>' +
+      (DN.hasBook(p)
+        ? '<a class="btn btn-gold btn-sm" data-book="' + p.id + '" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener">Quero ver book/tabela</a>' +
+          '<a class="btn btn-outline btn-sm" href="' + DN.url(p) + '">Ver detalhes</a>'
+        : '<a class="btn btn-gold btn-sm" href="' + DN.url(p) + '">Ver detalhes</a>') +
       '</div>' +
       (opts.compare ? '<label class="card-compare"><input type="checkbox" data-compare="' + p.id + '"> Comparar</label>' : '') +
       '</div></article>';
@@ -119,7 +126,7 @@
       '<span class="tag">' + DN.esc(p.status) + ' · ' + DN.esc(p.codigo) + '</span>' +
       '<div class="price">' + DN.esc(DN.price(p)) + '</div>' +
       '<div class="loc">' + DN.esc(p.bairro) + ' · ' + DN.esc(p.cidade) + '</div>' +
-      '<a class="cat-book" data-book="' + p.id + '" href="' + DN.bookUrl(p) + '" target="_blank" rel="noopener">Quero ver book/tabela</a>' +
+      (DN.hasBook(p) ? '<a class="cat-book" data-book="' + p.id + '" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener">Quero ver book/tabela</a>' : '') +
       '</div></div>';
   };
 

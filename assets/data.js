@@ -16,14 +16,18 @@
    - trilhas: ["investir"], ["morar"] ou as duas
    - investimento (opcional): aPartirDe (true/false), entrega, entrada,
      parcela, posicao, pagamento — só aparece o que estiver preenchido
-   - simulador (opcional): diaria (R$), condominio (R$/mês), iptu (R$/ano) —
-     valores iniciais do simulador de investimento (/simulador/); o imóvel
-     só aparece lá se tiver este campo. Deixe condominio/iptu null se ainda
-     não souber: o visitante preenche e o simulador avisa se ficar vazio.
+   - simulador (opcional): modo ("temporada" ou "anual"; padrão temporada),
+     diaria (R$, temporada), aluguel (R$/mês, locação anual), condominio (R$/mês),
+     iptu (R$/ano) — valores iniciais do simulador de investimento (/simulador/);
+     o imóvel só aparece lá se tiver este campo. Deixe null o que ainda não souber:
+     o visitante preenche e o simulador avisa se ficar vazio.
+   - status: "Lançamento", "Na planta" e "Em construção" mostram o botão de
+     book/tabela; imóvel pronto (ou porteira fechada) não tem book.
    ============================================================ */
 
 const SITE_CONFIG = {
   whatsapp: "5583996336569",       // Dorgival Neto — número oficial
+  siteUrl: "https://dorgivalneto.com.br",   // usado nos links das mensagens de WhatsApp
   instagram: "https://instagram.com/dorgivalneto.imoveis",
   email: "dorgivalneto.corretor@gmail.com",
   ga4Id: "G-8GRWXGK9C0",           // Google Analytics 4 (conta dorgivalneto.corretor@gmail.com)
