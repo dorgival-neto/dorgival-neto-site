@@ -1,5 +1,5 @@
 {
-  "_ajuda": "Cadastro dos parceiros de serviços (página /parceiros/). Para incluir um parceiro: copie um bloco de 'parceiros', troque os dados e coloque as imagens em assets/parceiros/<slug>/ (logo.jpg e servicos.jpg). 'ativo': false esconde o parceiro sem apagar. 'whatsapp' = só números com 55 e DDD. 'opcoes' (opcional) são os serviços que o cliente marca na página do parceiro; se faltar, usa 'categorias'. 'pedido' (opcional) é o fim da mensagem de WhatsApp ("Gostaria de ..."); padrão: pedir um orçamento. 'servicos' alimenta apenas o texto alternativo da imagem e a descrição para o Google.",
+  "_ajuda": "Cadastro dos parceiros de serviços (página /parceiros/). Para incluir um parceiro: copie um bloco de 'parceiros', troque os dados e coloque as imagens em assets/parceiros/<slug>/ (logo.jpg e servicos.jpg). 'ativo': false esconde o parceiro sem apagar. 'whatsapp' = só números com 55 e DDD. 'opcoes' (opcional) são os serviços que o cliente marca na página do parceiro; se faltar, usa 'categorias'. 'pedido' (opcional) é o fim da mensagem de WhatsApp (“Gostaria de ...”); padrão: pedir um orçamento. 'servicos' alimenta apenas o texto alternativo da imagem e a descrição para o Google.",
   "parceiros": [
     {
       "slug": "lima-services",
