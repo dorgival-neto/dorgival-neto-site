@@ -33,7 +33,9 @@
   <div class="nav-inner">
     <a href="/"><img class="logo" src="/assets/logo-branco.png" alt="Dorgival Neto"></a>
     <nav class="nav-links" id="navLinks">
+      <a href="/">Home</a>
       <a href="/imoveis.html" style="color:var(--gold);">Imóveis</a>
+      <a href="/simulador/">Simular investimento</a>
       <a href="/avaliacao.html">Avalie seu imóvel</a>
       <a href="/#servicos">Serviços</a>
       <a href="/joao-pessoa.html">João Pessoa</a>
@@ -189,7 +191,7 @@
       row('Vagas', items.map(function(p){ return p.vagas || '–'; })) +
       row('Trilha', items.map(function(p){ return (p.trilhas || []).map(function(t){ return DN.trilhaLabel[t]; }).join(' · ') || '–'; })) +
       row('Condições', items.map(function(p){ var c = DN.investChips(p); return c.length ? c.map(DN.esc).join('<br>') : '–'; })) +
-      row('', items.map(function(p){ return DN.hasBook(p) ? '<a class="btn btn-gold btn-sm" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener" data-book="' + p.id + '">Quero ver book/tabela</a>' : '<a class="btn btn-gold btn-sm" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener">💬 Falar no WhatsApp</a>'; })) +
+      row('', items.map(function(p){ return DN.hasBook(p) ? '<a class="btn btn-gold btn-sm" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener" data-book="' + p.id + '">Agendar apresentação</a>' : '<a class="btn btn-gold btn-sm" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener">💬 Falar no WhatsApp</a>'; })) +
       '</table>';
     document.getElementById('compareTable').innerHTML = html;
     document.getElementById('compareOverlay').classList.add('open');

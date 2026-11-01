@@ -18,9 +18,11 @@
      parcela, posicao, pagamento — só aparece o que estiver preenchido
    - simulador (opcional): modo ("temporada" ou "anual"; padrão temporada),
      diaria (R$, temporada), aluguel (R$/mês, locação anual), condominio (R$/mês),
-     iptu (R$/ano) — valores iniciais do simulador de investimento (/simulador/);
-     o imóvel só aparece lá se tiver este campo. Deixe null o que ainda não souber:
-     o visitante preenche e o simulador avisa se ficar vazio.
+     iptu (R$/ano), entrada (R$), parcela (R$/mês na obra), entregaMeses —
+     valores iniciais do simulador de investimento (/simulador/). Deixe null o que
+     ainda não souber: o visitante preenche e o simulador avisa se ficar vazio.
+     O botão "Simular investimento" e a presença no simulador seguem o status:
+     só Lançamento / Na planta / Em construção.
    - status: "Lançamento", "Na planta" e "Em construção" mostram o botão de
      book/tabela; imóvel pronto (ou porteira fechada) não tem book.
    ============================================================ */

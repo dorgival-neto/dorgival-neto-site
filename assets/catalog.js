@@ -21,8 +21,9 @@
   // mensagem de WhatsApp com código, dados e link direto do imóvel (igual a wa_imovel em build_pages.py)
   DN.waImovel = function (p) {
     var site = cfg().siteUrl || location.origin;
-    return DN.wa('Olá Dorgival! ' + (DN.hasBook(p) ? 'Quero receber o book e a tabela do imóvel ' : 'Tenho interesse no imóvel ') +
-      p.codigo + ' (' + p.titulo + '), ' + DN.price(p) + '. Vi no seu site: ' + site + DN.url(p));
+    return DN.wa('Olá Dorgival! Tenho interesse no imóvel ' + p.codigo + ' (' + p.titulo + '), ' + DN.price(p) +
+      (DN.hasBook(p) ? ', e gostaria de agendar uma apresentação do empreendimento e receber informações sobre os valores de investimento' : '') +
+      '. Vi no seu site: ' + site + DN.url(p));
   };
   DN.trilhaLabel = { investir: 'Para investir', morar: 'Para morar' };
 
@@ -109,7 +110,7 @@
       (chips ? '<div class="card-chips">' + chips + '</div>' : '') +
       '<div class="card-actions">' +
       (DN.hasBook(p)
-        ? '<a class="btn btn-gold btn-sm" data-book="' + p.id + '" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener">Quero ver book/tabela</a>' +
+        ? '<a class="btn btn-gold btn-sm" data-book="' + p.id + '" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener">Agendar apresentação</a>' +
           '<a class="btn btn-outline btn-sm" href="' + DN.url(p) + '">Ver detalhes</a>'
         : '<a class="btn btn-gold btn-sm" href="' + DN.url(p) + '">Ver detalhes</a>') +
       '</div>' +
@@ -126,11 +127,11 @@
       '<span class="tag">' + DN.esc(p.status) + ' · ' + DN.esc(p.codigo) + '</span>' +
       '<div class="price">' + DN.esc(DN.price(p)) + '</div>' +
       '<div class="loc">' + DN.esc(p.bairro) + ' · ' + DN.esc(p.cidade) + '</div>' +
-      (DN.hasBook(p) ? '<a class="cat-book" data-book="' + p.id + '" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener">Quero ver book/tabela</a>' : '') +
+      (DN.hasBook(p) ? '<a class="cat-book" data-book="' + p.id + '" href="' + DN.waImovel(p) + '" target="_blank" rel="noopener">Agendar apresentação</a>' : '') +
       '</div></div>';
   };
 
-  // cliques globais: favoritar e medir pedidos de book/tabela
+  // cliques globais: favoritar e medir pedidos de apresentação
   document.addEventListener('click', function (e) {
     var fav = e.target.closest && e.target.closest('[data-fav]');
     if (fav) {
@@ -142,6 +143,6 @@
       return;
     }
     var book = e.target.closest && e.target.closest('[data-book]');
-    if (book) DN.track('generate_lead', { method: 'book_tabela', item_id: book.getAttribute('data-book') });
+    if (book) DN.track('generate_lead', { method: 'agendar_apresentacao', item_id: book.getAttribute('data-book') });
   });
 })();

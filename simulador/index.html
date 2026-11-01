@@ -34,7 +34,9 @@
   <div class="nav-inner">
     <a href="/"><img class="logo" src="/assets/logo-branco.png" alt="Dorgival Neto"></a>
     <nav class="nav-links" id="navLinks">
+      <a href="/">Home</a>
       <a href="/imoveis.html">Imóveis</a>
+      <a href="/simulador/" style="color:var(--gold);">Simular investimento</a>
       <a href="/avaliacao.html">Avalie seu imóvel</a>
       <a href="/#servicos">Serviços</a>
       <a href="/joao-pessoa.html">João Pessoa</a>
@@ -56,35 +58,45 @@
   <div class="sim-grid">
     <form class="form-dark" id="simForm" onsubmit="return false;" autocomplete="off">
       <div><label>Imóvel</label><select id="simImovel"></select></div>
-      <label>Preço do imóvel (R$)</label><input id="simPreco" type="text" inputmode="decimal">
+      <label>Preço do imóvel (R$)</label><input id="simPreco" type="text" inputmode="numeric" placeholder="0,00">
+      <label>Situação do imóvel</label>
+      <div class="sim-modo" id="simSitBox">
+        <label class="on"><input type="radio" name="simSit" value="planta" checked> Na planta ou em construção</label>
+        <label><input type="radio" name="simSit" value="pronto"> Pronto</label>
+      </div>
+      <div id="boxPlanta">
+        <label>Meses até a entrega (sem renda)</label><input id="simMeses" type="text" inputmode="numeric" placeholder="Ex.: 36">
+        <div class="sim-hint">Imóvel na planta só gera renda depois da entrega. Nesse período a renda não conta, mas a valorização sim.</div>
+        <label>Entrada (R$)</label><input id="simEntrada" type="text" inputmode="numeric" placeholder="0,00">
+        <label>Parcela mensal durante a obra (R$)</label><input id="simParcela" type="text" inputmode="numeric" placeholder="0,00">
+        <div class="sim-hint">Durante a obra, o saldo devedor é corrigido pelo INCC (adotamos 6% ao ano; o índice costuma variar entre 3,5% e 6%). Entrada e parcelas constam na tabela do empreendimento: preencha para calcular a correção.</div>
+      </div>
       <label>Tipo de locação</label>
       <div class="sim-modo" id="simModo">
         <label class="on"><input type="radio" name="simModo" value="temporada" checked> Locação por temporada</label>
         <label><input type="radio" name="simModo" value="anual"> Locação anual (aluguel mensal)</label>
       </div>
       <div id="boxTemp">
-        <label>Diária média (R$)</label><input id="simDiaria" type="text" inputmode="decimal" placeholder="Informe a diária média">
+        <label>Diária média (R$)</label><input id="simDiaria" type="text" inputmode="numeric" placeholder="Informe a diária média">
         <div class="sim-hint">A diária varia muito conforme a região, o bairro e o tipo de empreendimento. Use a sua pesquisa de mercado ou peça uma estimativa a mim.</div>
       </div>
       <div id="boxAnual" style="display:none;">
-        <label>Aluguel mensal (R$)</label><input id="simAluguel" type="text" inputmode="decimal" placeholder="Informe o aluguel mensal">
+        <label>Aluguel mensal (R$)</label><input id="simAluguel" type="text" inputmode="numeric" placeholder="Informe o aluguel mensal">
         <div class="sim-hint">Valor do aluguel do contrato anual. A simulação considera o imóvel alugado nos 12 meses do ano, sem vacância.</div>
       </div>
-      <label>Condomínio (R$ por mês)</label><input id="simCond" type="text" inputmode="decimal" placeholder="Preencha para um resultado fiel">
-      <label>IPTU (R$ por ano)</label><input id="simIptu" type="text" inputmode="decimal" placeholder="Preencha para um resultado fiel">
+      <label>Condomínio (R$ por mês)</label><input id="simCond" type="text" inputmode="numeric" placeholder="Preencha para um resultado fiel">
+      <label>IPTU (R$ por ano)</label><input id="simIptu" type="text" inputmode="numeric" placeholder="Preencha para um resultado fiel">
       <div class="sim-hint" id="simCustoHint" style="display:none;">Na locação anual, condomínio e IPTU costumam ficar por conta do inquilino. Preencha só se forem custo seu.</div>
       <label>Prazo da análise</label>
       <select id="simAnos"><option value="3">3 anos</option><option value="5" selected>5 anos</option><option value="7">7 anos</option><option value="10">10 anos</option></select>
-      <label>Anos até a entrega (sem renda)</label><input id="simEntrega" type="text" inputmode="decimal" value="0">
-      <div class="sim-hint">Imóvel na planta só gera renda depois da entrega. Informe quantos anos faltam: nesse período a renda não conta, mas a valorização sim.</div>
     </form>
     <div>
       <div class="sim-result">
         <div class="sim-warn" id="simWarn">⚠ Condomínio e/ou IPTU não preenchidos: esses custos foram considerados como R$ 0, então o resultado abaixo pode estar acima do real. Preencha os campos para uma projeção mais fiel.</div>
         <div id="simTabela"></div>
-        <p class="sim-note" id="simNote">Premissas: administração de 20% sobre a receita bruta; ocupação de 45% / 55% / 65% e valorização de 8% / 10% / 12% ao ano (conservador / base / otimista), valores constantes ao longo do prazo, sem impostos sobre a renda, financiamento ou correção da diária. Projeção não é promessa de rentabilidade.</p>
+        <div class="sim-note" id="simNote"></div>
       </div>
-      <p style="margin-top:18px;"><a class="btn btn-gold" id="simCta" target="_blank" rel="noopener" href="#">💬 Quero a tabela e uma simulação personalizada</a></p>
+      <p style="margin-top:18px;"><a class="btn btn-gold" id="simCta" target="_blank" rel="noopener" href="#">💬 Agendar apresentação e simulação personalizada</a></p>
     </div>
   </div>
   <h2>Condições de pagamento</h2>
@@ -107,14 +119,16 @@
 <script src="/assets/analytics.js"></script>
 <script>
 (function(){
-  var SIM = PROPERTIES.filter(function(p){ return p.simulador; });
+  var SIM = PROPERTIES.filter(DN.hasBook);
   if (!SIM.length) return;
   var CEN = [
-    { nome: 'Conservador', occ: 0.45, val: 0.08 },
-    { nome: 'Base', occ: 0.55, val: 0.10 },
-    { nome: 'Otimista', occ: 0.65, val: 0.12 }
+    { nome: 'Conservador', occ: 0.50, val: 0.08 },
+    { nome: 'Base', occ: 0.60, val: 0.10 },
+    { nome: 'Otimista', occ: 0.70, val: 0.12 }
   ];
   var ADM = { temporada: 0.20, anual: 0.10 };
+  var INCC = 0.06;
+  var MONEY = ['simPreco', 'simDiaria', 'simAluguel', 'simCond', 'simIptu', 'simEntrada', 'simParcela'];
   var $ = function(id){ return document.getElementById(id); };
   var used = false;
 
@@ -127,56 +141,104 @@
   }
   function brl(v){ return (v < 0 ? '-' : '') + 'R$ ' + Math.abs(Math.round(v)).toLocaleString('pt-BR'); }
   function pct(v, d){ return (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: d || 0, maximumFractionDigits: d == null ? 1 : d }) + '%'; }
+  function fmt(n){ return Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  // máscara em reais: os dígitos digitados entram pela direita (ex.: 85075600 vira 850.756,00)
+  function mask(el){
+    var d = el.value.replace(/\D/g, '').replace(/^0+/, '');
+    if (!d) { el.value = ''; return; }
+    while (d.length < 3) d = '0' + d;
+    el.value = d.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + d.slice(-2);
+  }
+  function radio(name){ var r = document.querySelector('input[name="' + name + '"]:checked'); return r ? r.value : ''; }
+  function setRadio(name, v){ document.querySelector('input[name="' + name + '"][value="' + v + '"]').checked = true; }
   function cur(){ return SIM.filter(function(p){ return p.id === $('simImovel').value; })[0] || SIM[0]; }
-  function modo(){ var r = document.querySelector('input[name="simModo"]:checked'); return r ? r.value : 'temporada'; }
+  function anosTxt(a){ return (Math.round(a * 10) / 10).toLocaleString('pt-BR') + (a === 1 ? ' ano' : ' anos'); }
 
-  function applyModo(){
-    var m = modo();
-    $('boxTemp').style.display = m === 'temporada' ? '' : 'none';
-    $('boxAnual').style.display = m === 'anual' ? '' : 'none';
-    $('simCustoHint').style.display = m === 'anual' ? '' : 'none';
-    $('simCond').placeholder = $('simIptu').placeholder = m === 'anual' ? 'Opcional' : 'Preencha para um resultado fiel';
-    document.querySelectorAll('#simModo label').forEach(function(l){ l.classList.toggle('on', l.querySelector('input').checked); });
-    $('simNote').innerHTML = m === 'anual'
-      ? 'Premissas: aluguel recebido nos 12 meses do ano, sem vacância; administração de 10% sobre o aluguel; valorização de 8% / 10% / 12% ao ano (conservador / base / otimista), valores constantes ao longo do prazo, sem impostos sobre a renda, financiamento ou reajuste do aluguel. Na locação anual, condomínio e IPTU costumam ficar com o inquilino. Projeção não é promessa de rentabilidade.'
-      : 'Premissas: administração de 20% sobre a receita bruta; ocupação de 45% / 55% / 65% e valorização de 8% / 10% / 12% ao ano (conservador / base / otimista), valores constantes ao longo do prazo, sem impostos sobre a renda, financiamento ou correção da diária. Projeção não é promessa de rentabilidade.';
+  function notes(loc, sit){
+    var l = [];
+    if (loc === 'anual') {
+      l.push('<b>Aluguel:</b> recebido nos 12 meses do ano, sem vacância e sem reajuste durante o prazo.');
+      l.push('<b>Administração:</b> 10% sobre o aluguel.');
+      l.push('<b>Condomínio e IPTU:</b> na locação anual costumam ficar com o inquilino; só entram na conta se você preencher.');
+    } else {
+      l.push('<b>Ocupação:</b> 50% (conservador), 60% (base) e 70% (otimista) dos dias do ano.');
+      l.push('<b>Administração:</b> 20% sobre a receita bruta.');
+      l.push('<b>Diária:</b> valor informado, constante ao longo do prazo.');
+    }
+    l.push('<b>Valorização do imóvel:</b> 8% (conservador), 10% (base) e 12% (otimista) ao ano, sobre o preço de hoje.');
+    if (sit === 'planta') {
+      l.push('<b>Entrega:</b> a renda só começa depois dos meses informados; a valorização conta desde a compra.');
+      l.push('<b>INCC:</b> 6% ao ano sobre o saldo devedor durante a obra (o índice costuma variar entre 3,5% e 6%). O saldo é o preço menos a entrada, abatido pelas parcelas, e o que restar é pago na entrega. A correção entra como custo.');
+    }
+    l.push('<b>Fora da conta:</b> imposto de renda, financiamento e reajuste de valores.');
+    l.push('Projeção não é promessa de rentabilidade.');
+    return '<b>Premissas</b><ul>' + l.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>';
+  }
+
+  function applyModes(){
+    var loc = radio('simModo'), sit = radio('simSit');
+    $('boxTemp').style.display = loc === 'temporada' ? '' : 'none';
+    $('boxAnual').style.display = loc === 'anual' ? '' : 'none';
+    $('simCustoHint').style.display = loc === 'anual' ? '' : 'none';
+    $('boxPlanta').style.display = sit === 'planta' ? '' : 'none';
+    $('simCond').placeholder = $('simIptu').placeholder = loc === 'anual' ? 'Opcional' : 'Preencha para um resultado fiel';
+    document.querySelectorAll('.sim-modo label').forEach(function(l){ l.classList.toggle('on', l.querySelector('input').checked); });
+    $('simNote').innerHTML = notes(loc, sit);
   }
 
   function fill(p){
-    var s = p.simulador;
-    $('simPreco').value = p.preco ? String(p.preco).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
-    document.querySelector('input[name="simModo"][value="' + (s.modo === 'anual' ? 'anual' : 'temporada') + '"]').checked = true;
-    $('simDiaria').value = s.diaria || '';
-    $('simAluguel').value = s.aluguel || '';
-    $('simCond').value = s.condominio == null ? '' : s.condominio;
-    $('simIptu').value = s.iptu == null ? '' : s.iptu;
-    $('simEntrega').value = s.entregaAnos || 0;
+    var s = p.simulador || {};
+    function money(id, v){ $(id).value = v ? fmt(v) : ''; }
+    money('simPreco', p.preco);
+    setRadio('simModo', s.modo === 'anual' ? 'anual' : 'temporada');
+    setRadio('simSit', s.situacao === 'pronto' ? 'pronto' : 'planta');
+    money('simDiaria', s.diaria); money('simAluguel', s.aluguel);
+    money('simCond', s.condominio); money('simIptu', s.iptu);
+    money('simEntrada', s.entrada); money('simParcela', s.parcela);
+    $('simMeses').value = s.entregaMeses != null ? s.entregaMeses : (s.entregaAnos ? Math.round(s.entregaAnos * 12) : '');
     document.querySelectorAll('.cond').forEach(function(c){ c.style.display = c.getAttribute('data-id') === p.id ? '' : 'none'; });
-    applyModo();
+    applyModes();
   }
 
   function calc(){
-    var p = cur(), m = modo(), anual = m === 'anual';
+    var p = cur(), loc = radio('simModo'), sit = radio('simSit'), anual = loc === 'anual', planta = sit === 'planta';
     var preco = parse($('simPreco').value), valor = parse($(anual ? 'simAluguel' : 'simDiaria').value);
     var cond = parse($('simCond').value), iptu = parse($('simIptu').value);
     var anos = parseInt($('simAnos').value, 10);
-    var entrega = Math.max(0, parseFloat($('simEntrega').value) || 0);
+    var meses = planta ? Math.max(0, parseInt($('simMeses').value, 10) || 0) : 0;
+    var entrada = planta ? (parse($('simEntrada').value) || 0) : 0, parcela = planta ? (parse($('simParcela').value) || 0) : 0;
     var out = $('simTabela'), warn = $('simWarn'), cta = $('simCta');
     if (!(preco > 0) || !(valor > 0)) {
       out.innerHTML = '<p class="sim-note" style="margin:0;">' + (anual ? 'Informe o preço do imóvel e o aluguel mensal para ver a projeção.' : 'Informe o preço do imóvel e a diária média para ver a projeção.') + '</p>';
       warn.classList.remove('on'); cta.style.display = 'none';
       return;
     }
+    var avisos = [];
     var semCustos = !anual && (isNaN(cond) || isNaN(iptu));
-    warn.classList.toggle('on', semCustos);
+    if (semCustos) avisos.push('⚠ Condomínio e/ou IPTU não preenchidos: esses custos foram considerados como R$ 0, então o resultado abaixo pode estar acima do real. Preencha os campos para uma projeção mais fiel.');
+    if (planta && !(meses > 0)) avisos.push('⚠ Meses até a entrega não informados: a renda foi contada desde o início, então o resultado pode estar acima do real.');
     var custos = (isNaN(cond) ? 0 : cond) * 12 + (isNaN(iptu) ? 0 : iptu);
-    var adm = ADM[m];
-    var anosRenda = Math.max(0, anos - entrega);
+
+    // INCC: corrige o saldo devedor mês a mês durante a obra; o que restar é pago na entrega
+    var incc = 0, inccOk = planta && meses > 0 && (entrada > 0 || parcela > 0);
+    if (inccOk) {
+      var im = Math.pow(1 + INCC, 1 / 12) - 1, saldo = Math.max(0, preco - entrada), pagas = 0;
+      for (var m = 0; m < meses; m++) { saldo *= 1 + im; var pg = Math.min(parcela, saldo); saldo -= pg; pagas += pg; }
+      incc = Math.max(0, entrada + pagas + saldo - preco);
+    } else if (planta && meses > 0) {
+      avisos.push('⚠ Entrada e parcelas não preenchidas: a correção do INCC não foi calculada (R$ 0), então o resultado pode estar acima do real. Peça a tabela para preencher.');
+    }
+    warn.innerHTML = avisos.join('<br>');
+    warn.classList.toggle('on', avisos.length > 0);
+
+    var adm = ADM[loc];
+    var anosRenda = Math.max(0, anos - meses / 12);
     var rows = CEN.map(function(c){
       var bruta = anual ? valor * 12 : valor * 365 * c.occ, ad = bruta * adm, liq = bruta - ad - custos;
       var fut = preco * Math.pow(1 + c.val, anos), valoriz = fut - preco;
-      var renda = liq * anosRenda, ganho = valoriz + renda;
-      return { c: c, bruta: bruta, adm: ad, liq: liq, y: liq / preco, fut: fut, renda: renda, ganho: ganho, ret: ganho / preco };
+      var renda = liq * anosRenda, ganho = valoriz + renda - incc;
+      return { c: c, bruta: bruta, adm: ad, liq: liq, y: liq / preco, fut: fut, valoriz: valoriz, vp: valoriz / preco,
+               renda: renda, rp: renda / preco, ip: incc / preco, ganho: ganho, ret: ganho / preco };
     });
     function line(label, fn, cls, neg){
       return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + label + '</td>' + rows.map(function(r){
@@ -191,24 +253,32 @@
       line('Renda líquida por ano', function(r){ return brl(r.liq); }, 'key', function(r){ return r.liq < 0; }) +
       line('Rendimento líquido sobre o preço', function(r){ return pct(r.y, 1) + ' a.a.'; }, '', function(r){ return r.y < 0; }) +
       line('Valorização do imóvel', function(r){ return pct(r.c.val) + ' a.a.'; }) +
-      line('Valor estimado em ' + anos + ' anos', function(r){ return brl(r.fut); }, 'key') +
-      line('Renda acumulada (' + anosRenda + (anosRenda === 1 ? ' ano' : ' anos') + ' de renda)', function(r){ return brl(r.renda); }, '', function(r){ return r.renda < 0; }) +
+      line('Valor estimado do imóvel em ' + anosTxt(anos), function(r){ return brl(r.fut); }, 'key') +
+      line('Valorização acumulada', function(r){ return brl(r.valoriz); }) +
+      line('Valorização acumulada sobre o preço', function(r){ return pct(r.vp, 1); }) +
+      line('Renda acumulada (' + anosTxt(anosRenda) + ' de renda)', function(r){ return brl(r.renda); }, '', function(r){ return r.renda < 0; }) +
+      line('Renda acumulada sobre o preço', function(r){ return pct(r.rp, 1); }, '', function(r){ return r.rp < 0; }) +
+      (planta ? line('Correção do INCC no saldo devedor', function(r){ return inccOk ? '-' + brl(incc).replace('-', '') : 'não calculada'; }) : '') +
+      (planta && inccOk ? line('Correção do INCC sobre o preço', function(r){ return '-' + pct(r.ip, 1); }) : '') +
       line('Ganho total estimado', function(r){ return brl(r.ganho); }, 'key', function(r){ return r.ganho < 0; }) +
-      line('Retorno total sobre o preço', function(r){ return pct(r.ret, 0); }, '', function(r){ return r.ret < 0; }) +
+      line('Retorno total sobre o preço', function(r){ return pct(r.ret, 1); }, 'key', function(r){ return r.ret < 0; }) +
       '</tbody></table>';
     var base = rows[1];
     cta.style.display = '';
-    cta.href = DN.wa('Olá Dorgival! Fiz a simulação do ' + p.codigo + ' (' + p.titulo + ') no site: preço ' + brl(preco) + ', ' + (anual ? 'locação anual com aluguel de ' + brl(valor) + ' por mês' : 'locação por temporada com diária de ' + brl(valor)) + ', prazo ' + anos + ' anos. No cenário base deu ganho de ' + brl(base.ganho) + '. Quero a tabela e uma simulação personalizada. ' + location.origin + DN.url(p));
-    if (!used) { used = true; DN.track('simulador_uso', { item_id: p.id, modo: m }); }
+    cta.href = DN.wa('Olá Dorgival! Fiz a simulação do ' + p.codigo + ' (' + p.titulo + ') no site: preço ' + brl(preco) + ', ' + (anual ? 'locação anual com aluguel de ' + brl(valor) + ' por mês' : 'locação por temporada com diária de ' + brl(valor)) + ', prazo ' + anos + ' anos. No cenário base deu ganho de ' + brl(base.ganho) + '. Gostaria de agendar uma apresentação do empreendimento e receber informações sobre os valores de investimento. ' + (cfgUrl() + DN.url(p)));
+    if (!used) { used = true; DN.track('simulador_uso', { item_id: p.id, modo: loc, situacao: sit }); }
   }
+  function cfgUrl(){ return (window.SITE_CONFIG && SITE_CONFIG.siteUrl) || location.origin; }
 
   var sel = $('simImovel');
   if (SIM.length > 1) {
     sel.innerHTML = SIM.map(function(p){ return '<option value="' + p.id + '">' + p.titulo + '</option>'; }).join('');
     sel.onchange = function(){ fill(cur()); calc(); };
   } else { sel.parentNode.style.display = 'none'; sel.innerHTML = '<option value="' + SIM[0].id + '"></option>'; }
-  document.querySelectorAll('input[name="simModo"]').forEach(function(r){ r.addEventListener('change', function(){ applyModo(); calc(); }); });
-  ['simPreco', 'simDiaria', 'simAluguel', 'simCond', 'simIptu', 'simEntrega', 'simAnos'].forEach(function(id){ $(id).addEventListener('input', calc); $(id).addEventListener('change', calc); });
+  document.querySelectorAll('input[name="simModo"], input[name="simSit"]').forEach(function(r){ r.addEventListener('change', function(){ applyModes(); calc(); }); });
+  MONEY.forEach(function(id){ $(id).addEventListener('input', function(){ mask($(id)); calc(); }); });
+  $('simMeses').addEventListener('input', function(){ $('simMeses').value = $('simMeses').value.replace(/\D/g, ''); calc(); });
+  $('simAnos').addEventListener('change', calc);
   fill(SIM[0]); calc();
 })();
 </script>
