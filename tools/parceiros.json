@@ -44,6 +44,27 @@
         "Molduras e acabamentos: detalhes e finalizações em gesso",
         "Chafé e suportes de carga: execução e instalação conforme a necessidade da obra"
       ]
+    },
+    {
+      "slug": "chaves-negocios",
+      "ativo": true,
+      "nome": "Chaves Negócios Imobiliários",
+      "slogan": "Realize o sonho da casa própria",
+      "categorias": ["Financiamento imobiliário"],
+      "opcoes": ["Simulação de financiamento", "Indicação do melhor financiamento para o meu perfil", "Acompanhamento até a assinatura do contrato", "Envio de documentos pelo WhatsApp"],
+      "atendimento": "João Pessoa e região, com atendimento por WhatsApp",
+      "whatsapp": "5583999409988",
+      "whatsappExibicao": "(83) 99940-9988",
+      "logo": "assets/parceiros/chaves-negocios/logo.jpg",
+      "imagemServicos": "assets/parceiros/chaves-negocios/servicos.jpg",
+      "resumo": "Assessoria em financiamento imobiliário: simulação, indicação do melhor financiamento conforme o seu perfil e acompanhamento até a assinatura do contrato no banco, com envio de documentos pelo WhatsApp.",
+      "servicos": [
+        "Agilidade no processo: acompanhamento da simulação até a assinatura do contrato no banco",
+        "Taxas competitivas: as melhores condições",
+        "Assessoria especializada: indicação do melhor financiamento conforme o seu perfil",
+        "Transparência total: sem surpresas, você sabe de tudo antes de assinar",
+        "Conveniência digital: envio de documentos pelo WhatsApp"
+      ]
     }
   ]
 }
